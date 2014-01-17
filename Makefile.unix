@@ -1,0 +1,15 @@
+objects := 3DObject.o Image.o Engine.o Object.o Text.o globaldefs.o hud.o main.o tinyxml2.o magichexagon.o opengl-api.o
+libs := -lGL -lGLU -lSDLmain -lSDL -lSDL_image -lvorbis -lvorbisfile -lopenal -logg -ltinyxml2 -lttvfs -lBox2D -lFreeImage
+
+all: magichexagon
+
+magichexagon: $(objects)
+	g++ -o $@ $^ $(libs)
+
+%.o: %.cpp
+	g++ -c -MMD -o $@ $<
+
+-include $(objects:.o=.d)
+
+clean:
+	rm -f *.o *.d magichexagon
