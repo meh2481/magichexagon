@@ -48,6 +48,7 @@ private:
   Color m_colors[8];
   float m_fRotateAngle;
   float m_fRotateAdd;
+  float m_fPlayerAngle;
   
   Rect m_rcBounds;			//Camera bounds
   Rect m_rcDragArea;		//Area that the user can drag the apples around in

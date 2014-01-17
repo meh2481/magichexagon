@@ -74,6 +74,7 @@ void PrintEvent(const SDL_Event * event)
 
 bool Engine::_frame()
 {
+	tyrsound_update();
     //Handle input events from SDL
     SDL_Event event;
     while(SDL_PollEvent(&event))
@@ -204,6 +205,9 @@ Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sIcon, b
     m_bQuitting = false;
     srand(SDL_GetTicks());  //Not as random as it could be... narf
 	m_fTimeScale = 1.0f;
+
+	if(tyrsound_init(NULL, NULL) != TYRSOUND_ERR_OK)
+        errlog << "Failed to init tyrsound." << std::endl;
 }
 
 Engine::~Engine()
@@ -214,7 +218,12 @@ Engine::~Engine()
 	errlog << "Clearing images" << endl;
     clearImages();
 
-    //TODO: Clean up our sound effects
+    //Clean up our sound effects
+	for(map<string, tyrsound_Handle>::iterator i = m_sounds.begin(); i != m_sounds.end(); i++)
+		tyrsound_unload(i->second);
+	
+	//Clean up tyrsound
+	tyrsound_shutdown();
 
     // Clean up and shutdown
 	errlog << "Deleting phys world" << endl;
@@ -264,22 +273,53 @@ void Engine::fillRect(float32 x1, float32 y1, float32 x2, float32 y2, Color col)
 
 void Engine::createSound(string sPath, string sName)
 {
-    //TODO
+	tyrsound_Stream strm;
+    if(tyrsound_createFileNameStream(&strm, sPath.c_str(), "rb") != TYRSOUND_ERR_OK)
+    {
+        errlog << "File not found: " << sPath << endl;
+        return;
+    }
+
+    tyrsound_Handle handle = tyrsound_load(strm);
+
+    if(handle == TYRSOUND_NULLHANDLE)
+    {
+        errlog << "Invalid handle for song " << sPath << endl;
+        return;
+    }
+	m_sounds[sName] = handle;
+	tyrsound_play(handle);
+	tyrsound_pause(handle);
 }
 
 void Engine::playSound(string sName, int volume, int pan, float32 pitch)
 {
-    // TODO
+	tyrsound_Handle handle = m_sounds[sName];
+    tyrsound_setVolume(handle, (float)(volume)/100.0);
+	tyrsound_setSpeed(handle, pitch);
+	tyrsound_setPosition(handle, pan, 0, 0);
+	//TODO: Play sounds more than once at a time
+	tyrsound_stop(handle);
+	tyrsound_seek(handle, 0);
+    tyrsound_play(handle);
 }
 
 void Engine::pauseMusic()
 {
-    // TODO
+    tyrsound_pause(m_sounds["music"]);
+}
+
+void Engine::seekMusic(float32 fTime)
+{
+	tyrsound_seek(m_sounds["music"], fTime);
 }
 
 void Engine::playMusic(string sName, int volume, int pan, float32 pitch)
 {
-	//TODO
+	if(!m_sounds.count("music"))
+		createSound(sName, "music");
+	tyrsound_setLoop(m_sounds["music"], 0.0f, -1);
+	playSound("music", volume, pan, pitch);
 }
 
 bool Engine::keyDown(int32_t keyCode)
