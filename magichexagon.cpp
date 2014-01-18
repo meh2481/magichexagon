@@ -8,8 +8,7 @@
 #include <float.h>
 #include <sstream>
 
-//For our engine functions to be able to call our Engine class functions - Note that this means there can be no more than one Engine at a time
-//TODO: Think of workaround? How should everything communicate now?
+//For our engine functions to be able to call our Engine class functions
 static magichexagonEngine* g_pGlobalEngine;
 
 void signalHandler(string sSignal)
@@ -24,7 +23,7 @@ Engine(iWidth, iHeight, sTitle, sIcon, bResizable)
 	vfs.Prepare();
 	
 	//Set camera position for this game
-	m_fDefCameraZ = -12;
+	m_fDefCameraZ = -15;
 	CameraPos.x = 0;
 	CameraPos.y = 0;
 	CameraPos.z = m_fDefCameraZ;
@@ -33,15 +32,15 @@ Engine(iWidth, iHeight, sTitle, sIcon, bResizable)
 	//Game vars
 	m_fRotateAngle = 0.0;
 	m_fRotateAdd = 20;
-	m_colors[0] = Dash;		//Center part - Fluttershy yellow
-	m_colors[1] = Color(0,0,0);	//Center ring and triangle - Fluttershy eye blue
-	m_colors[2] = DashManeR;	//Radial arm 1 - Fluttershy pink
-	m_colors[3] = DashManeO;		//Radial arm 2 - Fluttershy yellow
-	m_colors[4] = DashManeY;	//Radial arm 3 - Fluttershy pink
-	m_colors[5] = DashManeG;		//Radial arm 4 - Fluttershy yellow
-	m_colors[6] = DashManeB;	//Radial arm 5 - Fluttershy pink
-	m_colors[7] = DashManeV;		//Radial arm 6 - Fluttershy yellow
-	centerCutie = getImage("res/gfx/dashmark.png");
+	m_colors[0] = Color(255,255,255);	//Center part
+	m_colors[1] = Color(0,0,0);			//Center ring and triangle
+	m_colors[2] = Dash;					//Radial arm 1
+	m_colors[3] = Fluttershy;			//Radial arm 2
+	m_colors[4] = Twilight;				//Radial arm 3
+	m_colors[5] = Rarity;				//Radial arm 4
+	m_colors[6] = Pinkie;				//Radial arm 5
+	m_colors[7] = AJ;					//Radial arm 6
+	centerCutie = NULL;
 	m_fPlayerAngle = -90.0f;
 	
 	showCursor();
@@ -69,9 +68,8 @@ magichexagonEngine::~magichexagonEngine()
 void magichexagonEngine::frame(float32 dt)
 {
 	handleKeys();
-	stepPhysics(dt);	//Update our physics simulation
-	updateObjects(dt);
-	updateWalls(dt);
+	updateColors(dt);
+	updateLevel(dt);
 	m_fRotateAngle += m_fRotateAdd * dt;
 }
 
@@ -111,6 +109,7 @@ void magichexagonEngine::init(list<commandlineArg> sArgs)
 	
 	//Load our last screen position and such
 	loadConfig("res/config.xml");
+	loadPatterns("res/patterns.xml");
 	
 	//Set gravity to 0
 	getWorld()->SetGravity(b2Vec2(0,0));
@@ -171,7 +170,75 @@ void magichexagonEngine::handleEvent(SDL_Event event)
                     break;
 					
 				case SDL_SCANCODE_F:
-					addWall(15.0, 3.5, 2.6, rand() % 6);
+					phaseColor(&m_colors[0], Fluttershy, 0.5);
+					phaseColor(&m_colors[1], FluttershyEyes, 0.5);
+					phaseColor(&m_colors[2], FluttershyMane, 0.5);
+					phaseColor(&m_colors[3], Fluttershy, 0.5);
+					phaseColor(&m_colors[4], FluttershyMane, 0.5);
+					phaseColor(&m_colors[5], Fluttershy, 0.5);
+					phaseColor(&m_colors[6], FluttershyMane, 0.5);
+					phaseColor(&m_colors[7], Fluttershy, 0.5);
+					centerCutie = getImage("res/gfx/fluttermark.png");
+					break;
+					
+				case SDL_SCANCODE_R:
+					phaseColor(&m_colors[0], Rarity, 0.5);
+					phaseColor(&m_colors[1], RarityEyes, 0.5);
+					phaseColor(&m_colors[2], RarityMane, 0.5);
+					phaseColor(&m_colors[3], Rarity, 0.5);
+					phaseColor(&m_colors[4], RarityMane, 0.5);
+					phaseColor(&m_colors[5], Rarity, 0.5);
+					phaseColor(&m_colors[6], RarityMane, 0.5);
+					phaseColor(&m_colors[7], Rarity, 0.5);
+					centerCutie = getImage("res/gfx/rarimark.png");
+					break;
+					
+				case SDL_SCANCODE_P:
+					phaseColor(&m_colors[0], Pinkie, 0.5);
+					phaseColor(&m_colors[1], PinkieEyes, 0.5);
+					phaseColor(&m_colors[2], PinkieMane, 0.5);
+					phaseColor(&m_colors[3], Pinkie, 0.5);
+					phaseColor(&m_colors[4], PinkieMane, 0.5);
+					phaseColor(&m_colors[5], Pinkie, 0.5);
+					phaseColor(&m_colors[6], PinkieMane, 0.5);
+					phaseColor(&m_colors[7], Pinkie, 0.5);
+					centerCutie = getImage("res/gfx/pinkiemark.png");
+					break;
+					
+				case SDL_SCANCODE_A:
+					phaseColor(&m_colors[0], AJ, 0.5);
+					phaseColor(&m_colors[1], AJEyes, 0.5);
+					phaseColor(&m_colors[2], AJMane, 0.5);
+					phaseColor(&m_colors[3], AJ, 0.5);
+					phaseColor(&m_colors[4], AJMane, 0.5);
+					phaseColor(&m_colors[5], AJ, 0.5);
+					phaseColor(&m_colors[6], AJMane, 0.5);
+					phaseColor(&m_colors[7], AJ, 0.5);
+					centerCutie = getImage("res/gfx/ajmark.png");
+					break;
+					
+				case SDL_SCANCODE_T:
+					phaseColor(&m_colors[0], Twilight, 0.5);
+					phaseColor(&m_colors[1], TwilightMane1, 0.5);
+					phaseColor(&m_colors[2], TwilightMane2, 0.5);
+					phaseColor(&m_colors[3], TwilightMane3, 0.5);
+					phaseColor(&m_colors[4], TwilightMane2, 0.5);
+					phaseColor(&m_colors[5], TwilightMane3, 0.5);
+					phaseColor(&m_colors[6], TwilightMane2, 0.5);
+					phaseColor(&m_colors[7], TwilightMane3, 0.5);
+					centerCutie = getImage("res/gfx/twilimark.png");
+					break;
+					
+				case SDL_SCANCODE_D:
+					phaseColor(&m_colors[0], Dash, 0.5);
+					phaseColor(&m_colors[1], Color(0,0,0), 0.5);
+					phaseColor(&m_colors[2], DashManeR, 0.5);
+					phaseColor(&m_colors[3], DashManeO, 0.5);
+					phaseColor(&m_colors[4], DashManeY, 0.5);
+					phaseColor(&m_colors[5], DashManeG, 0.5);
+					phaseColor(&m_colors[6], DashManeB, 0.5);
+					phaseColor(&m_colors[7], DashManeV, 0.5);
+					centerCutie = getImage("res/gfx/dashmark.png");
 					break;
 				
 				case SDL_SCANCODE_F10:
@@ -181,7 +248,8 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 					break;
 					
 				case SDL_SCANCODE_F5:
-					
+					m_Patterns.clear();
+					loadPatterns("res/patterns.xml");	//Reload patterns
 					break;
 					
 				case SDL_SCANCODE_SPACE:

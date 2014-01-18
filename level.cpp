@@ -166,7 +166,9 @@ void magichexagonEngine::updateWalls(float32 dt)
 			if(playerHex == j && i->height + i->length + 1.0 > s_fPlayerPos)	//Player is in this hex, and not above this wall
 			{
 				float32 wallAngle = atan(playerHeight / (1.0 + i->height - playerDist)) * RAD2DEG;
-				if(wallAngle > 60.0f)	//If the angle here is greater than 60 degrees, we have a collision
+				if(wallAngle > 60.0f || //If the angle here is greater than 60 degrees, we have a collision
+				  //If we're at the very edge of this hex, we can test the height directly.
+				  (plAngle == 0.0 && i->height + 1.0 < s_fPlayerPos && i->height + i->length + 1.0 > s_fPlayerPos))		
 					cout << "Collision " << wallAngle << endl;	//TODO
 			}
 			if(i->height + i->length <= 0)
@@ -194,11 +196,92 @@ void magichexagonEngine::checkSides(float32 fOldAngle, int prevHex, int curHex)
 	}
 }
 
+void magichexagonEngine::updateLevel(float32 dt)
+{
+	updateWalls(dt);
+	
+	//Get the maximum height of the tallest wall
+	float32 maxHeight = 0;
+	for(int j = 0; j < 6; j++)
+	{
+		for(list<Wall>::iterator i = m_walls[j].begin(); i != m_walls[j].end(); i++)
+		{
+			if(maxHeight < i->height + i->length)
+				maxHeight = i->height + i->length;
+		}
+	}
+	
+	if(maxHeight < 13.0)	//Give brief gap of 2.0 texels between patterns
+		nextPattern();
+}
 
+void magichexagonEngine::nextPattern()
+{
+	int iLevel = 0;	//For now
+	int iPattern = rand() % m_Patterns[iLevel].size();	//Pick a random pattern out of those available
+	int startHex = rand() % 6;	//Start pattern at a random hex value (so it'll point in a random direction)
+	
+	for(list<pattern>::iterator i = m_Patterns[iLevel][iPattern].begin(); i != m_Patterns[iLevel][iPattern].end(); i++)
+	{
+		int hex = i->hex;
+		if(hex < 0 || hex > 5)
+			hex = rand() % 6;	//Set to random hex if out of range (can use this to set random patterns)
+		if(hex + startHex > 5)
+			hex -= 6;
+		addWall(i->height + WALL_START_HEIGHT, WALL_SPEED, i->length, hex + startHex);	//Add this wall to our list
+	}
+}
 
-
-
-
+bool magichexagonEngine::loadPatterns(string sFilename)
+{
+	errlog << "Parsing pattern file " << sFilename << endl;
+	//Open file
+	XMLDocument* doc = new XMLDocument;
+	int iErr = doc->LoadFile(sFilename.c_str());
+	if(iErr != XML_NO_ERROR)
+	{
+		errlog << "Error parsing pattern file: Error " << iErr << endl;
+		delete doc;
+		return false;
+	}
+	
+	//Grab root element
+	XMLElement* root = doc->RootElement();
+	if(root == NULL)
+	{
+		errlog << "Error: Root element NULL in XML file " << sFilename << endl;
+		delete doc;
+		return false;
+	}
+	
+	for(XMLElement* level = root->FirstChildElement("level"); level != NULL; level = level->NextSiblingElement("level"))
+	{
+		vector<list<pattern> > vl_Level;
+		
+		for(XMLElement* pat = level->FirstChildElement("pattern"); pat != NULL; pat = pat->NextSiblingElement("pattern"))
+		{
+			list<pattern> lWalls;
+			
+			for(XMLElement* wall = pat->FirstChildElement("wall"); wall != NULL; wall = wall->NextSiblingElement("wall"))
+			{
+				pattern p;
+				p.hex = 0;
+				p.height = p.length = 0.0;
+				wall->QueryIntAttribute("hex", &p.hex);
+				wall->QueryFloatAttribute("startpos", &p.height);
+				wall->QueryFloatAttribute("height", &p.length);
+				lWalls.push_back(p);
+			}
+			
+			vl_Level.push_back(lWalls);
+		}
+		
+		m_Patterns.push_back(vl_Level);
+	}
+	
+	delete doc;
+	return true;
+}
 
 
 

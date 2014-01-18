@@ -1,4 +1,4 @@
-objects := Image.o Engine.o Object.o Text.o globaldefs.o hud.o main.o tinyxml2.o magichexagon.o opengl-api.o DebugDraw.o level.o
+objects := Image.o Engine.o Object.o Text.o globaldefs.o hud.o main.o tinyxml2.o magichexagon.o opengl-api.o DebugDraw.o level.o color.o
 libs := -L./lib/Win32 -lglu32 -ltinyxml2 -lttvfs -lBox2D -static-libgcc -static-libstdc++ ./lib/Win32/FreeImage.lib -lmingw32 -lSDL2main -lSDL2 -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid -ltyrsound.dll -lOpenAL32.dll -lvorbis -logg
 HEADER := -I./ -I./include/
 
