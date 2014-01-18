@@ -69,8 +69,8 @@ void magichexagonEngine::phaseColor(Color* src, Color dest, float time)
 
 void magichexagonEngine::colorFlip()
 {
-	if(m_ColorsChanging.size()) return;
-	//Flip across (so RD's one looks better)
+	if(m_ColorsChanging.size()) return;	//Don't alternate colors if some of the colors are already changing
+	//Flip across
 	phaseColor(&m_colors[2], m_colors[5], 0.2);
 	phaseColor(&m_colors[3], m_colors[6], 0.2);
 	phaseColor(&m_colors[4], m_colors[7], 0.2);

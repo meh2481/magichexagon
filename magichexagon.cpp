@@ -70,7 +70,6 @@ void magichexagonEngine::frame(float32 dt)
 	handleKeys();
 	updateColors(dt);
 	updateLevel(dt);
-	m_fRotateAngle += m_fRotateAdd * dt;
 }
 
 void magichexagonEngine::draw()
@@ -376,6 +375,8 @@ void magichexagonEngine::loadConfig(string sFilename)
 	if(iErr != XML_NO_ERROR)
 	{
 		errlog << "Error parsing config file: Error " << iErr << ". Ignoring..." << endl;
+		if(isFullscreen())
+			setInitialFullscreen();
 		delete doc;
 		return;	//No file; ignore
 	}
@@ -385,6 +386,8 @@ void magichexagonEngine::loadConfig(string sFilename)
 	if(root == NULL)
 	{
 		errlog << "Error: Root element NULL in XML file. Ignoring..." << endl;
+		if(isFullscreen())
+			setInitialFullscreen();
 		delete doc;
 		return;
 	}
@@ -420,9 +423,8 @@ void magichexagonEngine::loadConfig(string sFilename)
 			Point pos = pointFromString(cWindowPos);
 			setWindowPos(pos);
 		}
-		
-		changeScreenResolution(width, height);
 		setFullscreen(bFullscreen);
+		changeScreenResolution(width, height);
 		if(bMaximized && !isMaximized() && !bFullscreen)
 			maximizeWindow();
 		setFramerate(framerate);

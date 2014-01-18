@@ -198,7 +198,7 @@ Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sIcon, b
     m_iKeystates = NULL;
     m_bShowCursor = true;
     setFramerate(60);   //60 fps default
-    m_bFullscreen = false;
+    m_bFullscreen = true;
     setup_sdl();
     setup_opengl();
 	m_fGamma = 1.0f;
@@ -407,7 +407,6 @@ void Engine::setup_sdl()
     exit(1);
   }
   SDL_GL_CreateContext(m_Window);
-
   
   // Set the minimum requirements for the OpenGL window
   SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);

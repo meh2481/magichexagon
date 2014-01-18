@@ -200,7 +200,7 @@ void magichexagonEngine::updateLevel(float32 dt)
 {
 	updateWalls(dt);
 	
-	//Get the maximum height of the tallest wall
+	//Get the maximum height of the tallest wall to see if we need to generate a new pattern
 	float32 maxHeight = 0;
 	for(int j = 0; j < 6; j++)
 	{
@@ -211,8 +211,25 @@ void magichexagonEngine::updateLevel(float32 dt)
 		}
 	}
 	
-	if(maxHeight < 13.0)	//Give brief gap of 2.0 texels between patterns
+	if(maxHeight < 11.0)	//Give brief gap of 4.0 texels between patterns
 		nextPattern();
+
+	//Spin!
+	static float fTotalSpinTime = 0.0f;
+	static float fTargetSpinReverse = 5.0f;
+	static float fTargetSpinIncrease = 15.0f;
+	fTotalSpinTime += dt;
+	if(fTotalSpinTime > fTargetSpinReverse)
+	{
+		fTargetSpinReverse += 5.0f;
+		m_fRotateAdd = -m_fRotateAdd;
+	}
+	if(fTotalSpinTime > fTargetSpinIncrease && fTargetSpinIncrease > 0)
+	{
+		m_fRotateAdd *= 2;
+		fTargetSpinIncrease = 0;
+	}
+	m_fRotateAngle += m_fRotateAdd * dt;
 }
 
 void magichexagonEngine::nextPattern()

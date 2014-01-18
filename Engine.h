@@ -124,6 +124,7 @@ public:
     void changeScreenResolution(float32 w, float32 h);  //Change resolution mid-game and reload OpenGL textures as needed
     void toggleFullscreen();                            //Switch between fullscreen/windowed modes
 	void setFullscreen(bool bFullscreen);				//Set fullscreen to true or false as needed
+	void setInitialFullscreen() {SDL_SetWindowFullscreen(m_Window, SDL_WINDOW_FULLSCREEN_DESKTOP);};
 	bool isFullscreen()	{return m_bFullscreen;};
 	bool isMaximized();	
 	Point getWindowPos();	//Get the window position
