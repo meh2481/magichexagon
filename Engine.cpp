@@ -89,9 +89,15 @@ bool Engine::_frame()
 		if(event.type == SDL_WINDOWEVENT)
 		{
 			if(event.window.event == SDL_WINDOWEVENT_FOCUS_LOST && m_bPauseOnKeyboardFocus)
+			{
 				m_bPaused = true;
+				pauseMusic();
+			}
 			else if(event.window.event == SDL_WINDOWEVENT_FOCUS_GAINED && m_bPauseOnKeyboardFocus)
+			{
 				m_bPaused = false;
+				resumeMusic();
+			}
 			else if(event.window.event == SDL_WINDOWEVENT_RESIZED)
 			{
 				if(m_bResizable)
@@ -307,6 +313,20 @@ void Engine::playSound(string sName, int volume, int pan, float32 pitch)
 void Engine::pauseMusic()
 {
     tyrsound_pause(m_sounds["music"]);
+}
+
+void Engine::restartMusic()
+{
+	tyrsound_Handle handle = m_sounds["music"];
+	tyrsound_stop(handle);
+	tyrsound_seek(handle, 0);
+    tyrsound_play(handle);
+}
+
+void Engine::resumeMusic()
+{
+	if(m_sounds.count("music"))
+		tyrsound_play(m_sounds["music"]);
 }
 
 void Engine::seekMusic(float32 fTime)

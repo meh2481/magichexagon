@@ -61,6 +61,7 @@ protected:
     void handleEvent(SDL_Event event);
 
 public:
+	//magichexagon.cpp functions - fairly generic 
     magichexagonEngine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sIcon, bool bResizable = false);
     ~magichexagonEngine();
 	
@@ -70,7 +71,6 @@ public:
 	void handleKeys();						//Poll the keyboard state and update the game accordingly
 	Point worldPosFromCursor(Point cursorpos);	//Get the worldspace position of the given mouse cursor position
 	Point worldMovement(Point cursormove);		//Get the worldspace transform of the given mouse transformation
-	void cameraBounds();					//Keep camera inside level bounds
 	
 	//Functions dealing with program defaults
 	void loadConfig(string sFilename);
@@ -78,6 +78,11 @@ public:
 	
 	obj* objFromXML(string sXMLFilename, Point ptOffset, Point ptVel = Point(0,0));
 	Rect getCameraView();		//Return the rectangle, in world position z=0, that the camera can see 
+		
+	//level.cpp functions
+	void renderLevel();
+	void addWall(float32 height, float32 speed, int32_t hex);	//Add a wall to the current level
+	void updateWalls();			//Make walls fall inward and check player collision
 };
 
 void signalHandler(string sSignal); //Stub function for handling signals that come in from our HUD, and passing them on to myEngine

@@ -104,6 +104,8 @@ public:
     virtual void playSound(string sName, int volume = 100, int pan = 0, float32 pitch = 1.0);     //Play a sound
     void playMusic(string sName, int volume = 100, int pan = 0, float32 pitch = 1.0);     //Play looping music, or resume paused music
     void pauseMusic();                                                                     //Pause music that's currently playing
+	void resumeMusic();																		//Resume music that was paused
+	void restartMusic();
 	void seekMusic(float32 fTime);
     bool keyDown(int32_t keyCode);  //Test and see if a key is currently pressed
     void quit() {m_bQuitting = true;};  //Stop the engine and quit nicely

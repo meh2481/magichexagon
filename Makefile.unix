@@ -1,4 +1,4 @@
-objects := 3DObject.o Image.o Engine.o Object.o Text.o globaldefs.o hud.o main.o tinyxml2.o magichexagon.o opengl-api.o
+objects := 3DObject.o Image.o Engine.o Object.o Text.o globaldefs.o hud.o main.o tinyxml2.o magichexagon.o opengl-api.o level.o
 libs := -lGL -lGLU -lSDLmain -lSDL -lSDL_image -lvorbis -lvorbisfile -lopenal -logg -ltinyxml2 -lttvfs -lBox2D -lFreeImage
 
 all: magichexagon

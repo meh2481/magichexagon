@@ -1,5 +1,5 @@
 /*
-    magichexagon source - myEngine.cpp
+    magichexagon source - magichexagon.cpp
     Copyright (c) 2014 Mark Hutcheson
 */
 
@@ -15,49 +15,6 @@ static magichexagonEngine* g_pGlobalEngine;
 void signalHandler(string sSignal)
 {
     g_pGlobalEngine->hudSignalHandler(sSignal);
-}
-
-/*void fillRect(Rect rc, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
-{
-    g_pGlobalEngine->fillRect(rc, red, green, blue, alpha);
-}*/
-
-class QueryCallback : public b2QueryCallback
-{
-public:
-	QueryCallback(const b2Vec2& point)
-	{
-		m_point = point;
-		m_fixture = NULL;
-	}
-
-	bool ReportFixture(b2Fixture* fixture)
-	{
-		b2Body* body = fixture->GetBody();
-		if(body->GetType() != b2_dynamicBody)	//Can't click on parasprites directly
-		{	
-			bool inside = fixture->TestPoint(m_point);
-			if(inside && g_pGlobalEngine->_shouldSelect(fixture))	//Let global game engine determine if we should select this
-			{
-				m_fixture = fixture;
-
-				// We are done, terminate the query.
-				return false;
-			}
-		}
-		// Continue the query.
-		return true;
-	}
-
-	b2Vec2 m_point;
-	b2Fixture* m_fixture;
-};
-
-bool magichexagonEngine::_shouldSelect(b2Fixture* fix)
-{
-	if(!fix->IsSensor() && fix->GetBody()->GetUserData() != NULL)
-		return true;
-	return false;
 }
 
 magichexagonEngine::magichexagonEngine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sIcon, bool bResizable) : 
@@ -76,9 +33,14 @@ Engine(iWidth, iHeight, sTitle, sIcon, bResizable)
 	//Game vars
 	m_fRotateAngle = 0;
 	m_fRotateAdd = 20;
-	m_colors[0].from256(253, 246, 175);
-	m_colors[1].from256(248, 185, 207);
-	m_colors[2].from256(0, 173, 168);
+	m_colors[0].from256(253, 246, 175);	//Center part - Fluttershy yellow
+	m_colors[1].from256(0, 173, 168);	//Center ring and triangle - Fluttershy eye blue
+	m_colors[2].from256(248, 185, 207);	//Radial arm 1 - Fluttershy pink
+	m_colors[3].from256(253, 246, 175);	//Radial arm 2 - Fluttershy yellow
+	m_colors[4].from256(248, 185, 207);	//Radial arm 3 - Fluttershy pink
+	m_colors[5].from256(253, 246, 175);	//Radial arm 4 - Fluttershy yellow
+	m_colors[6].from256(248, 185, 207);	//Radial arm 5 - Fluttershy pink
+	m_colors[7].from256(253, 246, 175);	//Radial arm 6 - Fluttershy yellow
 	m_fPlayerAngle = 0.0f;
 	
 	showCursor();
@@ -122,118 +84,13 @@ void magichexagonEngine::draw()
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_LIGHTING);
 	glLoadIdentity();
-	//glTranslatef(-CameraPos.x, -CameraPos.y, CameraPos.z);
-	CameraPos.x = 8.0;
+	//TEST CameraPos.x = 8.0;
 	
 	//Tilt the camera to look at 0,0
 	gluLookAt(CameraPos.x, CameraPos.y, -CameraPos.z, 0, 0, 0, 0, 0, 1);
 	
-	//Rotate by how much we're spinning
-	glRotatef(m_fRotateAngle, 0, 0, 1);
-	
-	//Get how large our screenspace is
-	Point ptWorldSize(getWidth(), getHeight());
-	ptWorldSize = worldMovement(ptWorldSize);	//Get the actual world movement in texels
-	float fDrawSize = ptWorldSize.Length() * 1.75;	//Actual radius we need to draw is 0.5*this, add on extra to be safe
-	
-	//Draw center hex
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glColor4f(m_colors[0].r, m_colors[0].g, m_colors[0].b, m_colors[0].a);
-	glPushMatrix();
-	glTexCoord2f(0.0, 0.0);
-	for(int i = 0; i < 6; i++)
-	{
-		glBegin(GL_TRIANGLES);
-		//center
-		glVertex3f(0.0, 0.0, 0.0);
-		//left
-		glVertex3f(-1.0, 0.0, 0.0);
-		//Top left
-		glVertex3f(-0.5, 0.866, 0.0);
-		glEnd();
-		glRotatef(60, 0, 0, 1);
-	}
-	glPopMatrix();
-	
-	static float s_fWallW = 0.14;
-	
-	//Draw hollow hex around center one
-	glColor4f(m_colors[2].r, m_colors[2].g, m_colors[2].b, m_colors[2].a);
-	glPushMatrix();
-	glTexCoord2f(0.0, 0.0);
-	for(int i = 0; i < 6; i++)
-	{
-		glBegin(GL_QUADS);
-		//left center
-		glVertex3f(-1.0, 0.0, 0.0);
-		//left
-		glVertex3f(-1.0-s_fWallW, 0.0, 0.0);
-		//Top left
-		glVertex3f(-0.5*(s_fWallW+1.0), 0.866*(s_fWallW+1.0), 0.0);
-		//Top left inside
-		glVertex3f(-0.5, 0.866, 0.0);
-		
-		glEnd();
-		glRotatef(60, 0, 0, 1);
-	}
-	glPopMatrix();
-	
-	//Draw radial arms going outwards at the full size of the screen
-	glColor4f(m_colors[1].r, m_colors[1].g, m_colors[1].b, m_colors[1].a);
-	glPushMatrix();
-	glTexCoord2f(0.0, 0.0);
-	for(int i = 0; i < 3; i++)
-	{
-		glBegin(GL_QUADS);
-		//left center
-		glVertex3f(-1.0-s_fWallW, 0.0, 0.0);
-		//left
-		glVertex3f(-fDrawSize, 0.0, 0.0);
-		//Top left
-		glVertex3f(-0.5*fDrawSize, 0.866*fDrawSize, 0.0);
-		//Top left inside
-		glVertex3f(-0.5*(s_fWallW+1.0), 0.866*(s_fWallW+1.0), 0.0);
-		
-		glEnd();
-		glRotatef(120, 0, 0, 1);
-	}
-	glPopMatrix();
-	//Other color of arms
-	glColor4f(m_colors[0].r, m_colors[0].g, m_colors[0].b, m_colors[0].a);
-	glPushMatrix();
-	glRotatef(60, 0, 0, 1);
-	glTexCoord2f(0.0, 0.0);
-	for(int i = 0; i < 3; i++)
-	{
-		glBegin(GL_QUADS);
-		//left center
-		glVertex3f(-1.0-s_fWallW, 0.0, 0.0);
-		//left
-		glVertex3f(-fDrawSize, 0.0, 0.0);
-		//Top left
-		glVertex3f(-0.5*fDrawSize, 0.866*fDrawSize, 0.0);
-		//Top left inside
-		glVertex3f(-0.5*(s_fWallW+1.0), 0.866*(s_fWallW+1.0), 0.0);
-		
-		glEnd();
-		glRotatef(120, 0, 0, 1);
-	}
-	glPopMatrix();
-	
-	//Draw triangle for player
-	static float s_fPlayerPos = 1.42;
-	glColor4f(m_colors[2].r, m_colors[2].g, m_colors[2].b, m_colors[2].a);
-	glPushMatrix();
-	glRotatef(m_fPlayerAngle, 0, 0, 1);
-	glBegin(GL_TRIANGLES);
-	//top
-	glVertex3f(0, s_fPlayerPos, 0.01);
-	//left bottom
-	glVertex3f(-0.1462, 1.22, 0.01);
-	//right bottom
-	glVertex3f(0.1462, 1.22, 0.01);
-	glEnd();
-	glPopMatrix();
+	//Draw level
+	renderLevel();
 	
 	//Draw objects
 	drawObjects();
@@ -267,11 +124,34 @@ void magichexagonEngine::init(list<commandlineArg> sArgs)
 	//Set gravity to 0
 	getWorld()->SetGravity(b2Vec2(0,0));
 	
+	//Create sounds up front
+	//vox
+	createSound("res/sfx/begin.ogg", "begin");
+	createSound("res/sfx/awesome.ogg", "awesome");
+	createSound("res/sfx/excellent.ogg", "excellent");
+	createSound("res/sfx/gameover.ogg", "gameover");
+	createSound("res/sfx/magichexagon.ogg", "magichexagon");
+	createSound("res/sfx/nice.ogg", "nice");
+	createSound("res/sfx/wonderful.ogg", "wonderful");
+	createSound("res/sfx/generosity.ogg", "generosity");
+	createSound("res/sfx/honesty.ogg", "honesty");
+	createSound("res/sfx/kindness.ogg", "kindness");
+	createSound("res/sfx/laughter.ogg", "laughter");
+	createSound("res/sfx/loyalty.ogg", "loyalty");
+	createSound("res/sfx/magic.ogg", "magic");
+	//sfx
+	createSound("res/sfx/beginlevel.ogg", "beginlevel");	//When you enter a level
+	createSound("res/sfx/menubegin.ogg", "menubegin");		//Initial keypress: Title->menu
+	createSound("res/sfx/die.ogg", "die");					//When you DIIIIIE
+	createSound("res/sfx/select.ogg", "select");			//When you're selecting different menu items
+	
+	
 	//Play music
 	playMusic("res/sfx/encore-micro_hexagon_courtesy.ogg");
-	createSound("res/sfx/begin.ogg", "begin");
+	//TODO pauseMusic();
+	playSound("magichexagon");
 	
-	//seekMusic(34.504028);
+	//TODO seekMusic(34.504028);
 	
 	hideCursor();
 }
@@ -304,7 +184,6 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 					break;
 					
 				case SDL_SCANCODE_F:
-					//objFromXML("res/objects/parasprite/parasprite.xml", worldPosFromCursor(getCursorPos()));
 					break;
 				
 				case SDL_SCANCODE_F10:
@@ -331,11 +210,11 @@ void magichexagonEngine::handleEvent(SDL_Event event)
             break;
 		
 		case SDL_MOUSEBUTTONDOWN:
-            if(event.button.button == SDL_BUTTON_LEFT)	//Left mouse button: pick up apple if there
+            if(event.button.button == SDL_BUTTON_LEFT)
             {
 				
             }
-            else if(event.button.button == SDL_BUTTON_RIGHT)	//Right mouse button: Place apple
+            else if(event.button.button == SDL_BUTTON_RIGHT)
             {
 				
             }
@@ -402,48 +281,6 @@ Rect magichexagonEngine::getCameraView()
 	rcCamera.right = rcCamera.top * fAspect;
 	rcCamera.offset(CameraPos.x, CameraPos.y);
 	return rcCamera;
-}
-
-//Do some trig to make sure the camera stays within bounds, zooming in as needed
-void magichexagonEngine::cameraBounds()
-{	
-	Rect rcCamera = getCameraView();
-	const float32 tan45_2 = tan(DEG2RAD*45/2);
-	const float32 fAspect = (float32)getWidth() / (float32)getHeight();
-	
-	//Move camera to stay within bounds
-	if(rcCamera.top > m_rcBounds.top)	//Set to right vertical position if we're too far up
-		CameraPos.y = m_rcBounds.top - tan45_2 * -CameraPos.z;
-	if(rcCamera.bottom < m_rcBounds.bottom)
-		CameraPos.y = m_rcBounds.bottom + tan45_2 * -CameraPos.z;
-	if(rcCamera.left < m_rcBounds.left)
-		CameraPos.x = m_rcBounds.left + tan45_2 * -CameraPos.z * fAspect;
-	if(rcCamera.right > m_rcBounds.right)
-		CameraPos.x = m_rcBounds.right - tan45_2 * -CameraPos.z * fAspect;
-		
-	//Recalculate camera view rect
-	rcCamera = getCameraView();
-	
-	//Zoom camera in if we're still too far out
-	/*if(rcCamera.top > m_rcBounds.top)
-	{
-		//If we're too far out
-		if(-rcCamera.height() > -m_rcBounds.height())
-			CameraPos.y = m_rcBounds.bottom + (m_rcBounds.top - m_rcBounds.bottom)/2.0;	//Center first
-		else
-			CameraPos.y -= (rcCamera.top - m_rcBounds.top);	//Go back
-		float32 len = m_rcBounds.top - CameraPos.y;
-		CameraPos.z = -(len/tan45_2);	//Zoom in as needed
-	}*/
-	if(rcCamera.left < m_rcBounds.left)
-	{
-		if(rcCamera.width() > m_rcBounds.width())
-			CameraPos.x = m_rcBounds.left + (m_rcBounds.right - m_rcBounds.left)/2.0;
-		else
-			CameraPos.x += m_rcBounds.left - rcCamera.left;
-		float32 len = (CameraPos.x - m_rcBounds.left)/(fAspect);
-		CameraPos.z = -(len/tan45_2);
-	}
 }
 
 Point magichexagonEngine::worldMovement(Point cursormove)
@@ -572,507 +409,20 @@ void magichexagonEngine::saveConfig(string sFilename)
 
 void physicsContact::BeginContact(b2Contact *contact)
 {
-	b2Fixture* fixtureA = contact->GetFixtureA();
-	b2Fixture* fixtureB = contact->GetFixtureB();
-
-	if(fixtureA->IsSensor())
-	{
-		if(fixtureB->IsSensor()) return;							//Both are sensors; oops
-		if(fixtureB->GetBody()->GetType() == b2_staticBody)	return;	//Can't gravitate static objects
-		
-		void* userData = fixtureA->GetUserData();
-		if (userData != NULL)
-		{
-			//gravWell* gw = (gravWell*)userData;
-			//b2Body* gravObj = fixtureB->GetBody();
-			//gw->trappedObjects.insert(gravObj);		//Add this object to this gravity well
-		}
-	}
-
-	else if(fixtureB->IsSensor())
-	{
-		if(fixtureA->IsSensor()) return;
-		if(fixtureA->GetBody()->GetType() == b2_staticBody)	return;
-		
-		void* userData = fixtureB->GetUserData();
-		if (userData != NULL)
-		{
-			//gravWell* gw = (gravWell*)userData;
-			//b2Body* gravObj = fixtureA->GetBody();
-			//gw->trappedObjects.insert(gravObj);
-		}
-	}
 }
 
 void physicsContact::EndContact(b2Contact *contact)
 {
-	b2Fixture* fixtureA = contact->GetFixtureA();
-	b2Fixture* fixtureB = contact->GetFixtureB();
-
-	if(fixtureA->IsSensor())
-	{
-		if(fixtureB->IsSensor()) return;							//Both are sensors; oops
-		if(fixtureB->GetBody()->GetType() == b2_staticBody)	return;	//Can't gravitate static objects
-		
-		void* userData = fixtureA->GetUserData();
-		if (userData != NULL)
-		{
-			//gravWell* gw = (gravWell*)userData;
-			//b2Body* gravObj = fixtureB->GetBody();
-			//gw->trappedObjects.erase(gw->trappedObjects.find(gravObj));	//Take this item out of the list
-		}
-	}
-
-	else if(fixtureB->IsSensor())
-	{
-		if(fixtureA->IsSensor()) return;
-		if(fixtureA->GetBody()->GetType() == b2_staticBody)	return;
-		
-		void* userData = fixtureB->GetUserData();
-		if (userData != NULL)
-		{
-			//gravWell* gw = (gravWell*)userData;
-			//b2Body* gravObj = fixtureA->GetBody();
-			//gw->trappedObjects.erase(gw->trappedObjects.find(gravObj));
-		}
-	}
 }
 
 
 obj* magichexagonEngine::objFromXML(string sXMLFilename, Point ptOffset, Point ptVel)
 {
-	//Load in the XML document
-    XMLDocument* doc = new XMLDocument();
-    int iErr = doc->LoadFile(sXMLFilename.c_str());
-	if(iErr != XML_NO_ERROR)
-	{
-		errlog << "Error parsing XML file " << sXMLFilename << ": Error " << iErr << endl;
-		delete doc;
-		return NULL;
-	}
-
-	//Grab root element
-    XMLElement* root = doc->FirstChildElement("object");
-    if(root == NULL)
-	{
-		errlog << "Error: No toplevel \"object\" item in XML file " << sXMLFilename << endl;
-		delete doc;
-		return NULL;
-	}
-    
-	obj* o = new obj;
-	//anim* lastani = NULL;
-	map<string, physSegment*> mSegNames;	//For keeping track of bodies, so we can hook up joints correctly
-	//Start on segments
-	for(XMLElement* segment = root->FirstChildElement("segment"); segment != NULL; segment = segment->NextSiblingElement("segment"))
-	{
-		//Create new segment
-		physSegment* seg = new physSegment;
-		
-		//Get segment name (if any)
-		const char* cSegName = segment->Attribute("name");
-		if(cSegName != NULL)
-			mSegNames[cSegName] = seg;	//Keep track of this segment
-		
-		//Get image path (if any)
-		const char* cImgPath = segment->Attribute("image");
-		if(cImgPath != NULL)
-			seg->img = getImage(cImgPath);    //Grab the name
-			
-		//Get image offset
-		const char* cOffset = segment->Attribute("imgoffset");
-		if(cOffset != NULL)
-			seg->pos = pointFromString(cOffset);
-			
-		//Get image center of rotation
-		const char* cRotOffset = segment->Attribute("rotcenter");
-		if(cRotOffset != NULL)
-			seg->center = pointFromString(cRotOffset);
-		
-		//Get rotation
-		segment->QueryFloatAttribute("rot", &seg->rot);
-		
-		//Get texel size
-		const char* cSize = segment->Attribute("imgsize");
-		if(cSize != NULL)
-			seg->size = pointFromString(cSize);
-			
-		//Get texel shear
-		const char* cShear = segment->Attribute("shear");
-		if(cShear != NULL)
-			seg->shear = pointFromString(cShear);
-		
-		//Get color
-		const char* cColor = segment->Attribute("colorize");
-		if(cColor != NULL)
-			seg->col = colorFromString(cColor);
-			
-		//Get physics offset
-		b2BodyDef bodyDef;
-		bodyDef.position.SetZero();
-		const char* cPos = segment->Attribute("pos");
-		if(cPos != NULL)
-			bodyDef.position = pointFromString(cPos);
-		bodyDef.position += ptOffset;
-		bodyDef.linearVelocity = ptVel;
-		
-		//If the object is dynamic
-		bool isstatic = true;
-		segment->QueryBoolAttribute("static", &isstatic);
-		if(!isstatic)
-			bodyDef.type = b2_dynamicBody;
-			
-		//Create physicsy stuff, if we should
-		if(!segment->NoChildren())
-		{
-			b2Body* body = getWorld()->CreateBody(&bodyDef);
-			seg->body = body;
-			body->SetUserData(seg);
-			for(XMLElement* elem = segment->FirstChildElement(); elem != NULL; elem = elem->NextSiblingElement())
-			{
-				const char* cName = elem->Name();
-				if(cName == NULL) continue;
-				string sName(cName);
-				if(sName == "circle")
-				{
-					b2CircleShape shape;
-					
-					//Get radius
-					shape.m_radius = 1.0f;
-					elem->QueryFloatAttribute("radius", &shape.m_radius);
-					
-					//Get position
-					shape.m_p.SetZero();
-					const char* cPos = elem->Attribute("pos");
-					if(cPos != NULL)
-						shape.m_p = pointFromString(cPos);
-					
-					//See if this should collide with other physical objects (aka a sensor)
-					bool collide = true;
-					elem->QueryBoolAttribute("collide", &collide);
-					
-					//Check and see if gravity well
-					bool gravity = false;
-					elem->QueryBoolAttribute("gravity", &gravity);
-					
-					//Create fixture
-					b2FixtureDef fd;
-					fd.shape = &shape;
-					fd.isSensor = !collide;
-					fd.density = 1.0f;
-					elem->QueryFloatAttribute("density", &fd.density);
-					fd.friction = 0.1f;
-					elem->QueryFloatAttribute("friction", &fd.friction);
-					fd.restitution = 0.1f;
-					elem->QueryFloatAttribute("restitution", &fd.restitution);
-					b2Fixture* fix = body->CreateFixture(&fd);
-					
-					//Create gravity well if we should
-					if(gravity)
-					{
-						gravWell* well = new gravWell;
-						well->sensor = fix;
-						well->sensor->SetUserData(well);
-						
-						//Get gravity mass
-						well->wellMass = 5.972;	//Fairly high default mass
-						elem->QueryFloatAttribute("gravmass", &well->wellMass);
-						
-						//m_Wells.push_back(well);
-					}
-				}
-				else if(sName == "box")
-				{
-					b2PolygonShape box;
-					
-					//Get position
-					Point pos(0,0);
-					const char* cPos = elem->Attribute("pos");
-					if(cPos != NULL)
-						pos = pointFromString(cPos);
-					
-					//Get size
-					Point size(1,1);
-					const char* cSize = elem->Attribute("size");
-					if(cSize != NULL)
-						size = pointFromString(cSize);
-						
-					//Get rotation angle
-					float32 angle = 0.0f;
-					elem->QueryFloatAttribute("rot", &angle);
-					
-					//Create box
-					box.SetAsBox(size.x/2.0, size.y/2.0, pos, angle);
-					
-					//Create fixture
-					b2FixtureDef fd;
-					fd.shape = &box;
-					fd.density = 1.0f;
-					elem->QueryFloatAttribute("density", &fd.density);
-					fd.friction = 0.1f;
-					elem->QueryFloatAttribute("friction", &fd.friction);
-					fd.restitution = 0.1f;
-					elem->QueryFloatAttribute("restitution", &fd.restitution);
-					body->CreateFixture(&fd);
-				}
-				else if(sName == "polygon")
-				{
-					//Start with an array of vertices
-					Point vertices[b2_maxPolygonVertices];	//Up to 8 vertices
-					int count = 0;
-					
-					//Loop through, finding vertices
-					for(XMLElement* vertex = elem->FirstChildElement("point"); vertex != NULL; vertex = vertex->NextSiblingElement("point"))
-					{
-						Point pos(0,0);
-						const char* cPos = vertex->Attribute("pos");
-						if(cPos != NULL)
-						{
-							pos = pointFromString(cPos);
-							vertices[count] = pos;
-							count++;
-							if(count >= b2_maxPolygonVertices) break;	//Ignore vertices past 8
-						}
-					}
-					if(count < 3) continue;	//Sanity check
-					
-					//Create polygon out of vertices
-					b2PolygonShape polygon;
-					polygon.Set(vertices, count);
-					
-					//Create fixture & add to body
-					b2FixtureDef fd;
-					fd.shape = &polygon;
-					fd.density = 1.0f;
-					elem->QueryFloatAttribute("density", &fd.density);
-					fd.friction = 0.1f;
-					elem->QueryFloatAttribute("friction", &fd.friction);
-					fd.restitution = 0.1f;
-					elem->QueryFloatAttribute("restitution", &fd.restitution);
-					body->CreateFixture(&fd);
-				}
-			}
-			
-			//Get physics stuff
-			//If the object can sleep
-			bool sleep = true;
-			segment->QueryBoolAttribute("sleep", &sleep);
-			body->SetSleepingAllowed(sleep);
-			
-			//If the object can rotate normally
-			bool rotate = true;
-			segment->QueryBoolAttribute("rotate", &rotate);
-			body->SetFixedRotation(!rotate);
-			
-			//If the object should follow this one body
-			bool parent = false;
-			segment->QueryBoolAttribute("parent", &parent);
-			if(parent)
-				o->body = body;
-		}
-		
-		//Animation for this segment
-		const char* cAnimFilename = segment->Attribute("anim");
-		if(cAnimFilename != NULL)
-		{
-			anim* ani = new anim;
-			if(!ani->fromXML(cAnimFilename)) 
-				delete ani;
-			else
-			{
-				ani->segments.push_back(seg);
-				ani->seg = seg;
-				if(ani->rotadd)
-					ani->origvelfac = seg->rot;
-				o->animations.push_back(ani);
-			}
-		}
-			
-		o->addSegment(seg);
-	}
-	
-	addObject(o);
-	
-	//Hook up joints between segments
-	for(XMLElement* joint = root->FirstChildElement("joint"); joint != NULL; joint = joint->NextSiblingElement("joint"))
-	{
-		b2Body* bodyA, *bodyB;	//The two bodies that we'll hook the joint up to
-		
-		//Get first object
-		const char* cSeg1Name = joint->Attribute("seg1");
-		if(cSeg1Name != NULL && mSegNames.count(cSeg1Name))
-			bodyA = mSegNames[cSeg1Name]->body;
-		else continue;
-		
-		//Get second object
-		const char* cSeg2Name = joint->Attribute("seg2");
-		if(cSeg2Name != NULL && mSegNames.count(cSeg2Name))
-			bodyB = mSegNames[cSeg2Name]->body;
-		else continue;
-		
-		//Get joint type
-		const char* cJointType = joint->Attribute("type");
-		if(cJointType == NULL) continue;
-		string sType = cJointType;
-		
-		if(sType == "revolute")	//Revolute joint
-		{
-			//Get joint position
-			Point pos;
-			const char* cJointPos = joint->Attribute("pos");
-			if(cJointPos != NULL)
-				pos = pointFromString(cJointPos);
-			
-			b2RevoluteJointDef jointDef;
-			jointDef.Initialize(bodyA, bodyB, bodyA->GetWorldCenter()+pos);
-			jointDef.collideConnected = false;
-			getWorld()->CreateJoint(&jointDef);
-		}
-	}
-	
-	//Read frames from the XML
-	for(XMLElement* frameElem = root->FirstChildElement("frame"); frameElem != NULL; frameElem = frameElem->NextSiblingElement("frame"))
-	{
-		const char* cFrameName = frameElem->Attribute("name");
-		if(cFrameName == NULL) 
-			continue;
-		objframe* f = new objframe;
-		const char* cSegments = frameElem->Attribute("segments");
-		if(cSegments != NULL)
-		{
-			istringstream iss(stripCommas(cSegments));
-			while(!iss.eof() && !iss.fail())	//Strip individual segment names from this string
-			{
-				string s;
-				if(!(iss >> s)) break;
-				if(!mSegNames.count(s)) continue;
-				physSegment* seg = mSegNames[s];
-				f->segments.push_back(seg);
-			}
-		}
-		else delete f;
-		
-		//Read decay variables
-		const char* cDecayFrame = frameElem->Attribute("decayframe");
-		if(cDecayFrame != NULL)
-			f->nextframe = cDecayFrame;
-		
-		frameElem->QueryFloatAttribute("decaytime", &f->decaytime);
-		frameElem->QueryFloatAttribute("decayvar", &f->decayvar);
-		frameElem->QueryBoolAttribute("flip", &f->velflip);
-		
-		//Read spawn variables
-		const char* cSpawn = frameElem->Attribute("spawn");
-		if(cSpawn != NULL)
-		{
-			f->spawn = cSpawn;
-			const char* cSpawnPos = frameElem->Attribute("spawnpos");
-			if(cSpawnPos != NULL)
-				f->spawnpos = pointFromString(cSpawnPos);
-			const char* cSpawnVel = frameElem->Attribute("spawnvel");
-			if(cSpawnVel != NULL)
-				f->spawnvel = pointFromString(cSpawnVel);
-			frameElem->QueryBoolAttribute("spawnaddvelx", &f->spawnaddvelx);
-			frameElem->QueryBoolAttribute("spawnaddvely", &f->spawnaddvely);
-		}
-		
-		o->addFrame(f, cFrameName);
-	}
-	//Set default frame, if there is one
-	const char* cDefaultFrame = root->Attribute("defaultframe");
-	if(cDefaultFrame != NULL)
-		o->setFrame(cDefaultFrame);
-	
-	//Create animations for these objects
-	XMLElement* animation = root->FirstChildElement("anim");
-	if(animation != NULL)
-	{
-		for(XMLElement* elem = animation->FirstChildElement(); elem != NULL; elem = elem->NextSiblingElement())
-		{
-			bool bSeparate = false;	//If we should separate the animations here
-			elem->QueryBoolAttribute("separate", &bSeparate);
-			bool bFirst = true;
-			
-			anim* ani = new anim;
-			if(!ani->fromXMLElement(elem)) continue;
-			const char* cSegments = elem->Attribute("segment");
-			if(cSegments != NULL)
-			{
-				istringstream iss(stripCommas(cSegments));
-				while(!iss.eof() && !iss.fail())	//Strip individual segment names from this string
-				{
-					string s;
-					if(!(iss >> s)) break;
-					if(!mSegNames.count(s)) continue;
-					physSegment* seg = mSegNames[s];
-					
-					if(bSeparate)
-					{
-						if(bFirst)
-							bFirst = false;
-						else
-						{
-							ani = new anim;
-							ani->fromXMLElement(elem);
-						}
-						o->animations.push_back(ani);
-					}
-					
-					if(ani->rotadd)
-						ani->origvelfac = seg->rot;
-					ani->segments.push_back(seg);
-					ani->seg = seg;
-					
-					//HACK: Save original size, center, shear, or position
-					if(ani->type & ANIM_SIZE)
-						ani->orig = seg->size;
-					else if(ani->type & ANIM_CENTER)
-						ani->orig = seg->center;
-					else if(ani->type & ANIM_SHEAR)
-						ani->orig = seg->shear;
-					else if(ani->type & ANIM_POS)
-						ani->orig = seg->pos;
-					
-					//SORT OF HACK: Determine if velfac and set type accordingly
-					const char* cName = elem->Name();
-					if(cName == NULL) continue;
-					string sName = cName;
-					if(sName == "velfac")
-					{
-						const char* cType = elem->Attribute("type");
-						if(cType == NULL) continue;
-						string sType = cType;
-						if(sType == "rot")
-							ani->dest = &seg->rot;
-						else if(sType == "shearx")
-							ani->dest = &seg->shear.x;
-						else if(sType == "sheary")
-							ani->dest = &seg->shear.y;
-						else if(sType == "sizex")
-							ani->dest = &seg->size.x;
-						else if(sType == "sizey")
-							ani->dest = &seg->size.y;
-						else if(sType == "posx")
-							ani->dest = &seg->center.x;
-						else if(sType == "posy")
-							ani->dest = &seg->center.y;
-					}
-				}
-				if(!bSeparate)
-					o->animations.push_back(ani);	
-			}
-		}
-	}
-	
-	delete doc;
-	return o;
+	return NULL;
 }
 
 void magichexagonEngine::handleKeys()
 {
-	//CameraPos.x = m_placingWell->GetWorldCenter().x;
-	//CameraPos.y = m_placingWell->GetWorldCenter().y;
-	//cameraBounds();
 	if(keyDown(SDL_SCANCODE_LEFT))
 	{
 		m_fPlayerAngle += 5;
