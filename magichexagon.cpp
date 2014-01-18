@@ -51,8 +51,6 @@ Engine(iWidth, iHeight, sTitle, sIcon, bResizable)
 	m_debugDraw.SetFlags(b2Draw::e_shapeBit | b2Draw::e_jointBit | b2Draw::e_centerOfMassBit);
 	b2World* world = getWorld();
 	world->SetDebugDraw(&m_debugDraw);
-	m_contactListener = new physicsContact();
-	world->SetContactListener(m_contactListener);
 	
 	setTimeScale(DEFAULT_TIMESCALE);	//Speed up time
 	m_bDrawDebug = true;
@@ -63,8 +61,6 @@ magichexagonEngine::~magichexagonEngine()
 	errlog << "~magichexagonEngine()" << endl;
 	saveConfig("res/config.xml");
 	//Delete stuffs
-	errlog << "Delete contact listener" << endl;
-	delete m_contactListener;
 	
 	//errlog << "delete hud" << endl;
 	//delete m_hud;
@@ -75,6 +71,7 @@ void magichexagonEngine::frame(float32 dt)
 	handleKeys();
 	stepPhysics(dt);	//Update our physics simulation
 	updateObjects(dt);
+	updateWalls(dt);
 	m_fRotateAngle += m_fRotateAdd * dt;
 }
 
@@ -187,6 +184,7 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 					break;
 					
 				case SDL_SCANCODE_F:
+					addWall(10.0, 3.5, 0.6, rand() % 6);
 					break;
 				
 				case SDL_SCANCODE_F10:
@@ -409,15 +407,6 @@ void magichexagonEngine::saveConfig(string sFilename)
 	doc->SaveFile(sFilename.c_str());
 	delete doc;
 }
-
-void physicsContact::BeginContact(b2Contact *contact)
-{
-}
-
-void physicsContact::EndContact(b2Contact *contact)
-{
-}
-
 
 obj* magichexagonEngine::objFromXML(string sXMLFilename, Point ptOffset, Point ptVel)
 {

@@ -19,14 +19,33 @@
 static Color FluttershyMane(248, 185, 207);
 static Color Fluttershy(253, 246, 175);
 static Color FluttershyEyes(0, 173, 168);
+static Color Twilight(218,172,232);
+static Color TwilightMane1(42,55,116);
+static Color TwilightMane2(233,72,143);
+static Color TwilightMane3(102,47,137);
+static Color Rarity(238,241,243);
+static Color RarityMane(101,77,160);
+static Color RarityEyes(57,120,187);
+static Color Dash(157,217,247);
+static Color DashManeR(239,64,53);
+static Color DashManeO(243,119,54);
+static Color DashManeY(255,247,151);
+static Color DashManeG(122,193,66);
+static Color DashManeB(0, 147, 208);
+static Color DashManeV(109, 31, 126);
+static Color Pinkie(248,185,207);
+static Color PinkieMane(239,79,147);
+static Color PinkieEyes(125,206,240);
+static Color AJ(252,188,94);
+static Color AJMane(255,246,152);
+static Color AJEyes(95,187,83);
 
-class physicsContact : public b2ContactListener
+class Wall
 {
 public:
-	void BeginContact(b2Contact *contact);
-	void EndContact(b2Contact *contact);
-	void PreSolve(b2Contact *contact, const b2Manifold *oldManifold) {};
-	void PostSolve(b2Contact *contact, const b2ContactImpulse *impulse) {};
+	float32 speed;
+	float32 height;
+	float32 length;
 };
 
 class magichexagonEngine : public Engine
@@ -37,7 +56,6 @@ private:
   Vec3 CameraPos;
   DebugDraw m_debugDraw;
   //HUD* m_hud;
-  physicsContact* m_contactListener;
   bool m_bMouseGrabOnWindowRegain;
   
   //Game stuff!
@@ -46,7 +64,9 @@ private:
   float m_fRotateAngle;
   float m_fRotateAdd;
   float m_fPlayerAngle;
+  list<Wall> m_walls[6];
   
+  //More generic game stuff
   Rect m_rcBounds;			//Camera bounds
   Rect m_rcDragArea;		//Area that the user can drag the apples around in
   float32 m_fDefCameraZ;	//Default position of camera on z axis
@@ -78,8 +98,8 @@ public:
 		
 	//level.cpp functions
 	void renderLevel();
-	void addWall(float32 height, float32 speed, int32_t hex);	//Add a wall to the current level
-	void updateWalls();			//Make walls fall inward and check player collision
+	void addWall(float32 height, float32 speed, float32 length, int32_t hex);	//Add a wall to the current level
+	void updateWalls(float32 dt);			//Make walls fall inward and check player collision
 };
 
 void signalHandler(string sSignal); //Stub function for handling signals that come in from our HUD, and passing them on to myEngine

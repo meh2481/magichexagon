@@ -77,6 +77,23 @@ void magichexagonEngine::renderLevel()
 		glVertex3f(-0.5*(s_fWallW+1.0), 0.866*(s_fWallW+1.0), 0.0);
 		
 		glEnd();
+		
+		//Draw walls
+		glColor4f(m_colors[1].r, m_colors[1].g, m_colors[1].b, m_colors[1].a);
+		for(list<Wall>::iterator j = m_walls[i].begin(); j != m_walls[i].end(); j++)
+		{
+			glBegin(GL_QUADS);
+			//left inside
+			glVertex3f(min(-1.0 - j->height, -1.0 - s_fWallW/2.0), 0.0, 0.0);
+			//left outside
+			glVertex3f(min(-1.0 - j->height - j->length, -1.0 - s_fWallW/2.0), 0.0, 0.0);
+			//Top left outside
+			glVertex3f(0.5*min(-1.0 - j->height - j->length, -1.0 - s_fWallW/2.0), -0.866*min(-1.0 - j->height - j->length, -1.0 - s_fWallW/2.0), 0.0);
+			//Top left inside
+			glVertex3f(0.5*(min(-1.0 - j->height, -1.0 - s_fWallW/2.0)), -0.866*(min(-1.0 - j->height, -1.0 - s_fWallW/2.0)), 0.0);
+			glEnd();
+		}
+		
 		glRotatef(60, 0, 0, 1);
 	}
 	glPopMatrix();
@@ -100,7 +117,30 @@ void magichexagonEngine::renderLevel()
 	
 }
 
+void magichexagonEngine::addWall(float32 height, float32 speed, float32 length, int32_t hex)
+{
+	Wall w;
+	w.speed = speed;
+	w.height = height;
+	w.length = length;
+	m_walls[hex].push_back(w);
+}
 
+void magichexagonEngine::updateWalls(float32 dt)
+{
+	for(int j = 0; j < 6; j++)
+	{
+		for(list<Wall>::iterator i = m_walls[j].begin(); i != m_walls[j].end(); i++)
+		{
+			i->height -= i->speed * dt;
+			if(i->height + i->length <= 0)
+			{	
+				i = m_walls[j].erase(i);
+				i--;
+			}
+		}
+	}
+}
 
 
 
