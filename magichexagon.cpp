@@ -33,14 +33,14 @@ Engine(iWidth, iHeight, sTitle, sIcon, bResizable)
 	//Game vars
 	m_fRotateAngle = 0;
 	m_fRotateAdd = 20;
-	m_colors[0].from256(253, 246, 175);	//Center part - Fluttershy yellow
-	m_colors[1].from256(0, 173, 168);	//Center ring and triangle - Fluttershy eye blue
-	m_colors[2].from256(248, 185, 207);	//Radial arm 1 - Fluttershy pink
-	m_colors[3].from256(253, 246, 175);	//Radial arm 2 - Fluttershy yellow
-	m_colors[4].from256(248, 185, 207);	//Radial arm 3 - Fluttershy pink
-	m_colors[5].from256(253, 246, 175);	//Radial arm 4 - Fluttershy yellow
-	m_colors[6].from256(248, 185, 207);	//Radial arm 5 - Fluttershy pink
-	m_colors[7].from256(253, 246, 175);	//Radial arm 6 - Fluttershy yellow
+	m_colors[0] = Fluttershy;		//Center part - Fluttershy yellow
+	m_colors[1] = FluttershyEyes;	//Center ring and triangle - Fluttershy eye blue
+	m_colors[2] = FluttershyMane;	//Radial arm 1 - Fluttershy pink
+	m_colors[3] = Fluttershy;		//Radial arm 2 - Fluttershy yellow
+	m_colors[4] = FluttershyMane;	//Radial arm 3 - Fluttershy pink
+	m_colors[5] = Fluttershy;		//Radial arm 4 - Fluttershy yellow
+	m_colors[6] = FluttershyMane;	//Radial arm 5 - Fluttershy pink
+	m_colors[7] = Fluttershy;		//Radial arm 6 - Fluttershy yellow
 	m_fPlayerAngle = 0.0f;
 	
 	showCursor();
@@ -84,10 +84,13 @@ void magichexagonEngine::draw()
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_LIGHTING);
 	glLoadIdentity();
-	//TEST CameraPos.x = 8.0;
 	
-	//Tilt the camera to look at 0,0
-	gluLookAt(CameraPos.x, CameraPos.y, -CameraPos.z, 0, 0, 0, 0, 0, 1);
+	//Make sure camera displays right no matter where we're pointed
+	if(CameraPos.x == 0.0 && CameraPos.y == 0.0)
+		glTranslatef(0, 0, CameraPos.z);
+	else
+		//Tilt the camera to look at 0,0
+		gluLookAt(CameraPos.x, CameraPos.y, -CameraPos.z, 0, 0, 0, 0, 0, 1);
 	
 	//Draw level
 	renderLevel();

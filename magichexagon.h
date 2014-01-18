@@ -15,13 +15,10 @@
 
 #define DEFAULT_TIMESCALE	2.5
 
-class gravWell
-{
-public:
-	float32 wellMass;
-	b2Fixture* sensor;
-	set<b2Body*> trappedObjects;
-};
+//Static variables
+static Color FluttershyMane(248, 185, 207);
+static Color Fluttershy(253, 246, 175);
+static Color FluttershyEyes(0, 173, 168);
 
 class physicsContact : public b2ContactListener
 {

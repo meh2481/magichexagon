@@ -16,9 +16,9 @@ void magichexagonEngine::renderLevel()
 	//Get how large our screenspace is
 	Point ptWorldSize(getWidth(), getHeight());
 	ptWorldSize = worldMovement(ptWorldSize);	//Get the actual world movement in texels
-	float fDrawSize = ptWorldSize.Length() * 1.75;	//Actual radius we need to draw is 0.5*this, add on extra to be safe
+	float fDrawSize = ptWorldSize.Length() * 1.75;	//Actual radius we _need_ to draw is 0.5*this, add on extra so we can tilt and such
 	
-	//Draw center hex
+	//Draw center hex	//TODO: Draw as polygon, so no rounding errors
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glColor4f(m_colors[0].r, m_colors[0].g, m_colors[0].b, m_colors[0].a);
 	glPushMatrix();
@@ -81,7 +81,7 @@ void magichexagonEngine::renderLevel()
 	}
 	glPopMatrix();
 	
-	//Draw triangle for player
+	//Draw triangle for player	//TODO: Rotate as player moves
 	static float s_fPlayerPos = 1.42;
 	glColor4f(m_colors[1].r, m_colors[1].g, m_colors[1].b, m_colors[1].a);
 	glPushMatrix();
