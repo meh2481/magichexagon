@@ -20,37 +20,6 @@
 			<wall hex="4" startpos="12" height="2" />
 			<wall hex="5" startpos="12.75" height="2" />
 			<wall hex="0" startpos="13.5" height="2" />
-			<wall hex="1" startpos="14.25" height="2" />
-			<wall hex="2" startpos="15" height="2" />
-			<wall hex="3" startpos="15.75" height="2" />
-			<wall hex="4" startpos="16.5" height="2" />
-			<wall hex="5" startpos="17.25" height="2" />
-		</pattern>
-		<pattern>
-			<wall hex="5" startpos="0" height="2" />
-			<wall hex="4" startpos="0.75" height="2" />
-			<wall hex="3" startpos="1.5" height="2" />
-			<wall hex="2" startpos="2.25" height="2" />
-			<wall hex="1" startpos="3" height="2" />
-			<wall hex="0" startpos="3.75" height="2" />
-			<wall hex="5" startpos="4.5" height="2" />
-			<wall hex="4" startpos="5.25" height="2" />
-			<wall hex="3" startpos="6" height="2" />
-			<wall hex="2" startpos="6.75" height="2" />
-			<wall hex="1" startpos="7.5" height="2" />
-			<wall hex="0" startpos="8.25" height="2" />
-			<wall hex="5" startpos="9" height="2" />
-			<wall hex="4" startpos="9.75" height="2" />
-			<wall hex="3" startpos="10.5" height="2" />
-			<wall hex="2" startpos="11.25" height="2" />
-			<wall hex="1" startpos="12" height="2" />
-			<wall hex="0" startpos="12.75" height="2" />
-			<wall hex="5" startpos="13.5" height="2" />
-			<wall hex="4" startpos="14.25" height="2" />
-			<wall hex="3" startpos="15" height="2" />
-			<wall hex="2" startpos="15.75" height="2" />
-			<wall hex="1" startpos="16.5" height="2" />
-			<wall hex="0" startpos="17.25" height="2" />
 		</pattern>
 		<pattern>
 			<wall hex="0" startpos="0" height="1" />
@@ -58,18 +27,6 @@
 			<wall hex="2" startpos="0" height="1" />
 			<wall hex="3" startpos="0" height="1" />
 			<wall hex="4" startpos="0" height="1" />
-		</pattern>
-		<pattern>
-			<wall hex="0" startpos="0" height="1" />
-		</pattern>
-		<pattern>
-			<wall hex="0" startpos="0" height="1" />
-			<wall hex="1" startpos="0" height="1" />
-		</pattern>
-		<pattern>
-			<wall hex="0" startpos="0" height="1" />
-			<wall hex="1" startpos="0" height="1" />
-			<wall hex="2" startpos="0" height="1" />
 		</pattern>
 		<pattern>
 			<wall hex="0" startpos="0" height="1" />
@@ -131,6 +88,66 @@
 			<wall hex="1" startpos="0" height="1" />
 			<wall hex="3" startpos="0" height="1" />
 			<wall hex="5" startpos="0" height="1" />
+		</pattern>
+		<pattern>
+			<wall hex="0" startpos="0" height="1" />
+			<wall hex="1" startpos="0" height="1" />
+			<wall hex="2" startpos="0" height="1" />
+			<wall hex="3" startpos="0" height="1" />
+			<wall hex="4" startpos="0" height="1" />
+			<wall hex="2" startpos="4" height="1" />
+			<wall hex="3" startpos="4" height="1" />
+			<wall hex="4" startpos="4" height="1" />
+			<wall hex="5" startpos="4" height="1" />
+			<wall hex="0" startpos="4" height="1" />
+		</pattern>
+		<pattern>
+			<wall hex="0" startpos="0" height="1" />
+			<wall hex="1" startpos="0" height="1" />
+			<wall hex="2" startpos="0" height="1" />
+			<wall hex="3" startpos="0" height="1" />
+			<wall hex="4" startpos="0" height="1" />
+			<wall hex="4" startpos="4" height="1" />
+			<wall hex="5" startpos="4" height="1" />
+			<wall hex="0" startpos="4" height="1" />
+			<wall hex="1" startpos="4" height="1" />
+			<wall hex="2" startpos="4" height="1" />
+		</pattern>
+		<pattern>
+			<wall hex="0" startpos="0" height="1" />
+			<wall hex="1" startpos="0" height="1" />
+			<wall hex="2" startpos="0" height="1" />
+			<wall hex="3" startpos="0" height="1" />
+			<wall hex="4" startpos="0" height="1" />
+			<wall hex="3" startpos="4" height="1" />
+			<wall hex="4" startpos="4" height="1" />
+			<wall hex="5" startpos="4" height="1" />
+			<wall hex="0" startpos="4" height="1" />
+			<wall hex="1" startpos="4" height="1" />
+		</pattern>
+		<pattern>
+			<wall hex="0" startpos="0" height="1" />
+			<wall hex="1" startpos="0" height="1" />
+			<wall hex="2" startpos="0" height="1" />
+			<wall hex="3" startpos="0" height="1" />
+			<wall hex="4" startpos="0" height="1" />
+			<wall hex="1" startpos="4" height="1" />
+			<wall hex="2" startpos="4" height="1" />
+			<wall hex="3" startpos="4" height="1" />
+			<wall hex="4" startpos="4" height="1" />
+			<wall hex="5" startpos="4" height="1" />
+		</pattern>
+		<pattern>
+			<wall hex="0" startpos="0" height="1" />
+			<wall hex="1" startpos="0" height="1" />
+			<wall hex="2" startpos="0" height="1" />
+			<wall hex="3" startpos="0" height="1" />
+			<wall hex="4" startpos="0" height="1" />
+			<wall hex="4" startpos="4" height="1" />
+			<wall hex="5" startpos="4" height="1" />
+			<wall hex="0" startpos="4" height="1" />
+			<wall hex="1" startpos="4" height="1" />
+			<wall hex="2" startpos="4" height="1" />
 		</pattern>
 	</level>
 </patternmanifest>

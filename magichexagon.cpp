@@ -31,7 +31,7 @@ Engine(iWidth, iHeight, sTitle, sIcon, bResizable)
 	
 	//Game vars
 	m_fRotateAngle = 0.0;
-	m_fRotateAdd = 20;
+	m_fRotateAdd = 25;
 	m_colors[0] = Color(255,255,255);	//Center part
 	m_colors[1] = Color(0,0,0);			//Center ring and triangle
 	m_colors[2] = Dash;					//Radial arm 1
