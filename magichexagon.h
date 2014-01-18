@@ -59,12 +59,12 @@ private:
   bool m_bMouseGrabOnWindowRegain;
   
   //Game stuff!
-  bool m_bDrawDebug;
   Color m_colors[8];
   float m_fRotateAngle;
   float m_fRotateAdd;
   float m_fPlayerAngle;
   list<Wall> m_walls[6];
+  Image* centerCutie;
   
   //More generic game stuff
   Rect m_rcBounds;			//Camera bounds

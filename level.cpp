@@ -13,32 +13,27 @@ const float s_fCenterWallW = 0.14;
 
 void magichexagonEngine::renderLevel()
 {
+	glPushMatrix();
 	//Rotate by how much we're spinning
-	//glRotatef(m_fRotateAngle, 0, 0, 1);
+	glRotatef(m_fRotateAngle, 0, 0, 1);
 	
 	//Get how large our screenspace is
 	Point ptWorldSize(getWidth(), getHeight());
 	ptWorldSize = worldMovement(ptWorldSize);	//Get the actual world movement in texels
 	float fDrawSize = ptWorldSize.Length() * 1.75;	//Actual radius we _need_ to draw is 0.5*this, add on extra so we can tilt and such
 	
-	//Draw center hex	//TODO: Draw as polygon, so no rounding errors
+	//Draw center hex
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glColor4f(m_colors[0].r, m_colors[0].g, m_colors[0].b, m_colors[0].a);
-	glPushMatrix();
 	glTexCoord2f(0.0, 0.0);
-	for(int i = 0; i < 6; i++)
-	{
-		glBegin(GL_TRIANGLES);
-		//center
-		glVertex3f(0.0, 0.0, 0.0);
-		//left
-		glVertex3f(-1.0, 0.0, 0.0);
-		//Top left
-		glVertex3f(-0.5, 0.866, 0.0);
-		glEnd();
-		glRotatef(60, 0, 0, 1);
-	}
-	glPopMatrix();
+	glBegin(GL_POLYGON);
+	glVertex3f(-1.0, 0.0, 0.0);
+	glVertex3f(-0.5, 0.866, 0.0);
+	glVertex3f(0.5, 0.866, 0.0);
+	glVertex3f(1.0, 0.0, 0.0);
+	glVertex3f(0.5, -0.866, 0.0);
+	glVertex3f(-0.5, -0.866, 0.0);
+	glEnd();
 	
 	//Draw hollow hex around center one
 	glColor4f(m_colors[1].r, m_colors[1].g, m_colors[1].b, m_colors[1].a);
@@ -76,7 +71,6 @@ void magichexagonEngine::renderLevel()
 		glVertex3f(-0.5*fDrawSize, 0.866*fDrawSize, 0.0);
 		//Top left inside
 		glVertex3f(-0.5*(s_fCenterWallW+1.0), 0.866*(s_fCenterWallW+1.0), 0.0);
-		
 		glEnd();
 		
 		//Draw walls
@@ -112,6 +106,15 @@ void magichexagonEngine::renderLevel()
 	glVertex3f(0.1462, 1.22, 0.01);
 	glEnd();
 	glPopMatrix();
+	
+	//Draw central cutie mark image thingy
+	glPopMatrix();
+	if(centerCutie != NULL)
+	{
+		glColor4f(1.0, 1.0, 1.0, 1.0);
+		Point pt(1.5, 1.5);
+		centerCutie->render(pt);
+	}
 }
 
 void magichexagonEngine::addWall(float32 height, float32 speed, float32 length, int32_t hex)

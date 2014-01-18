@@ -41,6 +41,7 @@ Engine(iWidth, iHeight, sTitle, sIcon, bResizable)
 	m_colors[5] = DashManeG;		//Radial arm 4 - Fluttershy yellow
 	m_colors[6] = DashManeB;	//Radial arm 5 - Fluttershy pink
 	m_colors[7] = DashManeV;		//Radial arm 6 - Fluttershy yellow
+	centerCutie = getImage("res/gfx/dashmark.png");
 	m_fPlayerAngle = -90.0f;
 	
 	showCursor();
@@ -53,7 +54,6 @@ Engine(iWidth, iHeight, sTitle, sIcon, bResizable)
 	world->SetDebugDraw(&m_debugDraw);
 	
 	setTimeScale(DEFAULT_TIMESCALE);	//Speed up time
-	m_bDrawDebug = true;
 }
 
 magichexagonEngine::~magichexagonEngine()
@@ -94,15 +94,6 @@ void magichexagonEngine::draw()
 	
 	//Draw objects
 	drawObjects();
-	
-	//Draw debug stuff
-	if(m_bDrawDebug)
-	{
-		glClear(GL_DEPTH_BUFFER_BIT);	//Reset depth buffer (draw geom over everything else)
-		b2World* world = getWorld();
-		glBindTexture(GL_TEXTURE_2D, 0);
-		world->DrawDebugData();
-	}
 		
 	//Draw HUD
 	//glLoadIdentity();
@@ -178,10 +169,6 @@ void magichexagonEngine::handleEvent(SDL_Event event)
                     if(keyDown(SDL_SCANCODE_ALT))
                       toggleFullscreen();
                     break;
-					
-				case SDL_SCANCODE_V:	//DEBUG: Visual debug
-					m_bDrawDebug = !m_bDrawDebug;
-					break;
 					
 				case SDL_SCANCODE_F:
 					addWall(15.0, 3.5, 2.6, rand() % 6);
@@ -357,7 +344,6 @@ void magichexagonEngine::loadConfig(string sFilename)
 		window->QueryIntAttribute("vsync", &iVsync);
 		window->QueryIntAttribute("MSAA", &iMSAA);
 		window->QueryFloatAttribute("brightness", &fGamma);
-		window->QueryBoolAttribute("visualdebug", &m_bDrawDebug);
 		window->QueryBoolAttribute("pauseminimized", &bPausesOnFocus);
 		
 		const char* cWindowPos = window->Attribute("pos");
@@ -399,7 +385,6 @@ void magichexagonEngine::saveConfig(string sFilename)
 	window->SetAttribute("doublebuf", getDoubleBuffered());
 	window->SetAttribute("MSAA", getMSAA());
 	window->SetAttribute("brightness", getGamma());
-	window->SetAttribute("visualdebug", m_bDrawDebug);
 	window->SetAttribute("pauseminimized", pausesOnFocusLost());
 	root->InsertEndChild(window);
 	
