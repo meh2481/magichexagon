@@ -100,6 +100,8 @@ public:
 	void renderLevel();
 	void addWall(float32 height, float32 speed, float32 length, int32_t hex);	//Add a wall to the current level
 	void updateWalls(float32 dt);			//Make walls fall inward and check player collision
+	int  calcPlayerHex(float32* relAngle = NULL);
+	void checkSides(float32 fOldAngle, int prevHex, int curHex);
 };
 
 void signalHandler(string sSignal); //Stub function for handling signals that come in from our HUD, and passing them on to myEngine

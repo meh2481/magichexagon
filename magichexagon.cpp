@@ -184,7 +184,7 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 					break;
 					
 				case SDL_SCANCODE_F:
-					addWall(15.0, 3.5, 0.6, rand() % 6);
+					addWall(15.0, 3.5, 2.6, rand() % 6);
 					break;
 				
 				case SDL_SCANCODE_F10:
@@ -415,15 +415,13 @@ obj* magichexagonEngine::objFromXML(string sXMLFilename, Point ptOffset, Point p
 
 void magichexagonEngine::handleKeys()
 {
+	int prevHex = calcPlayerHex();
+	float32 fPrevAngle = m_fPlayerAngle;
 	if(keyDown(SDL_SCANCODE_LEFT))
-	{
 		m_fPlayerAngle += 5;
-	}
 	if(keyDown(SDL_SCANCODE_RIGHT))
-	{
 		m_fPlayerAngle -= 5;
-	}
-	
+	checkSides(fPrevAngle, prevHex, calcPlayerHex());
 }
 
 

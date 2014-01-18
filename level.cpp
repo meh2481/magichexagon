@@ -123,7 +123,7 @@ void magichexagonEngine::addWall(float32 height, float32 speed, float32 length, 
 	m_walls[hex].push_back(w);
 }
 
-void magichexagonEngine::updateWalls(float32 dt)
+int magichexagonEngine::calcPlayerHex(float32* relAngle)
 {
 	float fAbsPlayerAngle = m_fPlayerAngle+60.0;
 	while(fAbsPlayerAngle < 0.0)
@@ -142,8 +142,16 @@ void magichexagonEngine::updateWalls(float32 dt)
 		if(playerHex < 0)
 			playerHex = 5;
 	}
+	if(relAngle != NULL)
+		*relAngle = plAngle;
+	return playerHex;
+}
+
+void magichexagonEngine::updateWalls(float32 dt)
+{
+	float32 plAngle;
+	int playerHex = calcPlayerHex(&plAngle);
 	
-	//cout << playerHex << " " << plAngle << endl;
 	float32 playerDist = cos(DEG2RAD * plAngle) * s_fPlayerPos;
 	float32 playerHeight = sin(DEG2RAD* plAngle) * s_fPlayerPos;
 	
@@ -152,11 +160,11 @@ void magichexagonEngine::updateWalls(float32 dt)
 		for(list<Wall>::iterator i = m_walls[j].begin(); i != m_walls[j].end(); i++)
 		{
 			i->height -= i->speed * dt;
-			if(playerHex == j)	//Player is in this hex
+			if(playerHex == j && i->height + i->length + 1.0 > s_fPlayerPos)	//Player is in this hex, and not above this wall
 			{
 				float32 wallAngle = atan(playerHeight / (1.0 + i->height - playerDist)) * RAD2DEG;
 				if(wallAngle > 60.0f)	//If the angle here is greater than 60 degrees, we have a collision
-					cout << "Collision " << wallAngle << endl;
+					cout << "Collision " << wallAngle << endl;	//TODO
 			}
 			if(i->height + i->length <= 0)
 			{	
@@ -167,7 +175,21 @@ void magichexagonEngine::updateWalls(float32 dt)
 	}
 }
 
-
+void magichexagonEngine::checkSides(float32 fOldAngle, int prevHex, int curHex)
+{
+	if(calcPlayerHex() != prevHex)
+	{
+		for(list<Wall>::iterator i = m_walls[curHex].begin(); i != m_walls[curHex].end(); i++)
+		{
+			//If between top and bottom of wall
+			if(i->height + 1.0 < s_fPlayerPos && i->height + 1.0 + i->length > s_fPlayerPos)
+			{
+				m_fPlayerAngle = fOldAngle;
+				break;
+			}
+		}
+	}
+}
 
 
 
