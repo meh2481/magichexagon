@@ -8,10 +8,13 @@
 #include <float.h>
 #include <sstream>
 
+const float s_fPlayerPos = 1.42;
+const float s_fCenterWallW = 0.14;
+
 void magichexagonEngine::renderLevel()
 {
 	//Rotate by how much we're spinning
-	glRotatef(m_fRotateAngle, 0, 0, 1);
+	//glRotatef(m_fRotateAngle, 0, 0, 1);
 	
 	//Get how large our screenspace is
 	Point ptWorldSize(getWidth(), getHeight());
@@ -37,8 +40,6 @@ void magichexagonEngine::renderLevel()
 	}
 	glPopMatrix();
 	
-	static float s_fWallW = 0.14;
-	
 	//Draw hollow hex around center one
 	glColor4f(m_colors[1].r, m_colors[1].g, m_colors[1].b, m_colors[1].a);
 	glPushMatrix();
@@ -49,9 +50,9 @@ void magichexagonEngine::renderLevel()
 		//left center
 		glVertex3f(-1.0, 0.0, 0.0);
 		//left
-		glVertex3f(-1.0-s_fWallW, 0.0, 0.0);
+		glVertex3f(-1.0-s_fCenterWallW, 0.0, 0.0);
 		//Top left
-		glVertex3f(-0.5*(s_fWallW+1.0), 0.866*(s_fWallW+1.0), 0.0);
+		glVertex3f(-0.5*(s_fCenterWallW+1.0), 0.866*(s_fCenterWallW+1.0), 0.0);
 		//Top left inside
 		glVertex3f(-0.5, 0.866, 0.0);
 		
@@ -68,13 +69,13 @@ void magichexagonEngine::renderLevel()
 		glColor4f(m_colors[2+i].r, m_colors[2+i].g, m_colors[2+i].b, m_colors[2+i].a);
 		glBegin(GL_QUADS);
 		//left center
-		glVertex3f(-1.0-s_fWallW, 0.0, 0.0);
+		glVertex3f(-1.0-s_fCenterWallW, 0.0, 0.0);
 		//left
 		glVertex3f(-fDrawSize, 0.0, 0.0);
 		//Top left
 		glVertex3f(-0.5*fDrawSize, 0.866*fDrawSize, 0.0);
 		//Top left inside
-		glVertex3f(-0.5*(s_fWallW+1.0), 0.866*(s_fWallW+1.0), 0.0);
+		glVertex3f(-0.5*(s_fCenterWallW+1.0), 0.866*(s_fCenterWallW+1.0), 0.0);
 		
 		glEnd();
 		
@@ -84,13 +85,13 @@ void magichexagonEngine::renderLevel()
 		{
 			glBegin(GL_QUADS);
 			//left inside
-			glVertex3f(min(-1.0 - j->height, -1.0 - s_fWallW/2.0), 0.0, 0.0);
+			glVertex3f(min(-1.0 - j->height, -1.0 - s_fCenterWallW/2.0), 0.0, 0.0);
 			//left outside
-			glVertex3f(min(-1.0 - j->height - j->length, -1.0 - s_fWallW/2.0), 0.0, 0.0);
+			glVertex3f(min(-1.0 - j->height - j->length, -1.0 - s_fCenterWallW/2.0), 0.0, 0.0);
 			//Top left outside
-			glVertex3f(0.5*min(-1.0 - j->height - j->length, -1.0 - s_fWallW/2.0), -0.866*min(-1.0 - j->height - j->length, -1.0 - s_fWallW/2.0), 0.0);
+			glVertex3f(0.5*min(-1.0 - j->height - j->length, -1.0 - s_fCenterWallW/2.0), -0.866*min(-1.0 - j->height - j->length, -1.0 - s_fCenterWallW/2.0), 0.0);
 			//Top left inside
-			glVertex3f(0.5*(min(-1.0 - j->height, -1.0 - s_fWallW/2.0)), -0.866*(min(-1.0 - j->height, -1.0 - s_fWallW/2.0)), 0.0);
+			glVertex3f(0.5*(min(-1.0 - j->height, -1.0 - s_fCenterWallW/2.0)), -0.866*(min(-1.0 - j->height, -1.0 - s_fCenterWallW/2.0)), 0.0);
 			glEnd();
 		}
 		
@@ -99,10 +100,9 @@ void magichexagonEngine::renderLevel()
 	glPopMatrix();
 	
 	//Draw triangle for player	//TODO: Rotate as player moves
-	static float s_fPlayerPos = 1.42;
 	glColor4f(m_colors[1].r, m_colors[1].g, m_colors[1].b, m_colors[1].a);
 	glPushMatrix();
-	glRotatef(m_fPlayerAngle, 0, 0, 1);
+	glRotatef(m_fPlayerAngle+90.0, 0, 0, 1);
 	glBegin(GL_TRIANGLES);
 	//top
 	glVertex3f(0, s_fPlayerPos, 0.01);
@@ -112,9 +112,6 @@ void magichexagonEngine::renderLevel()
 	glVertex3f(0.1462, 1.22, 0.01);
 	glEnd();
 	glPopMatrix();
-	
-	//TODO: Draw walls
-	
 }
 
 void magichexagonEngine::addWall(float32 height, float32 speed, float32 length, int32_t hex)
@@ -128,11 +125,39 @@ void magichexagonEngine::addWall(float32 height, float32 speed, float32 length, 
 
 void magichexagonEngine::updateWalls(float32 dt)
 {
+	float fAbsPlayerAngle = m_fPlayerAngle+60.0;
+	while(fAbsPlayerAngle < 0.0)
+		fAbsPlayerAngle += 360.0;
+	while(fAbsPlayerAngle >= 360.0)
+		fAbsPlayerAngle -= 360.0;
+	
+	int playerHex = (fAbsPlayerAngle) / 60.0;
+	
+	//Calculate the player's angle according to their current hex
+	float32 plAngle = 60.0 - (fAbsPlayerAngle - playerHex*60.0);
+	if(plAngle == 60.0)
+	{
+		plAngle = 0;
+		playerHex--;
+		if(playerHex < 0)
+			playerHex = 5;
+	}
+	
+	//cout << playerHex << " " << plAngle << endl;
+	float32 playerDist = cos(DEG2RAD * plAngle) * s_fPlayerPos;
+	float32 playerHeight = sin(DEG2RAD* plAngle) * s_fPlayerPos;
+	
 	for(int j = 0; j < 6; j++)
 	{
 		for(list<Wall>::iterator i = m_walls[j].begin(); i != m_walls[j].end(); i++)
 		{
 			i->height -= i->speed * dt;
+			if(playerHex == j)	//Player is in this hex
+			{
+				float32 wallAngle = atan(playerHeight / (1.0 + i->height - playerDist)) * RAD2DEG;
+				if(wallAngle > 60.0f)	//If the angle here is greater than 60 degrees, we have a collision
+					cout << "Collision " << wallAngle << endl;
+			}
 			if(i->height + i->length <= 0)
 			{	
 				i = m_walls[j].erase(i);

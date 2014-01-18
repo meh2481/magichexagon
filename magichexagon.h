@@ -15,30 +15,30 @@
 
 #define DEFAULT_TIMESCALE	2.5
 
-//Static variables
-static Color FluttershyMane(248, 185, 207);
-static Color Fluttershy(253, 246, 175);
-static Color FluttershyEyes(0, 173, 168);
-static Color Twilight(218,172,232);
-static Color TwilightMane1(42,55,116);
-static Color TwilightMane2(233,72,143);
-static Color TwilightMane3(102,47,137);
-static Color Rarity(238,241,243);
-static Color RarityMane(101,77,160);
-static Color RarityEyes(57,120,187);
-static Color Dash(157,217,247);
-static Color DashManeR(239,64,53);
-static Color DashManeO(243,119,54);
-static Color DashManeY(255,247,151);
-static Color DashManeG(122,193,66);
-static Color DashManeB(0, 147, 208);
-static Color DashManeV(109, 31, 126);
-static Color Pinkie(248,185,207);
-static Color PinkieMane(239,79,147);
-static Color PinkieEyes(125,206,240);
-static Color AJ(252,188,94);
-static Color AJMane(255,246,152);
-static Color AJEyes(95,187,83);
+//const variables
+const Color FluttershyMane(248, 185, 207);
+const Color Fluttershy(253, 246, 175);
+const Color FluttershyEyes(0, 173, 168);
+const Color Twilight(218,172,232);
+const Color TwilightMane1(42,55,116);
+const Color TwilightMane2(233,72,143);
+const Color TwilightMane3(102,47,137);
+const Color Rarity(238,241,243);
+const Color RarityMane(101,77,160);
+const Color RarityEyes(57,120,187);
+const Color Dash(157,217,247);
+const Color DashManeR(239,64,53);
+const Color DashManeO(243,119,54);
+const Color DashManeY(255,247,151);
+const Color DashManeG(122,193,66);
+const Color DashManeB(0, 147, 208);
+const Color DashManeV(109, 31, 126);
+const Color Pinkie(248,185,207);
+const Color PinkieMane(239,79,147);
+const Color PinkieEyes(125,206,240);
+const Color AJ(252,188,94);
+const Color AJMane(255,246,152);
+const Color AJEyes(95,187,83);
 
 class Wall
 {

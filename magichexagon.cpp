@@ -31,17 +31,17 @@ Engine(iWidth, iHeight, sTitle, sIcon, bResizable)
 	m_bMouseGrabOnWindowRegain = false;//TODO: true;
 	
 	//Game vars
-	m_fRotateAngle = 0;
+	m_fRotateAngle = 0.0;
 	m_fRotateAdd = 20;
-	m_colors[0] = Fluttershy;		//Center part - Fluttershy yellow
-	m_colors[1] = FluttershyEyes;	//Center ring and triangle - Fluttershy eye blue
-	m_colors[2] = FluttershyMane;	//Radial arm 1 - Fluttershy pink
-	m_colors[3] = Fluttershy;		//Radial arm 2 - Fluttershy yellow
-	m_colors[4] = FluttershyMane;	//Radial arm 3 - Fluttershy pink
-	m_colors[5] = Fluttershy;		//Radial arm 4 - Fluttershy yellow
-	m_colors[6] = FluttershyMane;	//Radial arm 5 - Fluttershy pink
-	m_colors[7] = Fluttershy;		//Radial arm 6 - Fluttershy yellow
-	m_fPlayerAngle = 0.0f;
+	m_colors[0] = Dash;		//Center part - Fluttershy yellow
+	m_colors[1] = Color(0,0,0);	//Center ring and triangle - Fluttershy eye blue
+	m_colors[2] = DashManeR;	//Radial arm 1 - Fluttershy pink
+	m_colors[3] = DashManeO;		//Radial arm 2 - Fluttershy yellow
+	m_colors[4] = DashManeY;	//Radial arm 3 - Fluttershy pink
+	m_colors[5] = DashManeG;		//Radial arm 4 - Fluttershy yellow
+	m_colors[6] = DashManeB;	//Radial arm 5 - Fluttershy pink
+	m_colors[7] = DashManeV;		//Radial arm 6 - Fluttershy yellow
+	m_fPlayerAngle = -90.0f;
 	
 	showCursor();
 	
@@ -184,7 +184,7 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 					break;
 					
 				case SDL_SCANCODE_F:
-					addWall(10.0, 3.5, 0.6, rand() % 6);
+					addWall(15.0, 3.5, 0.6, rand() % 6);
 					break;
 				
 				case SDL_SCANCODE_F10:
