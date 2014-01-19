@@ -237,11 +237,10 @@ void magichexagonEngine::updateLevel(float32 dt)
 
 void magichexagonEngine::nextPattern()
 {
-	int iLevel = 0;	//For now
-	int iPattern = rand() % m_Patterns[iLevel].size();	//Pick a random pattern out of those available
+	int iPattern = rand() % m_Patterns[m_iCurLevel].size();	//Pick a random pattern out of those available
 	int startHex = rand() % 6;	//Start pattern at a random hex value (so it'll point in a random direction)
 	
-	for(list<pattern>::iterator i = m_Patterns[iLevel][iPattern].begin(); i != m_Patterns[iLevel][iPattern].end(); i++)
+	for(list<pattern>::iterator i = m_Patterns[m_iCurLevel][iPattern].begin(); i != m_Patterns[m_iCurLevel][iPattern].end(); i++)
 	{
 		int hex = i->hex;
 		if(hex < 0 || hex > 5)
@@ -310,6 +309,8 @@ void magichexagonEngine::resetLevel()
 	m_ColorsChanging.clear();
 	m_fRotateAngle = 0.0;
 	m_fRotateAdd = 25;
+	if(rand() % 2 == 0)	//Start rotating in a random direction
+		m_fRotateAdd = -m_fRotateAdd;
 	m_colors[0] = Color(255,255,255);	//Center part
 	m_colors[1] = Color(0,0,0);			//Center ring and triangle
 	m_colors[2] = Dash;					//Radial arm 1
@@ -323,6 +324,14 @@ void magichexagonEngine::resetLevel()
 	m_fTotalSpinTime = 0.0f;
 	m_fTargetSpinReverse = 7.0f;
 	m_fTargetSpinIncrease = 15.0f;
+	m_iCurLevel = 0;
+	//TODO: Order of levels:
+	//1. Honesty
+	//2. Kindness
+	//3. Loyalty
+	//4. Generosity
+	//5. Laughter
+	//6. Magic
 }
 
 

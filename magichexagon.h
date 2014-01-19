@@ -80,6 +80,7 @@ private:
   DebugDraw m_debugDraw;
   //HUD* m_hud;
   bool m_bMouseGrabOnWindowRegain;
+  float32 m_fDefCameraZ;	//Default position of camera on z axis
   
   //Game stuff!
   Color m_colors[8];
@@ -94,11 +95,7 @@ private:
   float m_fTotalSpinTime;
   float m_fTargetSpinReverse;
   float m_fTargetSpinIncrease;
-  
-  //More generic game stuff
-  Rect m_rcBounds;			//Camera bounds
-  Rect m_rcDragArea;		//Area that the user can drag the apples around in
-  float32 m_fDefCameraZ;	//Default position of camera on z axis
+  int m_iCurLevel;
 
 protected:
     void frame(float32 dt);

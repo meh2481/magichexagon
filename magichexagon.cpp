@@ -85,9 +85,11 @@ void magichexagonEngine::draw()
 	switch(m_iCurMenu)
 	{
 		case MENU_START:
+			//TODO
 			break;
 			
 		case MENU_LEVELSELECT:
+			//TODO
 			break;
 			
 		case MENU_NONE:
@@ -164,8 +166,40 @@ void magichexagonEngine::handleEvent(SDL_Event event)
             switch(event.key.keysym.scancode)
             {
                 case SDL_SCANCODE_ESCAPE:
-                    quit();
+					switch(m_iCurMenu)
+					{
+						case MENU_NONE:
+							pauseMusic();
+							playSound("menubegin");
+							m_iCurMenu = MENU_LEVELSELECT;
+							break;
+							
+						case MENU_LEVELSELECT:
+							playSound("menubegin");
+							m_iCurMenu = MENU_START;
+							break;
+							
+						case MENU_START:
+							quit();
+							break;
+					}
                     break;
+				
+				case SDL_SCANCODE_LEFT:
+					if(m_iCurMenu == MENU_LEVELSELECT)
+					{
+						playSound("select");
+						//TODO
+					}
+					break;
+				
+				case SDL_SCANCODE_RIGHT:
+					if(m_iCurMenu == MENU_LEVELSELECT)
+					{
+						playSound("select");
+						//TODO
+					}
+					break;
                 
                 case SDL_SCANCODE_RETURN:
                     if(keyDown(SDL_SCANCODE_ALT))
@@ -173,6 +207,7 @@ void magichexagonEngine::handleEvent(SDL_Event event)
                     break;
 					
 				case SDL_SCANCODE_F:
+					playSound("kindness");
 					phaseColor(&m_colors[0], Fluttershy, 0.5);
 					phaseColor(&m_colors[1], FluttershyEyes, 0.5);
 					phaseColor(&m_colors[2], FluttershyMane, 0.5);
@@ -185,6 +220,7 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 					break;
 					
 				case SDL_SCANCODE_R:
+					playSound("generosity");
 					phaseColor(&m_colors[0], Rarity, 0.5);
 					phaseColor(&m_colors[1], RarityEyes, 0.5);
 					phaseColor(&m_colors[2], RarityMane, 0.5);
@@ -197,6 +233,7 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 					break;
 					
 				case SDL_SCANCODE_P:
+					playSound("laughter");
 					phaseColor(&m_colors[0], Pinkie, 0.5);
 					phaseColor(&m_colors[1], PinkieEyes, 0.5);
 					phaseColor(&m_colors[2], PinkieMane, 0.5);
@@ -209,6 +246,7 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 					break;
 					
 				case SDL_SCANCODE_A:
+					playSound("honesty");
 					phaseColor(&m_colors[0], AJ, 0.5);
 					phaseColor(&m_colors[1], AJEyes, 0.5);
 					phaseColor(&m_colors[2], AJMane, 0.5);
@@ -221,6 +259,7 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 					break;
 					
 				case SDL_SCANCODE_T:
+					playSound("magic");
 					phaseColor(&m_colors[0], Twilight, 0.5);
 					phaseColor(&m_colors[1], TwilightMane1, 0.5);
 					phaseColor(&m_colors[2], TwilightMane2, 0.5);
@@ -233,6 +272,7 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 					break;
 					
 				case SDL_SCANCODE_D:
+					playSound("loyalty");
 					phaseColor(&m_colors[0], Dash, 0.5);
 					phaseColor(&m_colors[1], Color(0,0,0), 0.5);
 					phaseColor(&m_colors[2], DashManeR, 0.5);

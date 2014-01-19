@@ -68,8 +68,8 @@
 			<wall hex="5" startpos="0" height="1" />
 		</pattern>
 		<pattern>
-			<wall hex="0" startpos="0" height="24" />
-			<wall hex="3" startpos="0" height="24" />
+			<wall hex="0" startpos="0" height="25" />
+			<wall hex="3" startpos="0" height="25" />
 			<wall hex="1" startpos="0" height="1" />
 			<wall hex="4" startpos="0" height="1" />
 			<wall hex="2" startpos="4" height="1" />
@@ -82,6 +82,8 @@
 			<wall hex="4" startpos="16" height="1" />
 			<wall hex="2" startpos="20" height="1" />
 			<wall hex="5" startpos="20" height="1" />
+			<wall hex="1" startpos="24" height="1" />
+			<wall hex="4" startpos="24" height="1" />
 		</pattern>
 		<pattern>
 			<wall hex="0" startpos="0" height="1" />
@@ -148,6 +150,18 @@
 			<wall hex="0" startpos="4" height="1" />
 			<wall hex="1" startpos="4" height="1" />
 			<wall hex="2" startpos="4" height="1" />
+		</pattern>
+		<pattern>
+			<wall hex="0" startpos="0" height="1" />
+			<wall hex="2" startpos="0" height="1" />
+			<wall hex="5" startpos="0" height="2" />
+			<wall hex="3" startpos="0" height="2" />
+			<wall hex="4" startpos="0" height="3" />
+			<wall hex="1" startpos="4" height="4" />
+			<wall hex="0" startpos="5" height="3.75" />
+			<wall hex="2" startpos="5" height="3.75" />
+			<wall hex="3" startpos="6" height="2" />
+			<wall hex="5" startpos="6" height="2" />
 		</pattern>
 	</level>
 </patternmanifest>
