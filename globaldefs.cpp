@@ -157,7 +157,7 @@ float32 randFloat(float32 min, float32 max)
     if(min == max)
         return min;
     float32 scale = rand() % 1001;
-    return((float32)scale/1000.0*(max-min) + min);
+    return((scale/1000.0)*(max-min) + min);
 }
 
 Vec3::Vec3()

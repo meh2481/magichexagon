@@ -79,12 +79,7 @@ void magichexagonEngine::draw()
 	glDisable(GL_LIGHTING);
 	glLoadIdentity();
 	
-	//Make sure camera displays right no matter where we're pointed
-	if(CameraPos.x == 0.0 && CameraPos.y == 0.0)
-		glTranslatef(0, 0, CameraPos.z);
-	else
-		//Tilt the camera to look at 0,0
-		gluLookAt(CameraPos.x, CameraPos.y, -CameraPos.z, 0, 0, 0, 0, 0, 1);
+	glTranslatef(0, 0, CameraPos.z);
 	
 	//Draw level
 	renderLevel();

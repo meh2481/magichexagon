@@ -134,7 +134,7 @@ public:
 };
 
 void signalHandler(string sSignal); //Stub function for handling signals that come in from our HUD, and passing them on to myEngine
-
+float myAbs(float v);	//Because stinking namespace stuff
 
 
 #endif

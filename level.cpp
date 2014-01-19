@@ -79,13 +79,13 @@ void magichexagonEngine::renderLevel()
 		{
 			glBegin(GL_QUADS);
 			//left inside
-			glVertex3f(min(-1.0 - j->height, -1.0 - s_fCenterWallW/2.0), 0.0, 0.0);
+			glVertex3f(min(-1.0 - j->height, -1.0 - s_fCenterWallW/2.0), 0.0, 0.01);
 			//left outside
-			glVertex3f(min(-1.0 - j->height - j->length, -1.0 - s_fCenterWallW/2.0), 0.0, 0.0);
+			glVertex3f(min(-1.0 - j->height - j->length, -1.0 - s_fCenterWallW/2.0), 0.0, 0.01);
 			//Top left outside
-			glVertex3f(0.5*min(-1.0 - j->height - j->length, -1.0 - s_fCenterWallW/2.0), -0.866*min(-1.0 - j->height - j->length, -1.0 - s_fCenterWallW/2.0), 0.0);
+			glVertex3f(0.5*min(-1.0 - j->height - j->length, -1.0 - s_fCenterWallW/2.0), -0.866*min(-1.0 - j->height - j->length, -1.0 - s_fCenterWallW/2.0), 0.01);
 			//Top left inside
-			glVertex3f(0.5*(min(-1.0 - j->height, -1.0 - s_fCenterWallW/2.0)), -0.866*(min(-1.0 - j->height, -1.0 - s_fCenterWallW/2.0)), 0.0);
+			glVertex3f(0.5*(min(-1.0 - j->height, -1.0 - s_fCenterWallW/2.0)), -0.866*(min(-1.0 - j->height, -1.0 - s_fCenterWallW/2.0)), 0.01);
 			glEnd();
 		}
 		
@@ -99,11 +99,11 @@ void magichexagonEngine::renderLevel()
 	glRotatef(m_fPlayerAngle+90.0, 0, 0, 1);
 	glBegin(GL_TRIANGLES);
 	//top
-	glVertex3f(0, s_fPlayerPos, 0.01);
+	glVertex3f(0, s_fPlayerPos, 0.011);
 	//left bottom
-	glVertex3f(-0.1462, 1.22, 0.01);
+	glVertex3f(-0.1462, 1.22, 0.011);
 	//right bottom
-	glVertex3f(0.1462, 1.22, 0.01);
+	glVertex3f(0.1462, 1.22, 0.011);
 	glEnd();
 	glPopMatrix();
 	
@@ -216,12 +216,12 @@ void magichexagonEngine::updateLevel(float32 dt)
 
 	//Spin!
 	static float fTotalSpinTime = 0.0f;
-	static float fTargetSpinReverse = 5.0f;
+	static float fTargetSpinReverse = 7.0f;
 	static float fTargetSpinIncrease = 15.0f;
 	fTotalSpinTime += dt;
 	if(fTotalSpinTime > fTargetSpinReverse)
 	{
-		fTargetSpinReverse += 5.0f;
+		fTargetSpinReverse += randFloat(4, 7);
 		m_fRotateAdd = -m_fRotateAdd;
 	}
 	if(fTotalSpinTime > fTargetSpinIncrease && fTargetSpinIncrease > 0)
