@@ -315,6 +315,14 @@ void Engine::pauseMusic()
     tyrsound_pause(m_sounds["music"]);
 }
 
+void Engine::stopMusic()
+{
+	if(!m_sounds.count("music")) return;
+	tyrsound_Handle handle = m_sounds["music"];
+	tyrsound_stop(handle);
+	tyrsound_seek(handle, 0);
+}
+
 void Engine::restartMusic()
 {
 	tyrsound_Handle handle = m_sounds["music"];

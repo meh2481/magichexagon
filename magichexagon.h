@@ -53,6 +53,10 @@ public:
 #define WALL_START_HEIGHT 	15.0
 #define WALL_SPEED 			3.5
 
+#define MENU_START			0
+#define MENU_LEVELSELECT	1
+#define MENU_NONE			2
+
 class ColorPhase
 {
 public:
@@ -86,6 +90,7 @@ private:
   Image* centerCutie;
   list<ColorPhase> m_ColorsChanging;
   vector<vector<list<pattern> > > m_Patterns;
+  int m_iCurMenu;
   
   //More generic game stuff
   Rect m_rcBounds;			//Camera bounds

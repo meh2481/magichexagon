@@ -169,7 +169,13 @@ void magichexagonEngine::updateWalls(float32 dt)
 				if(wallAngle > 60.0f || //If the angle here is greater than 60 degrees, we have a collision
 				  //If we're at the very edge of this hex, we can test the height directly.
 				  (plAngle == 0.0 && i->height + 1.0 < s_fPlayerPos && i->height + i->length + 1.0 > s_fPlayerPos))		
-					cout << "Collision " << wallAngle << endl;	//TODO
+				{
+					m_iCurMenu = MENU_LEVELSELECT;
+					pauseMusic();
+					playSound("gameover");
+					playSound("die");
+					//TODO: Reset level
+				}
 			}
 			if(i->height + i->length <= 0)
 			{	

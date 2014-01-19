@@ -28,6 +28,7 @@ Engine(iWidth, iHeight, sTitle, sIcon, bResizable)
 	CameraPos.y = 0;
 	CameraPos.z = m_fDefCameraZ;
 	m_bMouseGrabOnWindowRegain = false;//TODO: true;
+	m_iCurMenu = MENU_START;
 	
 	//Game vars
 	m_fRotateAngle = 0.0;
@@ -67,9 +68,20 @@ magichexagonEngine::~magichexagonEngine()
 
 void magichexagonEngine::frame(float32 dt)
 {
-	handleKeys();
-	updateColors(dt);
-	updateLevel(dt);
+	switch(m_iCurMenu)
+	{
+		case MENU_START:
+			break;
+			
+		case MENU_LEVELSELECT:
+			break;
+			
+		case MENU_NONE:
+			updateColors(dt);
+			updateLevel(dt);
+			handleKeys();
+			break;
+	}
 }
 
 void magichexagonEngine::draw()
@@ -81,11 +93,19 @@ void magichexagonEngine::draw()
 	
 	glTranslatef(0, 0, CameraPos.z);
 	
-	//Draw level
-	renderLevel();
-	
-	//Draw objects
-	drawObjects();
+	switch(m_iCurMenu)
+	{
+		case MENU_START:
+			break;
+			
+		case MENU_LEVELSELECT:
+			break;
+			
+		case MENU_NONE:
+			//Draw level
+			renderLevel();
+			break;
+	}
 		
 	//Draw HUD
 	//glLoadIdentity();
@@ -131,8 +151,8 @@ void magichexagonEngine::init(list<commandlineArg> sArgs)
 	
 	
 	//Play music
-	playMusic("res/sfx/encore-micro_hexagon_courtesy.ogg");
-	//TODO pauseMusic();
+	//playMusic("res/sfx/encore-micro_hexagon_courtesy.ogg");
+	//pauseMusic();
 	playSound("magichexagon");
 	
 	//TODO seekMusic(34.504028);
@@ -247,7 +267,21 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 					break;
 					
 				case SDL_SCANCODE_SPACE:
-					playSound("begin");
+					switch(m_iCurMenu)
+					{
+						case MENU_START:
+							playSound("menubegin");
+							m_iCurMenu = MENU_LEVELSELECT;
+							break;
+							
+						case MENU_LEVELSELECT:
+							playMusic("res/sfx/encore-micro_hexagon_courtesy.ogg");
+							playSound("begin");
+							playSound("beginlevel");
+							restartMusic();
+							m_iCurMenu = MENU_NONE;
+							break;
+					}
 					break;
             }
             break;
