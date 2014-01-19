@@ -91,6 +91,9 @@ private:
   list<ColorPhase> m_ColorsChanging;
   vector<vector<list<pattern> > > m_Patterns;
   int m_iCurMenu;
+  float m_fTotalSpinTime;
+  float m_fTargetSpinReverse;
+  float m_fTargetSpinIncrease;
   
   //More generic game stuff
   Rect m_rcBounds;			//Camera bounds
@@ -136,6 +139,7 @@ public:
 	void updateColors(float32 dt);
 	void phaseColor(Color* src, Color dest, float time);
 	void colorFlip();
+	void resetLevel();
 };
 
 void signalHandler(string sSignal); //Stub function for handling signals that come in from our HUD, and passing them on to myEngine

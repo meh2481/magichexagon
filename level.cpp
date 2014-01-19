@@ -174,7 +174,7 @@ void magichexagonEngine::updateWalls(float32 dt)
 					pauseMusic();
 					playSound("gameover");
 					playSound("die");
-					//TODO: Reset level
+					break;
 				}
 			}
 			if(i->height + i->length <= 0)
@@ -221,19 +221,16 @@ void magichexagonEngine::updateLevel(float32 dt)
 		nextPattern();
 
 	//Spin!
-	static float fTotalSpinTime = 0.0f;
-	static float fTargetSpinReverse = 7.0f;
-	static float fTargetSpinIncrease = 15.0f;
-	fTotalSpinTime += dt;
-	if(fTotalSpinTime > fTargetSpinReverse)
+	m_fTotalSpinTime += dt;
+	if(m_fTotalSpinTime > m_fTargetSpinReverse)
 	{
-		fTargetSpinReverse += randFloat(4, 7);
+		m_fTargetSpinReverse += randFloat(4, 7);
 		m_fRotateAdd = -m_fRotateAdd;
 	}
-	if(fTotalSpinTime > fTargetSpinIncrease && fTargetSpinIncrease > 0)
+	if(m_fTotalSpinTime > m_fTargetSpinIncrease && m_fTargetSpinIncrease > 0)
 	{
 		m_fRotateAdd *= 2;
-		fTargetSpinIncrease = 0;
+		m_fTargetSpinIncrease = 0;
 	}
 	m_fRotateAngle += m_fRotateAdd * dt;
 }
@@ -306,7 +303,27 @@ bool magichexagonEngine::loadPatterns(string sFilename)
 	return true;
 }
 
-
+void magichexagonEngine::resetLevel()
+{
+	for(int j = 0; j < 6; j++)
+		m_walls[j].clear();
+	m_ColorsChanging.clear();
+	m_fRotateAngle = 0.0;
+	m_fRotateAdd = 25;
+	m_colors[0] = Color(255,255,255);	//Center part
+	m_colors[1] = Color(0,0,0);			//Center ring and triangle
+	m_colors[2] = Dash;					//Radial arm 1
+	m_colors[3] = Fluttershy;			//Radial arm 2
+	m_colors[4] = Twilight;				//Radial arm 3
+	m_colors[5] = Rarity;				//Radial arm 4
+	m_colors[6] = Pinkie;				//Radial arm 5
+	m_colors[7] = AJ;					//Radial arm 6
+	centerCutie = NULL;
+	m_fPlayerAngle = -92.5f;
+	m_fTotalSpinTime = 0.0f;
+	m_fTargetSpinReverse = 7.0f;
+	m_fTargetSpinIncrease = 15.0f;
+}
 
 
 
