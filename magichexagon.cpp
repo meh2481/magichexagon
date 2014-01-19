@@ -41,7 +41,7 @@ Engine(iWidth, iHeight, sTitle, sIcon, bResizable)
 	m_colors[6] = Pinkie;				//Radial arm 5
 	m_colors[7] = AJ;					//Radial arm 6
 	centerCutie = NULL;
-	m_fPlayerAngle = -90.0f;
+	m_fPlayerAngle = -92.5f;
 	
 	showCursor();
 	
