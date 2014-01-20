@@ -186,7 +186,9 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 					if(m_iCurMenu == MENU_LEVELSELECT)
 					{
 						playSound("select");
-						//TODO
+						m_iCurLevel--;
+						if(m_iCurLevel < 0)
+							m_iCurLevel = 5;
 					}
 					break;
 				
@@ -194,7 +196,9 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 					if(m_iCurMenu == MENU_LEVELSELECT)
 					{
 						playSound("select");
-						//TODO
+						m_iCurLevel++;
+						if(m_iCurLevel > 5)
+							m_iCurLevel = 0;
 					}
 					break;
                 
@@ -525,7 +529,23 @@ void magichexagonEngine::drawStartMenu()
 
 void magichexagonEngine::drawLevelSelectMenu()
 {
-	
+	m_fRotateAngle = 0.0f;
+	centerCutie = NULL;
+	m_fPlayerAngle = -60.0f * m_iCurLevel - 90;
+	for(int i = 0; i < 6; i++)
+	{
+		if(m_walls[i].size())
+			m_walls[i].clear();
+	}
+	m_colors[0] = Color(255,255,255);	//Center part
+	m_colors[1] = Color(0,0,0);			//Center ring and triangle
+	m_colors[2] = Twilight;				//Radial arm 1
+	m_colors[3] = Pinkie;				//Radial arm 2
+	m_colors[4] = Rarity;				//Radial arm 3
+	m_colors[5] = Dash;					//Radial arm 4
+	m_colors[6] = Fluttershy;			//Radial arm 5
+	m_colors[7] = AJ;					//Radial arm 6
+	renderLevel();
 }
 
 
