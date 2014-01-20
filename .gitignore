@@ -19,8 +19,6 @@ magichexagon
 magichexagon.exe
 
 # program output
-err.log
-config.xml
 gmon.out
 
 # Resources

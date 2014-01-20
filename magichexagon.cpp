@@ -16,8 +16,8 @@ void signalHandler(string sSignal)
     g_pGlobalEngine->hudSignalHandler(sSignal);
 }
 
-magichexagonEngine::magichexagonEngine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sIcon, bool bResizable) : 
-Engine(iWidth, iHeight, sTitle, sIcon, bResizable)
+magichexagonEngine::magichexagonEngine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sAppName, string sIcon, bool bResizable) : 
+Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 {
 	g_pGlobalEngine = this;
 	vfs.Prepare();
@@ -48,7 +48,7 @@ Engine(iWidth, iHeight, sTitle, sIcon, bResizable)
 magichexagonEngine::~magichexagonEngine()
 {
 	errlog << "~magichexagonEngine()" << endl;
-	saveConfig("res/config.xml");
+	saveConfig(getSaveLocation() + "config.xml");
 	//Delete stuffs
 	
 	//errlog << "delete hud" << endl;
@@ -113,7 +113,7 @@ void magichexagonEngine::init(list<commandlineArg> sArgs)
 	}
 	
 	//Load our last screen position and such
-	loadConfig("res/config.xml");
+	loadConfig(getSaveLocation() + "config.xml");
 	loadPatterns("res/patterns.xml");
 	
 	//Set gravity to 0

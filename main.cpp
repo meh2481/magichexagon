@@ -13,11 +13,9 @@
 
 int main(int argc, char *argv[])
 {
-    errlog << "Starting program" << endl;
-    errlog << "Starting FreeImage" << endl;
     FreeImage_Initialise();
 	
-    magichexagonEngine* eng = new magichexagonEngine(DEFAULT_WIDTH, DEFAULT_HEIGHT, "Magic Hexagon", ICONNAME, true); //Create our engine
+    magichexagonEngine* eng = new magichexagonEngine(DEFAULT_WIDTH, DEFAULT_HEIGHT, "Magic Hexagon", "magichexagon", ICONNAME, true); //Create our engine
 	eng->commandline(argc, argv);
     eng->start(); //Get the engine rolling
 	
@@ -27,5 +25,6 @@ int main(int argc, char *argv[])
     errlog << "Closing FreeImage" << endl;
     FreeImage_DeInitialise();
     errlog << "Ending program happily" << endl;
+	errlog.close();
     return 0;
 }

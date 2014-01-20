@@ -5,7 +5,7 @@
 
 #include "Engine.h"
 #include <SDL2/SDL_syswm.h>
-ofstream errlog("err.log");
+ofstream errlog;
 
 
 GLfloat LightAmbient[]  = { 0.1f, 0.1f, 0.1f, 1.0f };
@@ -184,9 +184,13 @@ void Engine::_render()
      SDL_GL_SwapWindow(m_Window);
 }
 
-Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sIcon, bool bResizable)
+Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sAppName, string sIcon, bool bResizable)
 {
 	m_sTitle = sTitle;
+	m_sAppName = sAppName;
+	errlog.open((getSaveLocation() + "err.log").c_str());
+	if(errlog.fail())
+		errlog.open("err.log");
 	m_sIcon = sIcon;
 	m_bResizable = bResizable;
     b2Vec2 gravity(0.0, -9.8);  //Vector for our world's gravity
@@ -828,7 +832,13 @@ void Engine::updateObjects(float32 dt)
 	}
 }
 
-
+string Engine::getSaveLocation()
+{
+	string s = ttvfs::GetAppDir(m_sAppName.c_str());
+	s += "/";
+	ttvfs::CreateDirRec(s.c_str());
+	return s;
+}
 
 
 

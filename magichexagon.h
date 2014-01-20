@@ -113,7 +113,7 @@ protected:
 
 public:
 	//magichexagon.cpp functions - fairly generic 
-    magichexagonEngine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sIcon, bool bResizable = false);
+    magichexagonEngine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sAppName, string sIcon, bool bResizable = false);
     ~magichexagonEngine();
 	
 	bool _shouldSelect(b2Fixture* fix);

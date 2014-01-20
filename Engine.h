@@ -38,6 +38,7 @@ class Engine
 private:
     //Variables for use by the engine
 	string m_sTitle;
+	string m_sAppName;
 	string m_sIcon;
 	SDL_Window* m_Window;
 	list<commandlineArg> lCommandLine;
@@ -90,7 +91,7 @@ protected:
 
 public:
     //Constructor/destructor
-    Engine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sIcon, bool bResizable = false);
+    Engine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sAppName, string sIcon, bool bResizable = false);
     ~Engine();
 
     //Methods
@@ -142,6 +143,7 @@ public:
 	void stepPhysics(float32 dt)    {m_physicsWorld->Step(dt * m_fTimeScale, VELOCITY_ITERATIONS, PHYSICS_ITERATIONS);};
 	void pauseOnKeyboard(bool p)	{m_bPauseOnKeyboardFocus = p;};
 	bool pausesOnFocusLost()		{return m_bPauseOnKeyboardFocus;};
+	string getSaveLocation();		//Get good location to save config files/save files
 
     //Accessor methods
     void setFramerate(float32 fFramerate);
