@@ -131,6 +131,9 @@ public:
 	obj* objFromXML(string sXMLFilename, Point ptOffset, Point ptVel = Point(0,0));
 	Rect getCameraView();		//Return the rectangle, in world position z=0, that the camera can see 
 		
+	void drawStartMenu();
+	void drawLevelSelectMenu();
+		
 	//level.cpp functions
 	bool loadPatterns(string sFilename);
 	void renderLevel();

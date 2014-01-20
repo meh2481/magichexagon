@@ -29,6 +29,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	CameraPos.z = m_fDefCameraZ;
 	m_bMouseGrabOnWindowRegain = false;//TODO: true;
 	m_iCurMenu = MENU_START;
+	m_fRotateAngle = 0;
 	
 	//Game vars
 	resetLevel();
@@ -56,6 +57,7 @@ void magichexagonEngine::frame(float32 dt)
 	switch(m_iCurMenu)
 	{
 		case MENU_START:
+			m_fRotateAngle += -60 * dt;
 			break;
 			
 		case MENU_LEVELSELECT:
@@ -81,15 +83,14 @@ void magichexagonEngine::draw()
 	switch(m_iCurMenu)
 	{
 		case MENU_START:
-			//TODO
+			drawStartMenu();
 			break;
 			
 		case MENU_LEVELSELECT:
-			//TODO
+			drawLevelSelectMenu();
 			break;
 			
 		case MENU_NONE:
-			//Draw level
 			renderLevel();
 			break;
 	}
@@ -492,6 +493,39 @@ void magichexagonEngine::handleKeys()
 	checkSides(fPrevAngle, prevHex, calcPlayerHex());
 }
 
+void magichexagonEngine::drawStartMenu()
+{
+	glPushMatrix();
+	//Rotate by how much we're spinning
+	glTranslatef(0, -8, 0);
+	glRotatef(m_fRotateAngle, 0, 0, 1);
+	glTexCoord2f(0.0, 0.0);
+	//Get how large our screenspace is
+	Point ptWorldSize(getWidth(), getHeight());
+	ptWorldSize = worldMovement(ptWorldSize);	//Get the actual world movement in texels
+	float fDrawSize = ptWorldSize.Length() * 2.0;
+	for(int i = 0; i < 6; i++)
+	{
+		if(i % 2)
+			glColor4f(0.9, 0.9, 0.9, 1.0);
+		else
+			glColor4f(0.7, 0.7, 0.7, 1.0);
+		glBegin(GL_TRIANGLES);
+		//center
+		glVertex3f(0.0, 0.0, 0.0);
+		//Left
+		glVertex3f(-fDrawSize, 0.0, 0.0);
+		//Top left
+		glVertex3f(-0.5*fDrawSize, 0.866*fDrawSize, 0.0);
+		glEnd();
+		glRotatef(60, 0, 0, 1);
+	}
+	glPopMatrix();
+}
 
+void magichexagonEngine::drawLevelSelectMenu()
+{
+	
+}
 
 
