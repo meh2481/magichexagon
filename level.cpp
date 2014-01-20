@@ -251,11 +251,12 @@ void magichexagonEngine::updateLevel(float32 dt)
 void magichexagonEngine::nextPattern()
 {
 	int iCurLevel = m_iCurLevel;
-	if(!m_Patterns[iCurLevel].size())
+	if(m_Patterns.size() <= m_iCurLevel)
 	{
 		cout << "Empty level" << endl;
 		iCurLevel = 0;
 	}
+	
 	int iPattern = rand() % m_Patterns[iCurLevel].size();	//Pick a random pattern out of those available
 	int startHex = rand() % 6;	//Start pattern at a random hex value (so it'll point in a random direction)
 	
@@ -367,6 +368,8 @@ void magichexagonEngine::changeLevel(float32 time)
 		m_fTargetSpinReverse = FLT_MAX;
 		m_fTargetSpinIncrease = FLT_MAX;
 		m_iCurLevel = 6;
+		for(int i = 0; i < 6; i++)
+			m_walls[i].clear();
 	}
 	else if(time >= LEVEL_LAUGHTER)
 	{
@@ -381,6 +384,8 @@ void magichexagonEngine::changeLevel(float32 time)
 		phaseColor(&m_colors[7], Pinkie, 0.5);
 		centerCutie = getImage("res/gfx/pinkiemark.png");
 		m_iCurLevel = 5;
+		for(int i = 0; i < 6; i++)
+			m_walls[i].clear();
 	}
 	else if(time >= LEVEL_GENEROSITY)
 	{
@@ -395,6 +400,8 @@ void magichexagonEngine::changeLevel(float32 time)
 		phaseColor(&m_colors[7], RarityEyes, 0.5);
 		centerCutie = getImage("res/gfx/rarimark.png");
 		m_iCurLevel = 4;
+		for(int i = 0; i < 6; i++)
+			m_walls[i].clear();
 	}
 	else if(time >= LEVEL_LOYALTY)
 	{
@@ -409,6 +416,8 @@ void magichexagonEngine::changeLevel(float32 time)
 		phaseColor(&m_colors[7], DashManeV, 0.5);
 		centerCutie = getImage("res/gfx/dashmark.png");
 		m_iCurLevel = 3;
+		for(int i = 0; i < 6; i++)
+			m_walls[i].clear();
 	}
 	else if(time >= LEVEL_KINDNESS)
 	{
@@ -423,6 +432,8 @@ void magichexagonEngine::changeLevel(float32 time)
 		phaseColor(&m_colors[7], Fluttershy, 0.5);
 		centerCutie = getImage("res/gfx/fluttermark.png");
 		m_iCurLevel = 2;
+		for(int i = 0; i < 6; i++)
+			m_walls[i].clear();
 	}
 	else if(time >= LEVEL_HONESTY)
 	{
@@ -442,6 +453,8 @@ void magichexagonEngine::changeLevel(float32 time)
 		m_fPlayerMove = 7.0;
 		m_fTargetSpinReverse = randFloat(4,7);
 		m_fTargetSpinIncrease = randFloat(12, 15);
+		for(int i = 0; i < 6; i++)
+			m_walls[i].clear();
 	}
 	else
 		errlog << "Unknown level-change time: " << time << endl;
