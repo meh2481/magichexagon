@@ -168,7 +168,7 @@ void magichexagonEngine::updateWalls(float32 dt)
 				float32 wallAngle = atan(playerHeight / (1.0 + i->height - playerDist)) * RAD2DEG;
 				if(wallAngle > 60.0f || //If the angle here is greater than 60 degrees, we have a collision
 				  //If we're at the very edge of this hex, we can test the height directly.
-				  (plAngle == 0.0 && i->height + 1.0 < s_fPlayerPos && i->height + i->length + 1.0 > s_fPlayerPos))		
+				  (plAngle <= 5.0 && i->height + 1.0 < s_fPlayerPos && i->height + i->length + 1.0 > s_fPlayerPos))		
 				{
 					m_iCurMenu = MENU_LEVELSELECT;
 					pauseMusic();
@@ -251,9 +251,9 @@ void magichexagonEngine::updateLevel(float32 dt)
 void magichexagonEngine::nextPattern()
 {
 	int iCurLevel = m_iCurLevel;
-	if(m_Patterns.size() <= m_iCurLevel)
+	if(m_Patterns.size() <= m_iCurLevel || !m_Patterns[iCurLevel].size())
 	{
-		cout << "Empty level" << endl;
+		//cout << "Empty level" << endl;
 		iCurLevel = 0;
 	}
 	
@@ -267,7 +267,7 @@ void magichexagonEngine::nextPattern()
 			hex = rand() % 6;	//Set to random hex if out of range (can use this to set random patterns)
 		if(hex + startHex > 5)
 			hex -= 6;
-		addWall(i->height + WALL_START_HEIGHT, m_fWallSpeed, i->length, hex + startHex);	//Add this wall to our list
+		addWall(i->height + m_fWallStartHeight, m_fWallSpeed, i->length, hex + startHex);	//Add this wall to our list
 	}
 }
 
@@ -348,6 +348,7 @@ void magichexagonEngine::resetLevel()
 	m_iCurLevel = 0;
 	m_fWallSpeed = 3.5;
 	m_fPlayerMove = 5.0;
+	m_fWallStartHeight = 15.0;
 }
 
 void magichexagonEngine::changeLevel(float32 time)
@@ -375,15 +376,20 @@ void magichexagonEngine::changeLevel(float32 time)
 	{
 		playSound("laughter");
 		phaseColor(&m_colors[0], Pinkie, 0.5);
-		phaseColor(&m_colors[1], PinkieEyes, 0.5);
-		phaseColor(&m_colors[2], PinkieMane, 0.5);
+		phaseColor(&m_colors[1], PinkieMane, 0.5);
+		phaseColor(&m_colors[2], PinkieEyes, 0.5);
 		phaseColor(&m_colors[3], Pinkie, 0.5);
-		phaseColor(&m_colors[4], PinkieMane, 0.5);
+		phaseColor(&m_colors[4], PinkieEyes, 0.5);
 		phaseColor(&m_colors[5], Pinkie, 0.5);
-		phaseColor(&m_colors[6], PinkieMane, 0.5);
+		phaseColor(&m_colors[6], PinkieEyes, 0.5);
 		phaseColor(&m_colors[7], Pinkie, 0.5);
 		centerCutie = getImage("res/gfx/pinkiemark.png");
 		m_iCurLevel = 5;
+		m_fRotateAdd = 175;
+		m_fWallSpeed = 9.5;
+		m_fPlayerMove = 9.5;
+		m_fTargetSpinReverse = randFloat(4,7);
+		m_fTargetSpinIncrease = randFloat(12, 15);
 		for(int i = 0; i < 6; i++)
 			m_walls[i].clear();
 	}
@@ -400,6 +406,11 @@ void magichexagonEngine::changeLevel(float32 time)
 		phaseColor(&m_colors[7], RarityEyes, 0.5);
 		centerCutie = getImage("res/gfx/rarimark.png");
 		m_iCurLevel = 4;
+		m_fRotateAdd = 150;
+		m_fWallSpeed = 8.5;
+		m_fPlayerMove = 8.5;
+		m_fTargetSpinReverse = randFloat(4,7);
+		m_fTargetSpinIncrease = randFloat(12, 15);
 		for(int i = 0; i < 6; i++)
 			m_walls[i].clear();
 	}
@@ -416,6 +427,11 @@ void magichexagonEngine::changeLevel(float32 time)
 		phaseColor(&m_colors[7], DashManeV, 0.5);
 		centerCutie = getImage("res/gfx/dashmark.png");
 		m_iCurLevel = 3;
+		m_fRotateAdd = 125;
+		m_fWallSpeed = 8;
+		m_fPlayerMove = 8.0;
+		m_fTargetSpinReverse = randFloat(4,7);
+		m_fTargetSpinIncrease = randFloat(12, 15);
 		for(int i = 0; i < 6; i++)
 			m_walls[i].clear();
 	}
@@ -432,6 +448,11 @@ void magichexagonEngine::changeLevel(float32 time)
 		phaseColor(&m_colors[7], Fluttershy, 0.5);
 		centerCutie = getImage("res/gfx/fluttermark.png");
 		m_iCurLevel = 2;
+		m_fRotateAdd = 100;
+		m_fWallSpeed = 7;
+		m_fPlayerMove = 8.0;
+		m_fTargetSpinReverse = randFloat(4,7);
+		m_fTargetSpinIncrease = randFloat(12, 15);
 		for(int i = 0; i < 6; i++)
 			m_walls[i].clear();
 	}

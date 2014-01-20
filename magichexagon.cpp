@@ -38,10 +38,6 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	//m_hud = new HUD("hud");
 	//m_hud->create("res/hud.xml");
 	
-	m_debugDraw.SetFlags(b2Draw::e_shapeBit | b2Draw::e_jointBit | b2Draw::e_centerOfMassBit);
-	b2World* world = getWorld();
-	world->SetDebugDraw(&m_debugDraw);
-	
 	setTimeScale(DEFAULT_TIMESCALE);	//Speed up time
 }
 

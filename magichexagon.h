@@ -48,8 +48,6 @@ public:
 	float32 length;
 };
 
-#define WALL_START_HEIGHT 	15.0
-
 #define MENU_START			0
 #define MENU_LEVELSELECT	1
 #define MENU_NONE			2
@@ -82,7 +80,6 @@ private:
   //Important general-purpose game variables
   ttvfs::VFSHelper vfs;
   Vec3 CameraPos;
-  DebugDraw m_debugDraw;
   //HUD* m_hud;
   bool m_bMouseGrabOnWindowRegain;
   float32 m_fDefCameraZ;	//Default position of camera on z axis
@@ -104,6 +101,7 @@ private:
   int m_iCurLevel;
   float m_fWallSpeed;
   float m_fPlayerMove;
+  float m_fWallStartHeight;
 
 protected:
     void frame(float32 dt);
