@@ -349,6 +349,7 @@ void magichexagonEngine::resetLevel()
 	m_fWallSpeed = 3.5;
 	m_fPlayerMove = 5.0;
 	m_fWallStartHeight = 15.0;
+	CameraPos.z = m_fDefCameraZ;
 }
 
 void magichexagonEngine::changeLevel(float32 time)
@@ -369,6 +370,9 @@ void magichexagonEngine::changeLevel(float32 time)
 		m_fTargetSpinReverse = FLT_MAX;
 		m_fTargetSpinIncrease = FLT_MAX;
 		m_iCurLevel = 6;
+		m_fWallSpeed = 10;
+		m_fPlayerMove = 10;
+		CameraPos.z -= 2;
 		for(int i = 0; i < 6; i++)
 			m_walls[i].clear();
 	}
