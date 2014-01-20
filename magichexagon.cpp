@@ -62,8 +62,8 @@ void magichexagonEngine::frame(float32 dt)
 			break;
 			
 		case MENU_NONE:
-			updateColors(dt);
-			updateLevel(dt);
+			updateColors(dt*getTimeScale());
+			updateLevel(dt*getTimeScale());
 			handleKeys();
 			break;
 	}
@@ -477,12 +477,16 @@ obj* magichexagonEngine::objFromXML(string sXMLFilename, Point ptOffset, Point p
 
 void magichexagonEngine::handleKeys()
 {
+	if(keyDown(SDL_SCANCODE_B))
+		setTimeScale(DEFAULT_TIMESCALE/3);
+	else
+		setTimeScale(DEFAULT_TIMESCALE);
 	int prevHex = calcPlayerHex();
 	float32 fPrevAngle = m_fPlayerAngle;
 	if(keyDown(SDL_SCANCODE_LEFT))
-		m_fPlayerAngle += m_fPlayerMove;
+		m_fPlayerAngle += m_fPlayerMove * getTimeScale();
 	if(keyDown(SDL_SCANCODE_RIGHT))
-		m_fPlayerAngle -= m_fPlayerMove;
+		m_fPlayerAngle -= m_fPlayerMove * getTimeScale();
 	checkSides(fPrevAngle, prevHex, calcPlayerHex());
 }
 

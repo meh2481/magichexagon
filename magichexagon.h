@@ -13,7 +13,7 @@
 #define DEFAULT_WIDTH	800
 #define DEFAULT_HEIGHT	600
 
-#define DEFAULT_TIMESCALE	2.5
+#define DEFAULT_TIMESCALE	1.0
 
 //const variables
 const Color FluttershyMane(248, 185, 207);
@@ -102,6 +102,8 @@ private:
   float m_fWallSpeed;
   float m_fPlayerMove;
   float m_fWallStartHeight;
+  float m_fTargetMadSpin;
+  float m_fMadSpinLength;
 
 protected:
     void frame(float32 dt);

@@ -222,12 +222,30 @@ void magichexagonEngine::updateLevel(float32 dt)
 
 	//Spin!
 	m_fTotalSpinTime += dt;
-	if(m_fTotalSpinTime > m_fTargetSpinReverse)
+	if(m_fTotalSpinTime > m_fTargetMadSpin)	//MAAD SPIIIN
+	{
+		if(m_fTotalSpinTime > m_fTargetMadSpin + m_fMadSpinLength)
+		{
+			m_fTargetMadSpin += m_fMadSpinLength + (m_iCurLevel == 6)?(randFloat(5, 8)):(randFloat(10, 12));
+			
+			//For "magic" level, we want the screen to be perfectly even when not rotating like mad
+			if(m_iCurLevel == 6)
+			{
+				if(m_fRotateAngle/60.0 - floorf(m_fRotateAngle/60.0) > 0.5)
+					m_fRotateAngle = ceilf(m_fRotateAngle/60.0)*60;
+				else
+					m_fRotateAngle = floorf(m_fRotateAngle/60.0)*60;
+			}
+		}
+		else
+			m_fRotateAngle += (m_fRotateAdd > 0)?(-(m_fRotateAdd+300)*dt):((-m_fRotateAdd+300)*dt);
+	}
+	else if(m_fTotalSpinTime > m_fTargetSpinReverse)
 	{
 		m_fTargetSpinReverse += randFloat(4, 7);
 		m_fRotateAdd = -m_fRotateAdd;
 	}
-	if(m_fTotalSpinTime > m_fTargetSpinIncrease && m_fTargetSpinIncrease > 0)
+	else if(m_fTotalSpinTime > m_fTargetSpinIncrease && m_fTargetSpinIncrease > 0)
 	{
 		if(m_fRotateAdd < 0)
 			m_fRotateAdd -= 50;
@@ -350,6 +368,8 @@ void magichexagonEngine::resetLevel()
 	m_fPlayerMove = 5.0;
 	m_fWallStartHeight = 15.0;
 	CameraPos.z = m_fDefCameraZ;
+	m_fMadSpinLength = 0;
+	m_fTargetMadSpin = FLT_MAX;
 }
 
 void magichexagonEngine::changeLevel(float32 time)
@@ -373,6 +393,8 @@ void magichexagonEngine::changeLevel(float32 time)
 		m_fWallSpeed = 10;
 		m_fPlayerMove = 10;
 		CameraPos.z -= 2;
+		m_fMadSpinLength = 2.0;
+		m_fTargetMadSpin = randFloat(5, 8);
 		for(int i = 0; i < 6; i++)
 			m_walls[i].clear();
 	}
@@ -457,6 +479,8 @@ void magichexagonEngine::changeLevel(float32 time)
 		m_fPlayerMove = 8.0;
 		m_fTargetSpinReverse = randFloat(4,7);
 		m_fTargetSpinIncrease = randFloat(12, 15);
+		m_fMadSpinLength = 1.0;
+		m_fTargetMadSpin = randFloat(9, 11);
 		for(int i = 0; i < 6; i++)
 			m_walls[i].clear();
 	}
