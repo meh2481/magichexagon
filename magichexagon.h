@@ -20,9 +20,7 @@ const Color FluttershyMane(248, 185, 207);
 const Color Fluttershy(253, 246, 175);
 const Color FluttershyEyes(0, 173, 168);
 const Color Twilight(218,172,232);
-const Color TwilightMane1(234,218,240);
-const Color TwilightMane2(233,72,143);
-const Color TwilightMane3(102,47,137);
+const Color TwilightMane(102,47,137);
 const Color Rarity(238,241,243);
 const Color RarityMane(101,77,160);
 const Color RarityEyes(57,120,187);
@@ -51,11 +49,18 @@ public:
 };
 
 #define WALL_START_HEIGHT 	15.0
-#define WALL_SPEED 			3.5
 
 #define MENU_START			0
 #define MENU_LEVELSELECT	1
 #define MENU_NONE			2
+
+#define LEVELTIME			20.0
+#define LEVEL_HONESTY		1.0*LEVELTIME
+#define LEVEL_KINDNESS		2.0*LEVELTIME
+#define LEVEL_LOYALTY		3.0*LEVELTIME
+#define LEVEL_GENEROSITY	4.0*LEVELTIME
+#define LEVEL_LAUGHTER		5.0*LEVELTIME
+#define LEVEL_MAGIC			6.0*LEVELTIME
 
 class ColorPhase
 {
@@ -95,7 +100,10 @@ private:
   float m_fTotalSpinTime;
   float m_fTargetSpinReverse;
   float m_fTargetSpinIncrease;
+  float m_fTargetSpinTime;
   int m_iCurLevel;
+  float m_fWallSpeed;
+  float m_fPlayerMove;
 
 protected:
     void frame(float32 dt);
@@ -131,6 +139,7 @@ public:
 	void nextPattern();						//Lay down next pattern of walls
 	int  calcPlayerHex(float32* relAngle = NULL);
 	void checkSides(float32 fOldAngle, int prevHex, int curHex);
+	void changeLevel(float32 time);	//Change the level according to the given time
 	
 	//color.cpp functions
 	void updateColors(float32 dt);

@@ -206,82 +206,34 @@ void magichexagonEngine::handleEvent(SDL_Event event)
                       toggleFullscreen();
                     break;
 					
-				case SDL_SCANCODE_F:
-					playSound("kindness");
-					phaseColor(&m_colors[0], Fluttershy, 0.5);
-					phaseColor(&m_colors[1], FluttershyEyes, 0.5);
-					phaseColor(&m_colors[2], FluttershyMane, 0.5);
-					phaseColor(&m_colors[3], Fluttershy, 0.5);
-					phaseColor(&m_colors[4], FluttershyMane, 0.5);
-					phaseColor(&m_colors[5], Fluttershy, 0.5);
-					phaseColor(&m_colors[6], FluttershyMane, 0.5);
-					phaseColor(&m_colors[7], Fluttershy, 0.5);
-					centerCutie = getImage("res/gfx/fluttermark.png");
+				case SDL_SCANCODE_Q:
+					changeLevel(LEVEL_HONESTY);
+					m_fTargetSpinTime = FLT_MAX;
+					break;
+					
+				case SDL_SCANCODE_W:
+					changeLevel(LEVEL_KINDNESS);
+					m_fTargetSpinTime = FLT_MAX;
+					break;
+					
+				case SDL_SCANCODE_E:
+					changeLevel(LEVEL_LOYALTY);
+					m_fTargetSpinTime = FLT_MAX;
 					break;
 					
 				case SDL_SCANCODE_R:
-					playSound("generosity");
-					phaseColor(&m_colors[0], Rarity, 0.5);
-					phaseColor(&m_colors[1], RarityEyes, 0.5);
-					phaseColor(&m_colors[2], RarityMane, 0.5);
-					phaseColor(&m_colors[3], Rarity, 0.5);
-					phaseColor(&m_colors[4], RarityMane, 0.5);
-					phaseColor(&m_colors[5], Rarity, 0.5);
-					phaseColor(&m_colors[6], RarityMane, 0.5);
-					phaseColor(&m_colors[7], Rarity, 0.5);
-					centerCutie = getImage("res/gfx/rarimark.png");
-					break;
-					
-				case SDL_SCANCODE_P:
-					playSound("laughter");
-					phaseColor(&m_colors[0], Pinkie, 0.5);
-					phaseColor(&m_colors[1], PinkieEyes, 0.5);
-					phaseColor(&m_colors[2], PinkieMane, 0.5);
-					phaseColor(&m_colors[3], Pinkie, 0.5);
-					phaseColor(&m_colors[4], PinkieMane, 0.5);
-					phaseColor(&m_colors[5], Pinkie, 0.5);
-					phaseColor(&m_colors[6], PinkieMane, 0.5);
-					phaseColor(&m_colors[7], Pinkie, 0.5);
-					centerCutie = getImage("res/gfx/pinkiemark.png");
-					break;
-					
-				case SDL_SCANCODE_A:
-					playSound("honesty");
-					phaseColor(&m_colors[0], AJ, 0.5);
-					phaseColor(&m_colors[1], AJEyes, 0.5);
-					phaseColor(&m_colors[2], AJMane, 0.5);
-					phaseColor(&m_colors[3], AJ, 0.5);
-					phaseColor(&m_colors[4], AJMane, 0.5);
-					phaseColor(&m_colors[5], AJ, 0.5);
-					phaseColor(&m_colors[6], AJMane, 0.5);
-					phaseColor(&m_colors[7], AJ, 0.5);
-					centerCutie = getImage("res/gfx/ajmark.png");
+					changeLevel(LEVEL_GENEROSITY);
+					m_fTargetSpinTime = FLT_MAX;
 					break;
 					
 				case SDL_SCANCODE_T:
-					playSound("magic");
-					phaseColor(&m_colors[0], Twilight, 0.5);
-					phaseColor(&m_colors[1], TwilightMane1, 0.5);
-					phaseColor(&m_colors[2], TwilightMane2, 0.5);
-					phaseColor(&m_colors[3], TwilightMane3, 0.5);
-					phaseColor(&m_colors[4], TwilightMane2, 0.5);
-					phaseColor(&m_colors[5], TwilightMane3, 0.5);
-					phaseColor(&m_colors[6], TwilightMane2, 0.5);
-					phaseColor(&m_colors[7], TwilightMane3, 0.5);
-					centerCutie = getImage("res/gfx/twilimark.png");
+					changeLevel(LEVEL_LAUGHTER);
+					m_fTargetSpinTime = FLT_MAX;
 					break;
 					
-				case SDL_SCANCODE_D:
-					playSound("loyalty");
-					phaseColor(&m_colors[0], Dash, 0.5);
-					phaseColor(&m_colors[1], Color(0,0,0), 0.5);
-					phaseColor(&m_colors[2], DashManeR, 0.5);
-					phaseColor(&m_colors[3], DashManeO, 0.5);
-					phaseColor(&m_colors[4], DashManeY, 0.5);
-					phaseColor(&m_colors[5], DashManeG, 0.5);
-					phaseColor(&m_colors[6], DashManeB, 0.5);
-					phaseColor(&m_colors[7], DashManeV, 0.5);
-					centerCutie = getImage("res/gfx/dashmark.png");
+				case SDL_SCANCODE_Y:
+					changeLevel(LEVEL_MAGIC);
+					m_fTargetSpinTime = FLT_MAX;
 					break;
 				
 				case SDL_SCANCODE_F10:
@@ -532,9 +484,9 @@ void magichexagonEngine::handleKeys()
 	int prevHex = calcPlayerHex();
 	float32 fPrevAngle = m_fPlayerAngle;
 	if(keyDown(SDL_SCANCODE_LEFT))
-		m_fPlayerAngle += 5;
+		m_fPlayerAngle += m_fPlayerMove;
 	if(keyDown(SDL_SCANCODE_RIGHT))
-		m_fPlayerAngle -= 5;
+		m_fPlayerAngle -= m_fPlayerMove;
 	checkSides(fPrevAngle, prevHex, calcPlayerHex());
 }
 

@@ -229,25 +229,44 @@ void magichexagonEngine::updateLevel(float32 dt)
 	}
 	if(m_fTotalSpinTime > m_fTargetSpinIncrease && m_fTargetSpinIncrease > 0)
 	{
-		m_fRotateAdd *= 2;
+		if(m_fRotateAdd < 0)
+			m_fRotateAdd -= 50;
+		else
+			m_fRotateAdd += 50;
 		m_fTargetSpinIncrease = 0;
 	}
 	m_fRotateAngle += m_fRotateAdd * dt;
+	
+	//Update timer!
+	if(m_fTotalSpinTime > m_fTargetSpinTime)
+	{
+		if(m_fTotalSpinTime < LEVEL_MAGIC)
+			m_fTargetSpinTime += LEVELTIME;
+		else
+			m_fTargetSpinTime = FLT_MAX;
+		changeLevel(m_fTotalSpinTime);
+	}
 }
 
 void magichexagonEngine::nextPattern()
 {
-	int iPattern = rand() % m_Patterns[m_iCurLevel].size();	//Pick a random pattern out of those available
+	int iCurLevel = m_iCurLevel;
+	if(!m_Patterns[iCurLevel].size())
+	{
+		cout << "Empty level" << endl;
+		iCurLevel = 0;
+	}
+	int iPattern = rand() % m_Patterns[iCurLevel].size();	//Pick a random pattern out of those available
 	int startHex = rand() % 6;	//Start pattern at a random hex value (so it'll point in a random direction)
 	
-	for(list<pattern>::iterator i = m_Patterns[m_iCurLevel][iPattern].begin(); i != m_Patterns[m_iCurLevel][iPattern].end(); i++)
+	for(list<pattern>::iterator i = m_Patterns[iCurLevel][iPattern].begin(); i != m_Patterns[iCurLevel][iPattern].end(); i++)
 	{
 		int hex = i->hex;
 		if(hex < 0 || hex > 5)
 			hex = rand() % 6;	//Set to random hex if out of range (can use this to set random patterns)
 		if(hex + startHex > 5)
 			hex -= 6;
-		addWall(i->height + WALL_START_HEIGHT, WALL_SPEED, i->length, hex + startHex);	//Add this wall to our list
+		addWall(i->height + WALL_START_HEIGHT, m_fWallSpeed, i->length, hex + startHex);	//Add this wall to our list
 	}
 }
 
@@ -322,17 +341,123 @@ void magichexagonEngine::resetLevel()
 	centerCutie = NULL;
 	m_fPlayerAngle = -92.5f;
 	m_fTotalSpinTime = 0.0f;
-	m_fTargetSpinReverse = 7.0f;
-	m_fTargetSpinIncrease = 15.0f;
+	m_fTargetSpinReverse = randFloat(4,7);
+	m_fTargetSpinTime = LEVELTIME;
+	m_fTargetSpinIncrease = randFloat(12, 15);
 	m_iCurLevel = 0;
-	//TODO: Order of levels:
-	//1. Honesty
-	//2. Kindness
-	//3. Loyalty
-	//4. Generosity
-	//5. Laughter
-	//6. Magic
+	m_fWallSpeed = 3.5;
+	m_fPlayerMove = 5.0;
 }
+
+void magichexagonEngine::changeLevel(float32 time)
+{
+	if(time >= LEVEL_MAGIC)
+	{
+		playSound("magic");
+		phaseColor(&m_colors[0], Twilight, 0.5);
+		phaseColor(&m_colors[1], Twilight, 0.5);
+		phaseColor(&m_colors[2], TwilightMane, 0.5);
+		phaseColor(&m_colors[3], TwilightMane, 0.5);
+		phaseColor(&m_colors[4], TwilightMane, 0.5);
+		phaseColor(&m_colors[5], TwilightMane, 0.5);
+		phaseColor(&m_colors[6], TwilightMane, 0.5);
+		phaseColor(&m_colors[7], TwilightMane, 0.5);
+		centerCutie = getImage("res/gfx/twilimark.png");
+		m_fRotateAdd = m_fRotateAngle = 0;
+		m_fTargetSpinReverse = FLT_MAX;
+		m_fTargetSpinIncrease = FLT_MAX;
+		m_iCurLevel = 6;
+	}
+	else if(time >= LEVEL_LAUGHTER)
+	{
+		playSound("laughter");
+		phaseColor(&m_colors[0], Pinkie, 0.5);
+		phaseColor(&m_colors[1], PinkieEyes, 0.5);
+		phaseColor(&m_colors[2], PinkieMane, 0.5);
+		phaseColor(&m_colors[3], Pinkie, 0.5);
+		phaseColor(&m_colors[4], PinkieMane, 0.5);
+		phaseColor(&m_colors[5], Pinkie, 0.5);
+		phaseColor(&m_colors[6], PinkieMane, 0.5);
+		phaseColor(&m_colors[7], Pinkie, 0.5);
+		centerCutie = getImage("res/gfx/pinkiemark.png");
+		m_iCurLevel = 5;
+	}
+	else if(time >= LEVEL_GENEROSITY)
+	{
+		playSound("generosity");
+		phaseColor(&m_colors[0], RarityEyes, 0.5);
+		phaseColor(&m_colors[1], Rarity, 0.5);
+		phaseColor(&m_colors[2], RarityMane, 0.5);
+		phaseColor(&m_colors[3], RarityEyes, 0.5);
+		phaseColor(&m_colors[4], RarityMane, 0.5);
+		phaseColor(&m_colors[5], RarityEyes, 0.5);
+		phaseColor(&m_colors[6], RarityMane, 0.5);
+		phaseColor(&m_colors[7], RarityEyes, 0.5);
+		centerCutie = getImage("res/gfx/rarimark.png");
+		m_iCurLevel = 4;
+	}
+	else if(time >= LEVEL_LOYALTY)
+	{
+		playSound("loyalty");
+		phaseColor(&m_colors[0], Dash, 0.5);
+		phaseColor(&m_colors[1], Color(0,0,0), 0.5);
+		phaseColor(&m_colors[2], DashManeR, 0.5);
+		phaseColor(&m_colors[3], DashManeO, 0.5);
+		phaseColor(&m_colors[4], DashManeY, 0.5);
+		phaseColor(&m_colors[5], DashManeG, 0.5);
+		phaseColor(&m_colors[6], DashManeB, 0.5);
+		phaseColor(&m_colors[7], DashManeV, 0.5);
+		centerCutie = getImage("res/gfx/dashmark.png");
+		m_iCurLevel = 3;
+	}
+	else if(time >= LEVEL_KINDNESS)
+	{
+		playSound("kindness");
+		phaseColor(&m_colors[0], Fluttershy, 0.5);
+		phaseColor(&m_colors[1], FluttershyEyes, 0.5);
+		phaseColor(&m_colors[2], FluttershyMane, 0.5);
+		phaseColor(&m_colors[3], Fluttershy, 0.5);
+		phaseColor(&m_colors[4], FluttershyMane, 0.5);
+		phaseColor(&m_colors[5], Fluttershy, 0.5);
+		phaseColor(&m_colors[6], FluttershyMane, 0.5);
+		phaseColor(&m_colors[7], Fluttershy, 0.5);
+		centerCutie = getImage("res/gfx/fluttermark.png");
+		m_iCurLevel = 2;
+	}
+	else if(time >= LEVEL_HONESTY)
+	{
+		playSound("honesty");
+		phaseColor(&m_colors[0], AJ, 0.5);
+		phaseColor(&m_colors[1], AJEyes, 0.5);
+		phaseColor(&m_colors[2], AJMane, 0.5);
+		phaseColor(&m_colors[3], AJ, 0.5);
+		phaseColor(&m_colors[4], AJMane, 0.5);
+		phaseColor(&m_colors[5], AJ, 0.5);
+		phaseColor(&m_colors[6], AJMane, 0.5);
+		phaseColor(&m_colors[7], AJ, 0.5);
+		centerCutie = getImage("res/gfx/ajmark.png");
+		m_iCurLevel = 1;
+		m_fRotateAdd = 75;
+		m_fWallSpeed = 5.0;
+		m_fPlayerMove = 7.0;
+		m_fTargetSpinReverse = randFloat(4,7);
+		m_fTargetSpinIncrease = randFloat(12, 15);
+	}
+	else
+		errlog << "Unknown level-change time: " << time << endl;
+	
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
