@@ -201,7 +201,7 @@ void magichexagonEngine::handleEvent(SDL_Event event)
                     if(keyDown(SDL_SCANCODE_ALT))
                       toggleFullscreen();
                     break;
-					
+#ifdef DEBUG
 				case SDL_SCANCODE_Q:
 					changeLevel(LEVEL_HONESTY);
 					m_fTargetSpinTime = FLT_MAX;
@@ -231,7 +231,7 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 					changeLevel(LEVEL_MAGIC);
 					m_fTargetSpinTime = FLT_MAX;
 					break;
-				
+#endif
 				case SDL_SCANCODE_F10:
 				case SDL_SCANCODE_G:
 					if(keyDown(SDL_SCANCODE_CTRL))
@@ -477,10 +477,12 @@ obj* magichexagonEngine::objFromXML(string sXMLFilename, Point ptOffset, Point p
 
 void magichexagonEngine::handleKeys()
 {
+#ifdef DEBUG
 	if(keyDown(SDL_SCANCODE_B))
 		setTimeScale(DEFAULT_TIMESCALE/3);
 	else
 		setTimeScale(DEFAULT_TIMESCALE);
+#endif
 	int prevHex = calcPlayerHex();
 	float32 fPrevAngle = m_fPlayerAngle;
 	if(keyDown(SDL_SCANCODE_LEFT))

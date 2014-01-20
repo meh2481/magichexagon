@@ -6,9 +6,10 @@
 #define CUTSCENEENGINE_H
 
 #include "Engine.h"
-#include "DebugDraw.h"
 #include <vector>
 #include <set>
+
+#define DEBUG	//Debug mode; cheat keys and such
 
 #define DEFAULT_WIDTH	800
 #define DEFAULT_HEIGHT	600
