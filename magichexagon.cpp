@@ -27,9 +27,14 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	CameraPos.x = 0;
 	CameraPos.y = 0;
 	CameraPos.z = m_fDefCameraZ;
-	m_bMouseGrabOnWindowRegain = false;//TODO: true;
+#ifdef DEBUG
+	m_bMouseGrabOnWindowRegain = false;
+#else
+	m_bMouseGrabOnWindowRegain = true;
+#endif
 	m_iCurMenu = MENU_START;
 	m_fRotateAngle = 0;
+	m_iCurLevel = 0;
 	
 	//Game vars
 	resetLevel();
@@ -254,6 +259,7 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 						case MENU_START:
 							playSound("menubegin");
 							m_iCurMenu = MENU_LEVELSELECT;
+							m_iCurLevel = 0;
 							break;
 							
 						case MENU_LEVELSELECT:
@@ -539,12 +545,12 @@ void magichexagonEngine::drawLevelSelectMenu()
 	}
 	m_colors[0] = Color(255,255,255);	//Center part
 	m_colors[1] = Color(0,0,0);			//Center ring and triangle
-	m_colors[2] = Twilight;				//Radial arm 1
-	m_colors[3] = Pinkie;				//Radial arm 2
-	m_colors[4] = Rarity;				//Radial arm 3
-	m_colors[5] = Dash;					//Radial arm 4
-	m_colors[6] = Fluttershy;			//Radial arm 5
-	m_colors[7] = AJ;					//Radial arm 6
+	m_colors[2] = Pinkie;				//Radial arm 1
+	m_colors[3] = Rarity;				//Radial arm 2
+	m_colors[4] = Dash;					//Radial arm 3
+	m_colors[5] = Fluttershy;			//Radial arm 4
+	m_colors[6] = AJ;					//Radial arm 5
+	m_colors[7] = Twilight;				//Radial arm 6
 	renderLevel();
 }
 

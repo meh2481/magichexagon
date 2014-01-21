@@ -66,7 +66,7 @@ void magichexagonEngine::renderLevel()
 		//left center
 		glVertex3f(-1.0-s_fCenterWallW, 0.0, 0.0);
 		//left
-		glVertex3f(-fDrawSize, 0.0, 0.0);
+		glVertex3f(-fDrawSize, -0.01, 0.0);	//A touch down in order to cover up any gaps from rounding errors
 		//Top left
 		glVertex3f(-0.5*fDrawSize, 0.866*fDrawSize, 0.0);
 		//Top left inside
@@ -168,7 +168,8 @@ void magichexagonEngine::updateWalls(float32 dt)
 				float32 wallAngle = atan(playerHeight / (1.0 + i->height - playerDist)) * RAD2DEG;
 				if(wallAngle > 60.0f || //If the angle here is greater than 60 degrees, we have a collision
 				  //If we're at the very edge of this hex, we can test the height directly.
-				  (plAngle <= 5.0 && i->height + 1.0 < s_fPlayerPos && i->height + i->length + 1.0 > s_fPlayerPos))		
+				  (plAngle <= 5.0 && i->height + 1.0 < s_fPlayerPos && i->height + i->length + 1.0 > s_fPlayerPos) ||
+				  (plAngle >= 55.0 && i->height + 1.0 < s_fPlayerPos && i->height + i->length + 1.0 > s_fPlayerPos))		
 				{
 					m_iCurMenu = MENU_LEVELSELECT;
 					pauseMusic();
@@ -342,38 +343,21 @@ bool magichexagonEngine::loadPatterns(string sFilename)
 
 void magichexagonEngine::resetLevel()
 {
-	for(int j = 0; j < 6; j++)
-		m_walls[j].clear();
 	m_ColorsChanging.clear();
 	m_fRotateAngle = 0.0;
-	m_fRotateAdd = 25;
-	if(rand() % 2 == 0)	//Start rotating in a random direction
-		m_fRotateAdd = -m_fRotateAdd;
-	m_colors[0] = Color(255,255,255);	//Center part
-	m_colors[1] = Color(0,0,0);			//Center ring and triangle
-	m_colors[2] = Dash;					//Radial arm 1
-	m_colors[3] = Fluttershy;			//Radial arm 2
-	m_colors[4] = Twilight;				//Radial arm 3
-	m_colors[5] = Rarity;				//Radial arm 4
-	m_colors[6] = Pinkie;				//Radial arm 5
-	m_colors[7] = AJ;					//Radial arm 6
-	centerCutie = NULL;
 	m_fPlayerAngle = -92.5f;
 	m_fTotalSpinTime = 0.0f;
-	m_fTargetSpinReverse = randFloat(4,7);
 	m_fTargetSpinTime = LEVELTIME;
-	m_fTargetSpinIncrease = randFloat(12, 15);
-	m_iCurLevel = 0;
-	m_fWallSpeed = 3.5;
-	m_fPlayerMove = 5.0;
 	m_fWallStartHeight = 15.0;
-	CameraPos.z = m_fDefCameraZ;
-	m_fMadSpinLength = 0;
-	m_fTargetMadSpin = FLT_MAX;
+	
+	changeLevel(LEVELTIME * m_iCurLevel + 0.5);
 }
 
 void magichexagonEngine::changeLevel(float32 time)
-{
+{	
+	m_fMadSpinLength = 0;
+	m_fTargetMadSpin = FLT_MAX;
+	CameraPos.z = m_fDefCameraZ;
 	if(time >= LEVEL_MAGIC)
 	{
 		playSound("magic");
@@ -394,9 +378,7 @@ void magichexagonEngine::changeLevel(float32 time)
 		m_fPlayerMove = 10;
 		CameraPos.z -= 2;
 		m_fMadSpinLength = 2.0;
-		m_fTargetMadSpin = randFloat(5, 8);
-		for(int i = 0; i < 6; i++)
-			m_walls[i].clear();
+		m_fTargetMadSpin = time + randFloat(5, 8);
 	}
 	else if(time >= LEVEL_LAUGHTER)
 	{
@@ -416,8 +398,6 @@ void magichexagonEngine::changeLevel(float32 time)
 		m_fPlayerMove = 9.5;
 		m_fTargetSpinReverse = randFloat(4,7);
 		m_fTargetSpinIncrease = randFloat(12, 15);
-		for(int i = 0; i < 6; i++)
-			m_walls[i].clear();
 	}
 	else if(time >= LEVEL_GENEROSITY)
 	{
@@ -437,8 +417,6 @@ void magichexagonEngine::changeLevel(float32 time)
 		m_fPlayerMove = 8.5;
 		m_fTargetSpinReverse = randFloat(4,7);
 		m_fTargetSpinIncrease = randFloat(12, 15);
-		for(int i = 0; i < 6; i++)
-			m_walls[i].clear();
 	}
 	else if(time >= LEVEL_LOYALTY)
 	{
@@ -458,8 +436,6 @@ void magichexagonEngine::changeLevel(float32 time)
 		m_fPlayerMove = 8.0;
 		m_fTargetSpinReverse = randFloat(4,7);
 		m_fTargetSpinIncrease = randFloat(12, 15);
-		for(int i = 0; i < 6; i++)
-			m_walls[i].clear();
 	}
 	else if(time >= LEVEL_KINDNESS)
 	{
@@ -480,9 +456,7 @@ void magichexagonEngine::changeLevel(float32 time)
 		m_fTargetSpinReverse = randFloat(4,7);
 		m_fTargetSpinIncrease = randFloat(12, 15);
 		m_fMadSpinLength = 1.0;
-		m_fTargetMadSpin = randFloat(9, 11);
-		for(int i = 0; i < 6; i++)
-			m_walls[i].clear();
+		m_fTargetMadSpin = time + randFloat(9, 11);
 	}
 	else if(time >= LEVEL_HONESTY)
 	{
@@ -502,12 +476,33 @@ void magichexagonEngine::changeLevel(float32 time)
 		m_fPlayerMove = 7.0;
 		m_fTargetSpinReverse = randFloat(4,7);
 		m_fTargetSpinIncrease = randFloat(12, 15);
-		for(int i = 0; i < 6; i++)
-			m_walls[i].clear();
+	}
+	else if(time < LEVEL_HONESTY)
+	{
+		m_colors[0] = Color(255,255,255);	//Center part
+		m_colors[1] = Color(0,0,0);			//Center ring and triangle
+		m_colors[2] = Dash;					//Radial arm 1
+		m_colors[3] = Fluttershy;			//Radial arm 2
+		m_colors[4] = Twilight;				//Radial arm 3
+		m_colors[5] = Rarity;				//Radial arm 4
+		m_colors[6] = Pinkie;				//Radial arm 5
+		m_colors[7] = AJ;					//Radial arm 6
+		centerCutie = NULL;
+		m_fRotateAdd = 25;
+		m_fWallSpeed = 3.5;
+		m_fPlayerMove = 5.0;
+		m_iCurLevel = 0;
+		m_fTargetSpinReverse = randFloat(4,7);
+		m_fTargetSpinIncrease = randFloat(12, 15);
 	}
 	else
 		errlog << "Unknown level-change time: " << time << endl;
 	
+	if(rand() % 2 == 0)	//Start rotating in a random direction
+		m_fRotateAdd = -m_fRotateAdd;
+	
+	for(int i = 0; i < 6; i++)
+		m_walls[i].clear();
 }
 
 
