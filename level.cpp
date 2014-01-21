@@ -378,7 +378,7 @@ void magichexagonEngine::changeLevel(float32 time)
 		m_fPlayerMove = 10;
 		CameraPos.z -= 2;
 		m_fMadSpinLength = 2.0;
-		m_fTargetMadSpin = time + randFloat(5, 8);
+		m_fTargetMadSpin = m_fTotalSpinTime + randFloat(5, 8);
 	}
 	else if(time >= LEVEL_LAUGHTER)
 	{
@@ -456,7 +456,7 @@ void magichexagonEngine::changeLevel(float32 time)
 		m_fTargetSpinReverse = randFloat(4,7);
 		m_fTargetSpinIncrease = randFloat(12, 15);
 		m_fMadSpinLength = 1.0;
-		m_fTargetMadSpin = time + randFloat(9, 11);
+		m_fTargetMadSpin = m_fTotalSpinTime + randFloat(9, 11);
 	}
 	else if(time >= LEVEL_HONESTY)
 	{
