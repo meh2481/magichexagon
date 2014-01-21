@@ -119,11 +119,11 @@ void HUDTextbox::draw(float32 fCurTime)
     HUDItem::draw(fCurTime);
     if(m_txtFont == NULL) return;
 
-    m_txtFont->setAlign(m_iAlign);
+    //m_txtFont->setAlign(m_iAlign);
     m_txtFont->col = col;
 
     //Render a box around where this text will be
-    Point ptSize = m_txtFont->sizeString(m_sValue);
+    Point ptSize;//TODO = m_txtFont->sizeString(m_sValue);
 
     Rect rcText = {m_ptPos.x*m_iSCALE_FAC, m_ptPos.y*m_iSCALE_FAC, (m_ptPos.x+1)*m_iSCALE_FAC + ptSize.x, (m_ptPos.y+1)*m_iSCALE_FAC + ptSize.y};
 
@@ -141,7 +141,7 @@ void HUDTextbox::draw(float32 fCurTime)
     //fillRect(rcText, fill.r, fill.g, fill.b, fill.a);
 
     //Render the text
-    m_txtFont->render(m_sValue, m_ptPos.x*m_iSCALE_FAC, m_ptPos.y*m_iSCALE_FAC);
+    //TODO m_txtFont->render(m_sValue, m_ptPos.x*m_iSCALE_FAC, m_ptPos.y*m_iSCALE_FAC);
 }
 
 void HUDTextbox::setText(uint32_t iNum)

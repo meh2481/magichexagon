@@ -105,6 +105,7 @@ private:
   float m_fWallStartHeight;
   float m_fTargetMadSpin;
   float m_fMadSpinLength;
+  Text* m_font;
 
 protected:
     void frame(float32 dt);

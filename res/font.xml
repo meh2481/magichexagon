@@ -1,0 +1,41 @@
+<font name="text">
+  <image path="res/gfx/text.png" />
+  <char ascii="a" rect="0,0,15,18" />
+  <char ascii="b" rect="16,0,31,18" />
+  <char ascii="c" rect="32,0,47,18" />
+  <char ascii="d" rect="48,0,63,18" />
+  <char ascii="e" rect="64,0,79,18" />
+  <char ascii="f" rect="80,0,185,18" />
+  <char ascii="g" rect="96,0,111,18" />
+  <char ascii="h" rect="112,0,127,18" />
+  <char ascii="i" rect="128,0,142,18" />
+  <char ascii="j" rect="143,0,159,18" />
+  <char ascii="k" rect="160,0,175,18" />
+  <char ascii="l" rect="176,0,191,18" />
+  <char ascii="m" rect="192,0,207,18" />
+  <char ascii="n" rect="208,0,223,18" />
+  <char ascii="o" rect="224,0,239,18" />
+  <char ascii="p" rect="240,0,255,18" />
+  <char ascii="q" rect="256,0,271,18" />
+  <char ascii="r" rect="272,0,287,18" />
+  <char ascii="s" rect="288,0,303,18" />
+  <char ascii="t" rect="304,0,319,18" />
+  <char ascii="u" rect="320,0,335,18" />
+  <char ascii="v" rect="336,0,351,18" />
+  <char ascii="w" rect="352,0,367,18" />
+  <char ascii="x" rect="368,0,383,18" />
+  <char ascii="y" rect="384,0,399,18" />
+  <char ascii="z" rect="400,0,415,18" />
+  <char ascii="1" rect="416,0,431,18" />
+  <char ascii="2" rect="432,0,447,18" />
+  <char ascii="3" rect="448,0,463,18" />
+  <char ascii="4" rect="464,0,479,18" />
+  <char ascii="5" rect="480,0,495,18" />
+  <char ascii="6" rect="496,0,511,18" />
+  <char ascii="7" rect="512,0,527,18" />
+  <char ascii="8" rect="528,0,543,18" />
+  <char ascii="9" rect="544,0,559,18" />
+  <char ascii="0" rect="560,0,575,18" />
+  <char ascii="." rect="576,0,591,18" />
+  <char ascii=" " rect="592,0,607,18" />
+</font>

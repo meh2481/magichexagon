@@ -24,7 +24,6 @@ private:
     Image* m_imgFont;   //Image for this bitmap font
     map<unsigned char, Rect> m_mRectangles;  //Rectangles for drawing each character
     string m_sName;
-    uint8_t m_iAlign;
 
 public:
 	Color col;
@@ -32,13 +31,11 @@ public:
     Text(string sXMLFilename);  //Create the font from this XML file
     ~Text();
 
-    //Render this text to the screen
-    void render(string sText, Point pt);
-    void render(string sText, float32 x, float32 y);
+    //Render this text to the screen, centered on x and y
+    void render(string sText, float32 x, float32 y, float pt);
 
     //Find the size of a given string of text
-    Point sizeString(string sText);
-    void setAlign(uint8_t iAlign);  //Set alignment of the text (align left = to the left of pt, align right = to the right of pt)
+	float32 size(string sText, float pt);
     string getName()    {return m_sName;};
     void   setName(string sName)    {m_sName = sName;};
 

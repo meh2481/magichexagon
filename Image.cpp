@@ -87,6 +87,7 @@ void Image::_load(string sFilename)
   
 	//Free FreeImage's copy of the data
 	FreeImage_Unload(dib);
+	blur = true;
 }
 
 Image::~Image()
@@ -107,7 +108,8 @@ Image::~Image()
 
 void Image::render(Point size)
 {
-	render(size, Point(0,0));
+	Rect rc = {0,0,m_iWidth,m_iHeight};
+	render(size, rc);
 }
 
 // Shear is straightforward. To shear left/right, simply subtract from the x texel coordinates for the top part of the image,
@@ -119,10 +121,10 @@ void Image::render(Point size, Point shear)
 	glBindTexture(GL_TEXTURE_2D, m_hTex);
   
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-	//if(you want things blurry)
+	if(blur)
 		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-	//else //If you want things pixellated
-	//	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	else //If you want things pixellated
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
   
 	// make a rectangle
 	glBegin(GL_QUADS);
@@ -138,13 +140,41 @@ void Image::render(Point size, Point shear)
 	// top right
 	glTexCoord2f(1.0, 1.0);
 	glVertex3f(size.x/2.0 - shear.x, size.y/2.0 - shear.y, 0.0);
+
+	glEnd();
+  
+}
+
+void Image::render(Point size, Rect rcImg)
+{
+	rcImg.left = rcImg.left / (float)m_iWidth;
+	rcImg.right = rcImg.right / (float)m_iWidth;
+	rcImg.top = rcImg.top / (float)m_iHeight;
+	rcImg.bottom = rcImg.bottom / (float)m_iHeight;
 	
-	
-	
-	//glTexCoord2f(0.0f, 0.0f);
-	//glTexCoord2f(0.0f, (float32)(m_iHeight)/(float32)(m_iRealHeight));	//If the full width of the image isn't a power of 2, compensate
-	//glTexCoord2f((float32)(m_iWidth)/(float32)(m_iRealWidth), (float32)(m_iHeight)/(float32)(m_iRealHeight));
-	//glTexCoord2f((float32)(m_iWidth)/(float32)(m_iRealWidth), 0.0f);
+	// tell opengl to use the generated texture
+	glBindTexture(GL_TEXTURE_2D, m_hTex);
+  
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	if(blur)
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+	else //If you want things pixellated
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+  
+	// make a rectangle
+	glBegin(GL_QUADS);
+	// top left
+	glTexCoord2f(rcImg.left, rcImg.bottom);	//Our real image is in the upper-left corner of memory, flipped vertically. Compensate.
+	glVertex3f(-size.x/2.0, size.y/2.0, 0.0);
+	// bottom left
+	glTexCoord2f(rcImg.left, rcImg.top);
+	glVertex3f(-size.x/2.0, -size.y/2.0, 0.0);
+	// bottom right
+	glTexCoord2f(rcImg.right, rcImg.top);
+	glVertex3f(size.x/2.0, -size.y/2.0, 0.0);
+	// top right
+	glTexCoord2f(rcImg.right, rcImg.bottom);
+	glVertex3f(size.x/2.0, size.y/2.0, 0.0);
 
 	glEnd();
   

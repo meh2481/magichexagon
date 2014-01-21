@@ -35,9 +35,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_iCurMenu = MENU_START;
 	m_fRotateAngle = 0;
 	m_iCurLevel = 0;
-	
-	//Game vars
-	resetLevel();
+	m_font = new Text("res/font.xml");
 	
 	showCursor();
 	
@@ -52,7 +50,7 @@ magichexagonEngine::~magichexagonEngine()
 	errlog << "~magichexagonEngine()" << endl;
 	saveConfig(getSaveLocation() + "config.xml");
 	//Delete stuffs
-	
+	delete m_font;
 	//errlog << "delete hud" << endl;
 	//delete m_hud;
 }
@@ -531,6 +529,12 @@ void magichexagonEngine::drawStartMenu()
 		glRotatef(60, 0, 0, 1);
 	}
 	glPopMatrix();
+	
+	//Draw logo text
+	m_font->col = Twilight;
+	m_font->render("magic", 1, -0.7, 2.0);
+	m_font->col = Dash;
+	m_font->render("hexagon", -1, 1, 1.5);
 }
 
 void magichexagonEngine::drawLevelSelectMenu()

@@ -7,7 +7,6 @@
 
 Text::Text(string sXMLFilename)
 {
-    m_iAlign = ALIGN_RIGHT | ALIGN_BOTTOM;
     m_imgFont = NULL;
 
     //  Load font image and glyphs from xml
@@ -39,6 +38,7 @@ Text::Text(string sXMLFilename)
             const char* cPath = elem->Attribute("path");
             if(cPath == NULL) return;
             m_imgFont = new Image(cPath);   //Create image
+			m_imgFont->blur = false;
 
         }
         else if(sName == "char")    //Character
@@ -61,27 +61,14 @@ Text::~Text()
         delete m_imgFont;
 }
 
-void Text::render(string sText, Point pt)
-{
-    render(sText, pt.x, pt.y);
-}
-
-void Text::render(string sText, float32 x, float32 y)
+void Text::render(string sText, float32 x, float32 y, float pt)
 {
     if(m_imgFont == NULL)
         return;
 
 	glColor4f(col.r, col.g, col.b, col.a);
-	
-    if(m_iAlign & ALIGN_LEFT)
-        x -= sizeString(sText).x;
-    else if(m_iAlign & ALIGN_CENTER)
-        x -= sizeString(sText).x / 2;
-    if(m_iAlign & ALIGN_TOP)
-        y -= sizeString(sText).y;
-    else if(m_iAlign & ALIGN_MIDDLE)
-        y -= sizeString(sText).y / 2;
-
+	float width = size(sText, pt);
+	x += width / 2.0 - (width / sText.size()) / 2.0;
     for(string::iterator i = sText.begin(); i != sText.end(); i++)
     {
         unsigned char c = *i;
@@ -94,43 +81,25 @@ void Text::render(string sText, float32 x, float32 y)
 
         Rect rc = iRect->second;
 
+		glPushMatrix();
         //TODO m_imgFont->draw(x, y, rc);
-        x += rc.width();
+		glTranslatef(-x, -y, 0.0);
+		Point sz(width / sText.size(), pt);
+		m_imgFont->render(sz, rc);
+		glPopMatrix();
+        x -= sz.x;
     }
 	glColor4f(1.0f,1.0f,1.0f,1.0f);
 }
 
-Point Text::sizeString(string sText)
+float32 Text::size(string sText, float pt)
 {
-    Point ptResult;
-    ptResult.SetZero();
-    if(!sText.size())
-        return ptResult;
-    for(string::iterator i = sText.begin(); i != sText.end(); i++)
-    {
-        unsigned char c = *i;
-        if(c == '\0')
-            break;
-
-        map<unsigned char, Rect>::iterator iRect = m_mRectangles.find(c);
-        if(iRect == m_mRectangles.end())
-            continue;   //Skip over chars we can't draw
-
-        //If this is a taller character than the others, make this the final height
-        if(ptResult.y < iRect->second.height())
-            ptResult.y = iRect->second.height();
-
-        ptResult.x += iRect->second.width(); //Add the width of this char to the total width
-    }
-    return ptResult;
+	float width = m_imgFont->getWidth();
+	width /= m_mRectangles.size();
+	width *= pt / m_imgFont->getHeight();
+	width *= sText.size();
+	return width;
 }
-
-void Text::setAlign(uint8_t iAlign)
-{
-    m_iAlign = iAlign;
-}
-
-
 
 
 
