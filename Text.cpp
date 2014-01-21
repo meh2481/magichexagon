@@ -65,7 +65,8 @@ void Text::render(string sText, float32 x, float32 y, float pt)
 {
     if(m_imgFont == NULL)
         return;
-
+	x = -x;
+	y = -y;
 	glColor4f(col.r, col.g, col.b, col.a);
 	float width = size(sText, pt);
 	x += width / 2.0 - (width / sText.size()) / 2.0;

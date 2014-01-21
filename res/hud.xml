@@ -1,0 +1,32 @@
+<hud name="hexhud">
+	<fonts>
+		<font name="HL" path="res/font.xml" />
+	</fonts>
+	
+	<scene name="start">
+		<textbox name="title1" font="HL" text="magic" pos="-1, 0.7" pt="2" col="0.8549,0.6745,0.9098,1" />
+		<textbox name="title2" font="HL" text="hexagon" pos="1, -1" pt="1.5" col="0.6157,0.851,0.9686,1" />
+	</scene>
+	<scene name="levelselect">
+		<textbox name="lev1name" font="HL" text="friendship" pos="0, 5" pt="0.6" col="0.5,0.5,0.5,1" />
+		<textbox name="lev1time" font="HL" text="best time:" pos="-0.9, 4.5" pt="0.3" col="0.5,0.5,0.5,1" />
+		
+		<textbox name="lev2name" font="HL" text="honesty" pos="5, 2.5" pt="0.6" col="0.5,0.5,0.5,1" />
+		<textbox name="lev2time" font="HL" text="best time:" pos="4.7, 2" pt="0.3" col="0.5,0.5,0.5,1" />
+		
+		<textbox name="lev3name" font="HL" text="kindness" pos="5, -1.5" pt="0.6" col="0.5,0.5,0.5,1" />
+		<textbox name="lev3time" font="HL" text="best time:" pos="4.5, -2" pt="0.3" col="0.5,0.5,0.5,1" />
+		
+		<textbox name="lev4name" font="HL" text="loyalty" pos="0, -4" pt="0.6" col="0.5,0.5,0.5,1" />
+		<textbox name="lev4time" font="HL" text="best time:" pos="-0.25, -4.5" pt="0.3" col="0.5,0.5,0.5,1" />
+		<textbox name="lev4locked" font="HL" text="locked" pos="0, -4" pt="0.6" col="0.5,0.5,0.5,1" />
+		
+		<textbox name="lev5name" font="HL" text="generosity" pos="-5, -1.5" pt="0.6" col="0.5,0.5,0.5,1" />
+		<textbox name="lev5time" font="HL" text="best time:" pos="-6.0, -2" pt="0.3" col="0.5,0.5,0.5,1" />
+		<textbox name="lev5locked" font="HL" text="locked" pos="-5, -1.5" pt="0.6" col="0.5,0.5,0.5,1" />
+		
+		<textbox name="lev6name" font="HL" text="laughter" pos="-5, 2.5" pt="0.6" col="0.5,0.5,0.5,1" />
+		<textbox name="lev6time" font="HL" text="best time:" pos="-5.5, 2" pt="0.3" col="0.5,0.5,0.5,1" />
+		<textbox name="lev6locked" font="HL" text="locked" pos="-5, 2.5" pt="0.6" col="0.5,0.5,0.5,1" />
+	</scene>
+</hud>

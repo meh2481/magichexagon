@@ -81,7 +81,7 @@ private:
   //Important general-purpose game variables
   ttvfs::VFSHelper vfs;
   Vec3 CameraPos;
-  //HUD* m_hud;
+  HUD* m_hud;
   bool m_bMouseGrabOnWindowRegain;
   float32 m_fDefCameraZ;	//Default position of camera on z axis
   
@@ -105,7 +105,6 @@ private:
   float m_fWallStartHeight;
   float m_fTargetMadSpin;
   float m_fMadSpinLength;
-  Text* m_font;
 
 protected:
     void frame(float32 dt);

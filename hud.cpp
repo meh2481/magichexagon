@@ -18,6 +18,7 @@ HUDItem::HUDItem(string sName)
     m_sName = sName;
     m_signalHandler = stubSignal;
     m_iSCALE_FAC = 1;
+	hidden = false;
 }
 
 HUDItem::~HUDItem()
@@ -28,6 +29,7 @@ HUDItem::~HUDItem()
 
 void HUDItem::event(SDL_Event event)
 {
+	if(hidden) return;
     //Base class does nothing with this, except pass on
     for(list<HUDItem*>::iterator i = m_lChildren.begin(); i != m_lChildren.end(); i++)
         (*i)->event(event);
@@ -35,6 +37,7 @@ void HUDItem::event(SDL_Event event)
 
 void HUDItem::draw(float32 fCurTime)
 {
+	if(hidden) return;
     //Base class does nothing with this, except pass on
     for(list<HUDItem*>::iterator i = m_lChildren.begin(); i != m_lChildren.end(); i++)
         (*i)->draw(fCurTime);
@@ -86,6 +89,7 @@ HUDImage::~HUDImage()
 
 void HUDImage::draw(float32 fCurTime)
 {
+	if(hidden) return;
     HUDItem::draw(fCurTime);
     if(m_img != NULL)
     {
@@ -106,8 +110,8 @@ void HUDImage::setImage(Image* img)
 //-------------------------------------------------------------------------------------
 HUDTextbox::HUDTextbox(string sName) : HUDItem(sName)
 {
-    m_iAlign = ALIGN_RIGHT | ALIGN_BOTTOM;
     m_txtFont = NULL;
+	pt = 1.0f;
 }
 
 HUDTextbox::~HUDTextbox()
@@ -116,32 +120,14 @@ HUDTextbox::~HUDTextbox()
 
 void HUDTextbox::draw(float32 fCurTime)
 {
+	if(hidden) return;
     HUDItem::draw(fCurTime);
     if(m_txtFont == NULL) return;
 
-    //m_txtFont->setAlign(m_iAlign);
     m_txtFont->col = col;
 
-    //Render a box around where this text will be
-    Point ptSize;//TODO = m_txtFont->sizeString(m_sValue);
-
-    Rect rcText = {m_ptPos.x*m_iSCALE_FAC, m_ptPos.y*m_iSCALE_FAC, (m_ptPos.x+1)*m_iSCALE_FAC + ptSize.x, (m_ptPos.y+1)*m_iSCALE_FAC + ptSize.y};
-
-    //Deal with alignment issues
-    if(m_iAlign & ALIGN_CENTER)
-        rcText.offset(-rcText.width()/2,0);
-    if(m_iAlign & ALIGN_LEFT)
-        rcText.offset(-rcText.width(),0);
-    if(m_iAlign & ALIGN_MIDDLE)
-        rcText.offset(0,-rcText.height()/2);
-    if(m_iAlign & ALIGN_TOP)
-        rcText.offset(0,-rcText.height());
-
-    //Fill in bg
-    //fillRect(rcText, fill.r, fill.g, fill.b, fill.a);
-
     //Render the text
-    //TODO m_txtFont->render(m_sValue, m_ptPos.x*m_iSCALE_FAC, m_ptPos.y*m_iSCALE_FAC);
+    m_txtFont->render(m_sValue, m_ptPos.x, m_ptPos.y, pt);
 }
 
 void HUDTextbox::setText(uint32_t iNum)
@@ -169,6 +155,7 @@ HUDToggle::~HUDToggle()
 
 void HUDToggle::event(SDL_Event event)
 {
+	if(hidden) return;
     HUDItem::event(event);
     if(event.type == SDL_KEYDOWN && event.key.keysym.sym == m_iKey)
     {
@@ -179,6 +166,7 @@ void HUDToggle::event(SDL_Event event)
 
 void HUDToggle::draw(float32 fCurTime)
 {
+	if(hidden) return;
     HUDItem::draw(fCurTime);
 
     if(m_bValue)    //Draw enabled image
@@ -228,6 +216,7 @@ HUDGroup::~HUDGroup()
 
 void HUDGroup::draw(float32 fCurTime)
 {
+	if(hidden) return;
     if(m_fStartTime == FLT_MIN)
         m_fStartTime = fCurTime;
 
@@ -244,6 +233,7 @@ void HUDGroup::draw(float32 fCurTime)
 
 void HUDGroup::event(SDL_Event event)
 {
+	if(hidden) return;
     HUDItem::event(event);
 
     if(event.type == SDL_KEYDOWN && m_mKeys.find(event.key.keysym.sym) != m_mKeys.end())
@@ -397,42 +387,17 @@ HUDItem* HUD::_getItem(XMLElement* elem)
         if(cTextFont == NULL) return NULL;
         HUDTextbox* tb = new HUDTextbox(cTextName);
         tb->setFont(m_mFonts[cTextFont]);
-        const char* cDefaultText = elem->Attribute("default");
+        const char* cDefaultText = elem->Attribute("text");
         if(cDefaultText != NULL)
             tb->setText(cDefaultText);
         const char* cPos = elem->Attribute("pos");
         if(cPos != NULL)
-        {
-            Point ptTextPos = pointFromString(cPos);
-            tb->setPos(ptTextPos);
-        }
-        const char* cAlign = elem->Attribute("align");
-        if(cAlign != NULL)
-        {
-            //Set font alignment
-            string sAlign(cAlign);
-            uint8_t iFontAlign = 0;
-            if(sAlign.find("right") != sAlign.npos)
-                iFontAlign |= ALIGN_RIGHT;
-            if(sAlign.find("left") != sAlign.npos)
-                iFontAlign |= ALIGN_LEFT;
-            if(sAlign.find("center") != sAlign.npos)
-                iFontAlign |= ALIGN_CENTER;
-            if(sAlign.find("top") != sAlign.npos)
-                iFontAlign |= ALIGN_TOP;
-            if(sAlign.find("middle") != sAlign.npos)
-                iFontAlign |= ALIGN_MIDDLE;
-            if(sAlign.find("bottom") != sAlign.npos)
-                iFontAlign |= ALIGN_BOTTOM;
-            tb->setAlign(iFontAlign);
-        }
-        const char* cFill = elem->Attribute("fill");
-        if(cFill != NULL)
-        {
-            //Get color to fill in background of textbox
-            Color fillCol = colorFromString(cFill);
-            tb->fill = fillCol;
-        }
+            tb->setPos(pointFromString(cPos));
+		const char* cColor = elem->Attribute("col");
+		if(cColor != NULL)
+			tb->col = colorFromString(cColor);
+		elem->QueryFloatAttribute("pt", &tb->pt);
+		elem->QueryBoolAttribute("hidden", &tb->hidden);
         return(tb);
     }
     
@@ -453,23 +418,41 @@ void HUD::create(string sXMLFilename)
 		return;
 	}
 
-    XMLElement* elem = doc->FirstChildElement("hud");
-    if(elem == NULL)
+    XMLElement* root = doc->FirstChildElement("hud");
+    if(root == NULL)
 	{
 		errlog << "Error: No toplevel \"hud\" item in XML file " << sXMLFilename << endl;
 		return;
 	}
-    const char* cName = elem->Attribute("name");
+    const char* cName = root->Attribute("name");
     if(cName != NULL)
         m_sName = cName;    //Grab the name
     errlog << "Creating HUD \"" << m_sName << "\"" << endl;
     //Load all elements
-    for(elem = elem->FirstChildElement(); elem != NULL; elem = elem->NextSiblingElement())
+    for(XMLElement* elem = root->FirstChildElement(); elem != NULL; elem = elem->NextSiblingElement())
     {
         if(elem == NULL) break;
-        HUDItem* it = _getItem(elem);
-        if(it != NULL)
-            addChild(it);
+		string sElemType = elem->Name();
+		if(sElemType == "scene")
+		{
+			//Loop through scene children, populating list
+			string sSceneName = elem->Attribute("name");
+			for(XMLElement* elem2 = elem->FirstChildElement(); elem2 != NULL; elem2 = elem2->NextSiblingElement())
+			{
+				HUDItem* it = _getItem(elem2);
+				if(it != NULL)
+				{
+					addChild(it);
+					m_mScenes[sSceneName].push_back(it);
+				}
+			}
+		}
+		else
+		{
+			HUDItem* it = _getItem(elem);
+			if(it != NULL)
+				addChild(it);
+		}
 
     }
     delete doc;
@@ -487,10 +470,22 @@ void HUD::destroy()
   
   for(list<HUDItem*>::iterator i = m_lChildren.begin(); i != m_lChildren.end(); i++)
     delete (*i);
+
   m_lChildren.clear();
 }
 
-
+void HUD::setScene(string sScene)
+{
+	m_sScene = sScene;
+	
+	//Hide all elements
+	for(list<HUDItem*>::iterator i = m_lChildren.begin(); i != m_lChildren.end(); i++)
+		(*i)->hidden = true;
+	
+	//Reveal the elements of this scene
+	for(list<HUDItem*>::iterator i = m_mScenes[sScene].begin(); i != m_mScenes[sScene].end(); i++)
+		(*i)->hidden = false;
+}
 
 
 

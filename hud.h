@@ -30,6 +30,7 @@ protected:
 
 public:
 	Color col;
+	bool hidden;
 
     HUDItem(string sName);
     ~HUDItem();
@@ -72,10 +73,9 @@ class HUDTextbox : public HUDItem
 protected:
     Text* m_txtFont;
     string m_sValue;
-    uint8_t m_iAlign;
 
 public:
-	Color fill; //for filling the background
+	float pt;
 
     HUDTextbox(string sName);
     ~HUDTextbox();
@@ -87,8 +87,6 @@ public:
     void    setText(string s)           {m_sValue = s;};        //Set the text to display
     void    setText(uint32_t iNum);                             //Set the text from an integer
     string  getText()                   {return m_sValue;};
-    void    setAlign(uint8_t iAlign)    {m_iAlign = iAlign;};   //Set the font alignment for this textbox
-    uint8_t getAlign()                  {return m_iAlign;};
 
 };
 
@@ -147,6 +145,8 @@ class HUD : public HUDItem
 protected:
     map<string, Image*> m_mImages;
     map<string, Text*>  m_mFonts;
+	map<string, list<HUDItem*> > m_mScenes;
+	string m_sScene;
 
     HUDItem* _getItem(XMLElement* elem);    //Load the specific item pointed to (assumes elem != NULL)
 
@@ -156,6 +156,8 @@ public:
 
     void create(string sXMLFilename);   //Create this HUD from an XML file
     void destroy(); //Free memory associated with HUD items
+	void setScene(string sScene);
+	string getScene()	{return m_sScene;};
 };
 
 

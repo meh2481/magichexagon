@@ -38,9 +38,9 @@ void Color::fromHSV(float h, float s, float v, float fa)
 string stripCommas(string s)
 {
     //Replace all ',' characters with ' '
-    for(int i = 0; ; i++)
+    for(;;)
     {
-        size_t iPos = s.find(',', i);
+        size_t iPos = s.find(',');
         if(iPos == s.npos)
             break;  //Done
 

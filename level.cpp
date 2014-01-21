@@ -172,6 +172,7 @@ void magichexagonEngine::updateWalls(float32 dt)
 				  (plAngle >= 55.0 && i->height + 1.0 < s_fPlayerPos && i->height + i->length + 1.0 > s_fPlayerPos))		
 				{
 					m_iCurMenu = MENU_LEVELSELECT;
+					m_hud->setScene("levelselect");
 					pauseMusic();
 					playSound("gameover");
 					playSound("die");

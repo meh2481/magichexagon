@@ -35,12 +35,12 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_iCurMenu = MENU_START;
 	m_fRotateAngle = 0;
 	m_iCurLevel = 0;
-	m_font = new Text("res/font.xml");
 	
 	showCursor();
 	
-	//m_hud = new HUD("hud");
-	//m_hud->create("res/hud.xml");
+	m_hud = new HUD("hud");
+	m_hud->create("res/hud.xml");
+	m_hud->setScene("start");
 	
 	setTimeScale(DEFAULT_TIMESCALE);	//Speed up time
 }
@@ -50,9 +50,8 @@ magichexagonEngine::~magichexagonEngine()
 	errlog << "~magichexagonEngine()" << endl;
 	saveConfig(getSaveLocation() + "config.xml");
 	//Delete stuffs
-	delete m_font;
-	//errlog << "delete hud" << endl;
-	//delete m_hud;
+	errlog << "delete hud" << endl;
+	delete m_hud;
 }
 
 void magichexagonEngine::frame(float32 dt)
@@ -97,11 +96,9 @@ void magichexagonEngine::draw()
 			renderLevel();
 			break;
 	}
-		
-	//Draw HUD
-	//glLoadIdentity();
-	//glTranslatef(0.0f, 0.0f, MAGIC_ZOOM_NUMBER);
-	//m_hud->draw(0);
+	
+	//Draw logo text
+	m_hud->draw(0);
 }
 
 void magichexagonEngine::init(list<commandlineArg> sArgs)
@@ -158,7 +155,7 @@ void magichexagonEngine::hudSignalHandler(string sSignal)
 
 void magichexagonEngine::handleEvent(SDL_Event event)
 {
-    //m_hud->event(event);    //Let our HUD handle any events it needs to
+    m_hud->event(event);    //Let our HUD handle any events it needs to
     switch(event.type)
     {
         //Key pressed
@@ -172,11 +169,13 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 							pauseMusic();
 							playSound("menubegin");
 							m_iCurMenu = MENU_LEVELSELECT;
+							m_hud->setScene("levelselect");
 							break;
 							
 						case MENU_LEVELSELECT:
 							playSound("menubegin");
 							m_iCurMenu = MENU_START;
+							m_hud->setScene("start");
 							break;
 							
 						case MENU_START:
@@ -247,9 +246,16 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 					break;
 					
 				case SDL_SCANCODE_F5:
+				{
 					m_Patterns.clear();
 					loadPatterns("res/patterns.xml");	//Reload patterns
+					string sScene = m_hud->getScene();
+					delete m_hud;
+					m_hud = new HUD("hud");
+					m_hud->create("res/hud.xml");
+					m_hud->setScene(sScene);
 					break;
+				}
 					
 				case SDL_SCANCODE_SPACE:
 					switch(m_iCurMenu)
@@ -257,6 +263,7 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 						case MENU_START:
 							playSound("menubegin");
 							m_iCurMenu = MENU_LEVELSELECT;
+							m_hud->setScene("levelselect");
 							m_iCurLevel = 0;
 							break;
 							
@@ -267,6 +274,7 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 							restartMusic();
 							resetLevel();
 							m_iCurMenu = MENU_NONE;
+							m_hud->setScene("none");
 							break;
 					}
 					break;
@@ -529,12 +537,6 @@ void magichexagonEngine::drawStartMenu()
 		glRotatef(60, 0, 0, 1);
 	}
 	glPopMatrix();
-	
-	//Draw logo text
-	m_font->col = Twilight;
-	m_font->render("magic", 1, -0.7, 2.0);
-	m_font->col = Dash;
-	m_font->render("hexagon", -1, 1, 1.5);
 }
 
 void magichexagonEngine::drawLevelSelectMenu()

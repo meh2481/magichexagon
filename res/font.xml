@@ -5,7 +5,7 @@
   <char ascii="c" rect="32,0,47,18" />
   <char ascii="d" rect="48,0,63,18" />
   <char ascii="e" rect="64,0,79,18" />
-  <char ascii="f" rect="80,0,185,18" />
+  <char ascii="f" rect="80,0,95,18" />
   <char ascii="g" rect="96,0,111,18" />
   <char ascii="h" rect="112,0,127,18" />
   <char ascii="i" rect="128,0,142,18" />
