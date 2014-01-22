@@ -7,6 +7,7 @@
 #include "tinyxml2.h"
 #include <float.h>
 #include <sstream>
+#include <iomanip>
 
 //For our engine functions to be able to call our Engine class functions
 static magichexagonEngine* g_pGlobalEngine;
@@ -41,6 +42,9 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_hud = new HUD("hud");
 	m_hud->create("res/hud.xml");
 	m_hud->setScene("start");
+	
+	for(int i = 0; i < 6; i++)
+		m_fBestTime[i] = 0;
 	
 	setTimeScale(DEFAULT_TIMESCALE);	//Speed up time
 }
@@ -168,9 +172,12 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 					switch(m_iCurMenu)
 					{
 						case MENU_NONE:
+						case MENU_GAMEOVER:
 							pauseMusic();
 							playSound("menubegin");
 							m_iCurMenu = MENU_LEVELSELECT;
+							m_iCurLevel = m_iStartLevel;
+							CameraPos.z = m_fDefCameraZ;
 							m_hud->setScene("levelselect");
 							break;
 							
@@ -225,13 +232,17 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 							break;
 							
 						case MENU_LEVELSELECT:
-							playMusic("res/sfx/encore-micro_hexagon_courtesy.ogg");
-							playSound("begin");
-							playSound("beginlevel");
-							restartMusic();
-							resetLevel();
-							m_iCurMenu = MENU_NONE;
-							m_hud->setScene("none");
+							if(m_iCurLevel < 3 || m_fBestTime[m_iCurLevel-3] >= 60.0)
+							{
+								playMusic("res/sfx/encore-micro_hexagon_courtesy.ogg");
+								playSound("begin");
+								playSound("beginlevel");
+								restartMusic();
+								resetLevel();
+								m_iCurMenu = MENU_NONE;
+								m_iStartLevel = m_iCurLevel;
+								m_hud->setScene("none");
+							}
 							break;
 					}
 					break;
@@ -469,6 +480,17 @@ void magichexagonEngine::loadConfig(string sFilename)
 		pauseOnKeyboard(bPausesOnFocus);
 	}
 	
+	XMLElement* times = root->FirstChildElement("besttimes");
+	if(times != NULL)
+	{
+		times->QueryFloatAttribute("level1", &m_fBestTime[0]);
+		times->QueryFloatAttribute("level2", &m_fBestTime[1]);
+		times->QueryFloatAttribute("level3", &m_fBestTime[2]);
+		times->QueryFloatAttribute("level4", &m_fBestTime[3]);
+		times->QueryFloatAttribute("level5", &m_fBestTime[4]);
+		times->QueryFloatAttribute("level6", &m_fBestTime[5]);
+	}
+	
 	delete doc;
 }
 
@@ -491,6 +513,15 @@ void magichexagonEngine::saveConfig(string sFilename)
 	window->SetAttribute("brightness", getGamma());
 	window->SetAttribute("pauseminimized", pausesOnFocusLost());
 	root->InsertEndChild(window);
+	
+	XMLElement* times = doc->NewElement("besttimes");
+	times->SetAttribute("level1", m_fBestTime[0]);
+	times->SetAttribute("level2", m_fBestTime[1]);
+	times->SetAttribute("level3", m_fBestTime[2]);
+	times->SetAttribute("level4", m_fBestTime[3]);
+	times->SetAttribute("level5", m_fBestTime[4]);
+	times->SetAttribute("level6", m_fBestTime[5]);
+	root->InsertEndChild(times);
 	
 	doc->InsertFirstChild(root);
 	doc->SaveFile(sFilename.c_str());
@@ -559,6 +590,20 @@ void magichexagonEngine::drawStartMenu()
 	}
 }
 
+void bestTime(HUDTextbox* it, float fTime)
+{
+	if(fTime > 0)
+	{
+		ostringstream oss;
+		oss.precision(2);
+		oss.setf(ios::fixed, ios::floatfield);
+		oss << "best time: " << fTime;
+		it->setText(oss.str());
+	}
+	else
+		it->hidden = true;
+}
+
 void magichexagonEngine::drawLevelSelectMenu()
 {
 	m_fRotateAngle = 0.0f;
@@ -578,6 +623,69 @@ void magichexagonEngine::drawLevelSelectMenu()
 	m_colors[6] = AJ;					//Radial arm 5
 	m_colors[7] = Twilight;				//Radial arm 6
 	renderLevel();
+
+	//Update level locked/unlocked labels
+	HUDItem* locked = m_hud->getChild("lev4locked");
+	HUDItem* levelname = m_hud->getChild("lev4name");
+	if(locked != NULL && levelname != NULL)
+	{
+		if(m_fBestTime[0] >= 60.0)
+		{
+			locked->hidden = true;
+			levelname->hidden = false;
+		}
+		else
+		{
+			locked->hidden = false;
+			levelname->hidden = true;
+		}
+	}
+	
+	locked = m_hud->getChild("lev5locked");
+	levelname = m_hud->getChild("lev5name");
+	if(locked != NULL && levelname != NULL)
+	{
+		if(m_fBestTime[1] >= 60.0)
+		{
+			locked->hidden = true;
+			levelname->hidden = false;
+		}
+		else
+		{
+			locked->hidden = false;
+			levelname->hidden = true;
+		}
+	}
+	
+	locked = m_hud->getChild("lev6locked");
+	levelname = m_hud->getChild("lev6name");
+	if(locked != NULL && levelname != NULL)
+	{
+		if(m_fBestTime[2] >= 60.0)
+		{
+			locked->hidden = true;
+			levelname->hidden = false;
+		}
+		else
+		{
+			locked->hidden = false;
+			levelname->hidden = true;
+		}
+	}
+	
+	//Update best level times
+	HUDItem* besttime = m_hud->getChild("lev1time");
+	bestTime((HUDTextbox*)besttime, m_fBestTime[0]);
+	besttime = m_hud->getChild("lev2time");
+	bestTime((HUDTextbox*)besttime, m_fBestTime[1]);
+	besttime = m_hud->getChild("lev3time");
+	bestTime((HUDTextbox*)besttime, m_fBestTime[2]);
+	besttime = m_hud->getChild("lev4time");
+	bestTime((HUDTextbox*)besttime, m_fBestTime[3]);
+	besttime = m_hud->getChild("lev5time");
+	bestTime((HUDTextbox*)besttime, m_fBestTime[4]);
+	besttime = m_hud->getChild("lev6time");
+	bestTime((HUDTextbox*)besttime, m_fBestTime[5]);
 }
 
 

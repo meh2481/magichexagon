@@ -44,6 +44,7 @@ const Color AJEyes(95,187,83);
 #define MENU_START			0
 #define MENU_LEVELSELECT	1
 #define MENU_NONE			2
+#define MENU_GAMEOVER		3
 
 #define LEVELTIME			60.0
 
@@ -103,6 +104,7 @@ private:
   float m_fTargetSpinTime;
   int m_iTargetSpinLevel;
   int m_iCurLevel;
+  int m_iStartLevel;
   float m_fWallSpeed;
   float m_fPlayerMove;
   float m_fWallStartHeight;
@@ -111,6 +113,8 @@ private:
   Wall* m_wTop;
   float m_gap;
   float m_fLastChecked;	//Last time we checked the level (so we don't change levels constantly)
+  float m_fBestTime[6];	//Best time in each level
+	
 
 protected:
     void frame(float32 dt);
@@ -151,8 +155,8 @@ public:
 	int  calcPlayerHex(float32* relAngle = NULL);
 	void checkSides(float32 fOldAngle, int prevHex, int curHex);
 	void changeLevel(int iNewLevel);	//Change to given level
-		
-	Wall* top();
+	void die();							//Kill player
+	Wall* top();						//Get top (closest to player) wall
 	
 	//color.cpp functions
 	void updateColors(float32 dt);

@@ -150,6 +150,23 @@ int magichexagonEngine::calcPlayerHex(float32* relAngle)
 	return playerHex;
 }
 
+void magichexagonEngine::die()
+{
+	m_iCurMenu = MENU_LEVELSELECT;
+	CameraPos.z = m_fDefCameraZ;
+	m_hud->setScene("levelselect");
+	pauseMusic();
+	playSound("gameover");
+	playSound("die");
+	m_iCurLevel = m_iStartLevel;
+	//Update our best time for this level
+	if(m_fTotalSpinTime > m_fBestTime[m_iStartLevel])
+	{
+		m_fBestTime[m_iStartLevel] = m_fTotalSpinTime;
+		saveConfig(getSaveLocation() + "config.xml");	//Save new best time, so it isn't lost
+	}
+}
+
 void magichexagonEngine::updateWalls(float32 dt)
 {
 	float32 plAngle;
@@ -174,11 +191,7 @@ void magichexagonEngine::updateWalls(float32 dt)
 				  (plAngle <= 5.0 && i->height + 1.0 < s_fPlayerPos && i->height + i->length + 1.0 > s_fPlayerPos) ||
 				  (plAngle >= 55.0 && i->height + 1.0 < s_fPlayerPos && i->height + i->length + 1.0 > s_fPlayerPos))		
 				{
-					m_iCurMenu = MENU_LEVELSELECT;
-					m_hud->setScene("levelselect");
-					pauseMusic();
-					playSound("gameover");
-					playSound("die");
+					die();
 					break;
 				}
 			}
@@ -316,6 +329,7 @@ void magichexagonEngine::checkLevel()
 			break;
 		if(m_fTotalSpinTime > time && m_fLastChecked < time)
 		{
+			//Play the proper congratulatory vox
 			switch(i)
 			{
 				case 1:
@@ -377,8 +391,8 @@ void magichexagonEngine::checkLevel()
 					changeLevel(LEVEL_MAGIC);
 					break;
 				
-				case LEVEL_MAGIC:	//Go absolutely nuts if they survive here too long
-					//It's sort of entirely broken with the mad spinning, but basically you're dead anyway, so you probably won't notice
+				case LEVEL_MAGIC:	//Go absolutely nuts if they survive here for 60+ seconds
+					//It's sort of entirely broken with the mad spinning, but you're basically dead anyway, so you probably won't notice
 					if(m_fRotateAdd > 0) 
 						m_fRotateAdd += 300;
 					else
