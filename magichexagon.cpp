@@ -74,6 +74,10 @@ void magichexagonEngine::frame(float32 dt)
 			updateLevel(dt*getTimeScale());
 			handleKeys();
 			break;
+		
+		case MENU_GAMEOVER:
+			//TODO
+			break;
 	}
 }
 
@@ -98,6 +102,10 @@ void magichexagonEngine::draw()
 			
 		case MENU_NONE:
 			renderLevel();
+			break;
+			
+		case MENU_GAMEOVER:
+			//TODO
 			break;
 	}
 	
@@ -241,9 +249,20 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 								resetLevel();
 								m_iCurMenu = MENU_NONE;
 								m_iStartLevel = m_iCurLevel;
-								m_hud->setScene("none");
+								m_hud->setScene("level");
 							}
 							break;
+						
+						case MENU_GAMEOVER:
+							playMusic("res/sfx/encore-micro_hexagon_courtesy.ogg");
+							playSound("begin");
+							playSound("beginlevel");
+							restartMusic();
+							m_iCurLevel = m_iStartLevel;
+							resetLevel();
+							m_iCurMenu = MENU_NONE;
+							m_hud->setScene("level");
+							break;	
 					}
 					break;
 #ifdef DEBUG
@@ -602,14 +621,14 @@ void magichexagonEngine::drawStartMenu()
 	}
 }
 
-void bestTime(HUDTextbox* it, float fTime)
+void magichexagonEngine::bestTime(HUDTextbox* it, string s, float fTime)
 {
 	if(fTime > 0)
 	{
 		ostringstream oss;
 		oss.precision(2);
 		oss.setf(ios::fixed, ios::floatfield);
-		oss << "best time: " << fTime;
+		oss << s << fTime;
 		it->setText(oss.str());
 	}
 	else
@@ -700,17 +719,17 @@ void magichexagonEngine::drawLevelSelectMenu()
 	
 	//Update best level times
 	HUDItem* besttime = m_hud->getChild("lev1time");
-	bestTime((HUDTextbox*)besttime, m_fBestTime[0]);
+	bestTime((HUDTextbox*)besttime, "best time: ", m_fBestTime[0]);
 	besttime = m_hud->getChild("lev2time");
-	bestTime((HUDTextbox*)besttime, m_fBestTime[1]);
+	bestTime((HUDTextbox*)besttime, "best time: ", m_fBestTime[1]);
 	besttime = m_hud->getChild("lev3time");
-	bestTime((HUDTextbox*)besttime, m_fBestTime[2]);
+	bestTime((HUDTextbox*)besttime, "best time: ", m_fBestTime[2]);
 	besttime = m_hud->getChild("lev4time");
-	bestTime((HUDTextbox*)besttime, m_fBestTime[3]);
+	bestTime((HUDTextbox*)besttime, "best time: ", m_fBestTime[3]);
 	besttime = m_hud->getChild("lev5time");
-	bestTime((HUDTextbox*)besttime, m_fBestTime[4]);
+	bestTime((HUDTextbox*)besttime, "best time: ", m_fBestTime[4]);
 	besttime = m_hud->getChild("lev6time");
-	bestTime((HUDTextbox*)besttime, m_fBestTime[5]);
+	bestTime((HUDTextbox*)besttime, "best time: ", m_fBestTime[5]);
 }
 
 

@@ -50,10 +50,6 @@ private:
     float32 m_fTargetTime;
 	list<obj*> m_lObjects;	//Object handler
 	multiset<physSegment*, depthComparator> m_lScenery;
-	//TODO: Sound handler
-    //map<string, string> m_mSoundNames; //And names of sounds
-    //bool m_bFirstMusic; //Don't stop a previous song playing if there is none
-    //string m_sLastMusic;    //Last song we played, so we can pause/resume songs instead of restarting them
     bool m_bQuitting;   //Stop the game if this turns true
 	float32 m_fTimeScale;	//So we can scale time if we want
     uint16_t m_iWidth, m_iHeight;
@@ -134,7 +130,6 @@ public:
 	Point getWindowPos();	//Get the window position
 	void setWindowPos(Point pos);	//Set window position
 	void maximizeWindow();								//Call window manager to maximize application window
-    list<SDL_DisplayMode> getAvailableResolutions();         //Get available fullscreen resolutions
 	float32 getTimeScale()	{return m_fTimeScale;};
 	void setTimeScale(float32 fScale)	{m_fTimeScale = fScale;};
 	void addObject(obj* o);

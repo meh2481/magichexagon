@@ -3,6 +3,7 @@
 		<font name="HL" path="res/font.xml" />
 	</fonts>
 	
+	<!-- title screen HUD -->
 	<scene name="start">
 		<textbox name="title1" font="HL" text="magic" pos="-1, 0.7" pt="2" col="0.8549,0.6745,0.9098,1" />
 		<textbox name="title2" font="HL" text="hexagon" pos="1, -1" pt="1.5" col="0.6157,0.851,0.9686,1" />
@@ -33,6 +34,8 @@
 		
 		<textbox name="titleauthor" font="HL" text="made by inderpxar" pos="0, -5.75" pt="0.4" col="1,1,1,1" />
 	</scene>
+	
+	<!-- level select HUD -->
 	<scene name="levelselect">
 		<textbox name="lev1name" font="HL" text="friendship" pos="0, 5" pt="0.6" col="0.5,0.5,0.5,1" />
 		<textbox name="lev1time" font="HL" text="best time:" pos="0, 4.5" pt="0.3" col="0.5,0.5,0.5,1" />
@@ -54,5 +57,31 @@
 		<textbox name="lev6name" font="HL" text="laughter" pos="-5, 2.5" pt="0.6" col="0.5,0.5,0.5,1" />
 		<textbox name="lev6time" font="HL" text="best time:" pos="-5, 2" pt="0.3" col="0.5,0.5,0.5,1" />
 		<textbox name="lev6locked" font="HL" text="locked" pos="-5, 2.5" pt="0.6" col="0.5,0.5,0.5,1" />
+	</scene>
+	
+	<!-- in-level HUD -->
+	<scene name="level">
+		<geom name="curtimebg" col=".5,.5,.5,1">
+			<!-- top left: cur time bg -->
+			<quad p1="4.7, 6.5, 0" p2="5.7, 5.65, 0" p3="8.3, 5.65, 0" p4="9.3, 6.5, 0" />
+			<!-- top right: best time bg -->
+			<quad p1="-2.7, 6.5, 0" p2="-3.7, 5.65, 0" p3="-8.3, 5.65, 0" p4="-9.3, 6.5, 0" />
+		</geom>
+		<geom name="curtimebgborder" col="1,1,1,1">
+			<!-- top left bg -->
+			<quad p1="4.5, 6.5, 0" p2="4.7, 6.5, 0" p3="5.75, 5.65, 0" p4="5.65, 5.55, 0" />
+			<quad p1="5.74, 5.67, 0" p2="8.36, 5.67, 0" p3="8.35, 5.55, 0" p4="5.65, 5.55, 0" />
+			<quad p1="8.25, 5.65, 0" p2="9.3, 6.5, 0" p3="9.4, 6.4, 0" p4="8.35, 5.55, 0" />
+			<!-- top right bg -->
+			<quad p1="-2.5, 6.5, 0" p2="-2.7, 6.5, 0" p3="-3.75, 5.65, 0" p4="-3.65, 5.55, 0" />
+			<quad p1="-3.74, 5.67, 0" p2="-8.36, 5.67, 0" p3="-8.35, 5.55, 0" p4="-3.65, 5.55, 0" />
+			<quad p1="-8.25, 5.65, 0" p2="-9.3, 6.5, 0" p3="-9.4, 6.4, 0" p4="-8.35, 5.55, 0" />
+		</geom>
+		<textbox name="curtime" font="HL" text="100.00" pos="7, 5.975" pt="0.4" col="1,1,1,1" />
+		<textbox name="bestrtime" font="HL" text="best: 100.00" pos="-6, 5.975" pt="0.4" col="1,1,1,1" />
+	</scene>
+	
+	<!-- game over HUD -->
+	<scene name="gameover">
 	</scene>
 </hud>

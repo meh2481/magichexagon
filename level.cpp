@@ -13,6 +13,10 @@ const float s_fCenterWallW = 0.14;
 
 void magichexagonEngine::renderLevel()
 {
+	HUDItem* time = m_hud->getChild("curtime");
+	if(time != NULL)
+		bestTime((HUDTextbox*)time, "", m_fTotalSpinTime);
+	
 	glPushMatrix();
 	//Rotate by how much we're spinning
 	glRotatef(m_fRotateAngle, 0, 0, 1);
@@ -93,7 +97,7 @@ void magichexagonEngine::renderLevel()
 	}
 	glPopMatrix();
 	
-	//Draw triangle for player	//TODO: Rotate as player moves
+	//Draw triangle for player
 	glColor4f(m_colors[1].r, m_colors[1].g, m_colors[1].b, m_colors[1].a);
 	glPushMatrix();
 	glRotatef(m_fPlayerAngle+90.0, 0, 0, 1);
@@ -152,9 +156,9 @@ int magichexagonEngine::calcPlayerHex(float32* relAngle)
 
 void magichexagonEngine::die()
 {
-	m_iCurMenu = MENU_LEVELSELECT;
+	m_iCurMenu = MENU_GAMEOVER;
 	CameraPos.z = m_fDefCameraZ;
-	m_hud->setScene("levelselect");
+	m_hud->setScene("gameover");
 	pauseMusic();
 	playSound("gameover");
 	playSound("die");
@@ -373,22 +377,40 @@ void magichexagonEngine::checkLevel()
 					break;
 				
 				case LEVEL_LOYALTY:
-					if(m_fWallSpeed < 8.1)
+					if(m_fWallSpeed < 8.1)	//Go into nuts mode
 					{
 						m_fRotateAdd = 200;
 						m_fWallSpeed = 8.25;
 						m_gap = 5.0;
+						//Reverse color
+						phaseColor(&m_colors[0], Color(98,38,8), 0.5);
+						phaseColor(&m_colors[1], Color(255,255,255), 0.5);
+						phaseColor(&m_colors[2], Color(16,191,202), 0.5);
+						phaseColor(&m_colors[3], Color(12,136,201), 0.5);
+						phaseColor(&m_colors[4], Color(0,8,104), 0.5);
+						phaseColor(&m_colors[5], Color(133,62,189), 0.5);
+						phaseColor(&m_colors[6], Color(255,108,47), 0.5);
+						phaseColor(&m_colors[7], Color(146,224,129), 0.5);
 					}
 					else
 						changeLevel(LEVEL_LAUGHTER);
 					break;
 				
 				case LEVEL_GENEROSITY:
-					if(m_fWallSpeed < 8.6)
+					if(m_fWallSpeed < 8.6)	//Go into nuts mode
 					{
 						m_fRotateAdd = 225;
 						m_fWallSpeed = 9;
 						m_gap = 5.0;
+						//Nightmare Rarity mode
+						phaseColor(&m_colors[0], Color(72,181,214), 0.5);
+						phaseColor(&m_colors[1], Color(58,49,57), 0.5);
+						phaseColor(&m_colors[2], Color(120,106,168), 0.5);
+						phaseColor(&m_colors[3], Color(72,181,214), 0.5);
+						phaseColor(&m_colors[4], Color(120,106,168), 0.5);
+						phaseColor(&m_colors[5], Color(72,181,214), 0.5);
+						phaseColor(&m_colors[6], Color(120,106,168), 0.5);
+						phaseColor(&m_colors[7], Color(72,181,214), 0.5);
 					}
 					else
 						changeLevel(LEVEL_LAUGHTER);
@@ -523,6 +545,11 @@ void magichexagonEngine::resetLevel()
 	m_iTargetSpinLevel = LEVEL_HONESTY;
 	m_fLastChecked = 0;
 	m_bPlayedExcellent = false;
+	for(int i = 0; i < 6; i++)
+	{
+		if(m_walls[i].size())
+			m_walls[i].clear();
+	}
 	
 	changeLevel(m_iCurLevel);
 }

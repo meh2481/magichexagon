@@ -718,21 +718,6 @@ bool Engine::isMaximized()
 #endif
 }
 
-list<SDL_DisplayMode> Engine::getAvailableResolutions()
-{
-	//TODO: SDL 2.0 way
-	list<SDL_DisplayMode> lResolutions;
-	for(int i = 0; i < SDL_GetNumDisplayModes(0); i++)
-	{
-		SDL_DisplayMode mode;
-		if(SDL_GetDisplayMode(0, i, &mode) == 0)
-		{
-			lResolutions.push_back(mode);
-		}
-	}
-	return lResolutions;  
-}
-
 void Engine::setCursorPos(int32_t x, int32_t y)
 {
     SDL_WarpMouseInWindow(m_Window, x, y);

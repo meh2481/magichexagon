@@ -8,5 +8,8 @@ now:
 	- show time, best time, what level of friendship completed, and what time to next level (if incomplete)
 - Ingame
 	- add GUI that shows best time (if > 60s) or time to next level
+	- Fix music dying horribly when window dragged ingame
 - Tutorial
 - endgame cutscenes and such
+- Fix Vsync issues
+- Fix "excellent" playing on death when you run level for first time

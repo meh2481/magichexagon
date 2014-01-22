@@ -136,6 +136,7 @@ public:
 	void handleKeys();						//Poll the keyboard state and update the game accordingly
 	Point worldPosFromCursor(Point cursorpos);	//Get the worldspace position of the given mouse cursor position
 	Point worldMovement(Point cursormove);		//Get the worldspace transform of the given mouse transformation
+	void bestTime(HUDTextbox* it, string s, float fTime);
 	
 	//Functions dealing with program defaults
 	void loadConfig(string sFilename);
