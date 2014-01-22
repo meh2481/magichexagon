@@ -4,12 +4,9 @@ later:
 - camera movement?
 
 now:
-- Finish level select menu
-	- lock and unlock levels as needed
-	- show best times for levels
 - Game Over sceen
 	- show time, best time, what level of friendship completed, and what time to next level (if incomplete)
 - Ingame
 	- add GUI that shows best time (if > 60s) or time to next level
 - Tutorial
-- Don't resume music if it wasn't paused in the first place (breaks all sound)
+- endgame cutscenes and such

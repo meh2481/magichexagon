@@ -289,6 +289,13 @@ void magichexagonEngine::updateLevel(float32 dt)
 
 void magichexagonEngine::checkLevel()
 {
+	//Play "excellent" vox if passing previous record
+	if(m_fTotalSpinTime > m_fBestTime[m_iStartLevel] && m_fBestTime[m_iStartLevel] > 0 && !m_bPlayedExcellent)
+	{
+		playSound("excellent");
+		m_bPlayedExcellent = true;
+	}
+	
 	//Within a level, play vox for "honesty" - "laughter"
 	for(int i = 1; i < 6; i++)
 	{
@@ -515,6 +522,7 @@ void magichexagonEngine::resetLevel()
 	m_gap = 0;
 	m_iTargetSpinLevel = LEVEL_HONESTY;
 	m_fLastChecked = 0;
+	m_bPlayedExcellent = false;
 	
 	changeLevel(m_iCurLevel);
 }

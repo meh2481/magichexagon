@@ -84,6 +84,8 @@ protected:
     virtual void draw() = 0;    //Actual function that draws stuff
     virtual void init(list<commandlineArg> sArgs) = 0;    //So we can load all our images and such
     virtual void handleEvent(SDL_Event event) = 0;  //Function that's called for each SDL input event
+	virtual void pause() = 0;	//Called when the window is deactivated
+	virtual void resume() = 0;	//Called when the window is activated again
 	virtual obj* objFromXML(string sXMLFilename, Point ptOffset, Point ptVel) = 0;	//Function called when an object should be created
 	
 	//Helper functions for your own class definition

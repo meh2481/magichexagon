@@ -114,6 +114,7 @@ private:
   float m_gap;
   float m_fLastChecked;	//Last time we checked the level (so we don't change levels constantly)
   float m_fBestTime[6];	//Best time in each level
+  bool m_bPlayedExcellent;
 	
 
 protected:
@@ -121,6 +122,8 @@ protected:
     void draw();
     void init(list<commandlineArg> sArgs);
     void handleEvent(SDL_Event event);
+	void pause();
+	void resume();
 
 public:
 	//magichexagon.cpp functions - fairly generic 

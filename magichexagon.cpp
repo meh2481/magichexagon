@@ -370,6 +370,18 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 	}
 }
 
+void magichexagonEngine::pause()
+{
+	if(m_iCurMenu == MENU_NONE)
+		pauseMusic();
+}
+
+void magichexagonEngine::resume()
+{
+	if(m_iCurMenu == MENU_NONE)
+		resumeMusic();
+}
+
 Rect magichexagonEngine::getCameraView()
 {
 	Rect rcCamera;
@@ -616,9 +628,22 @@ void magichexagonEngine::drawLevelSelectMenu()
 	}
 	m_colors[0] = Color(255,255,255);	//Center part
 	m_colors[1] = Color(0,0,0);			//Center ring and triangle
-	m_colors[2] = Pinkie;				//Radial arm 1
-	m_colors[3] = Rarity;				//Radial arm 2
-	m_colors[4] = Dash;					//Radial arm 3
+	
+	if(m_fBestTime[2] >= 60)
+		m_colors[2] = Pinkie;				//Radial arm 1
+	else
+		m_colors[2].set(0.7,0.7,0.7);
+	
+	if(m_fBestTime[1] >= 60)
+		m_colors[3] = Rarity;				//Radial arm 2
+	else
+		m_colors[3].set(0.9,0.9,0.9);
+		
+	if(m_fBestTime[0] >= 60)
+		m_colors[4] = Dash;					//Radial arm 3
+	else
+		m_colors[4].set(0.7,0.7,0.7);
+	
 	m_colors[5] = Fluttershy;			//Radial arm 4
 	m_colors[6] = AJ;					//Radial arm 5
 	m_colors[7] = Twilight;				//Radial arm 6

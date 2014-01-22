@@ -91,12 +91,12 @@ bool Engine::_frame()
 			if(event.window.event == SDL_WINDOWEVENT_FOCUS_LOST && m_bPauseOnKeyboardFocus)
 			{
 				m_bPaused = true;
-				pauseMusic();
+				pause();
 			}
 			else if(event.window.event == SDL_WINDOWEVENT_FOCUS_GAINED && m_bPauseOnKeyboardFocus)
 			{
 				m_bPaused = false;
-				resumeMusic();
+				resume();
 			}
 			else if(event.window.event == SDL_WINDOWEVENT_RESIZED)
 			{
