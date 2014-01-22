@@ -248,7 +248,12 @@ void magichexagonEngine::updateLevel(float32 dt)
 			}
 		}
 		else
-			m_fRotateAngle += (m_fRotateAdd > 0)?(-(m_fRotateAdd+300)*dt):((-m_fRotateAdd+300)*dt);
+		{
+			if(m_iCurLevel == LEVEL_MAGIC)	//Spin with our already potentially mad spinning in magic level
+				m_fRotateAngle += (m_fRotateAdd > 0)?((-m_fRotateAdd+300)*dt):(-(m_fRotateAdd+300)*dt);
+			else							//Spin against our current spin direction in kindness level
+				m_fRotateAngle += (m_fRotateAdd > 0)?(-(m_fRotateAdd+300)*dt):((-m_fRotateAdd+300)*dt);
+		}
 	}
 	else if(m_fTotalSpinTime > m_fTargetSpinReverse)
 	{
@@ -330,7 +335,57 @@ void magichexagonEngine::checkLevel()
 					break;
 					
 			}
-			//TODO: Load next level
+			
+			//Load next level
+			switch(m_iCurLevel)
+			{
+				case LEVEL_FRIENDSHIP:
+					changeLevel(LEVEL_LOYALTY);
+					break;
+				
+				case LEVEL_HONESTY:
+					changeLevel(LEVEL_GENEROSITY);
+					break;
+				
+				case LEVEL_KINDNESS:
+					changeLevel(LEVEL_LAUGHTER);
+					break;
+				
+				case LEVEL_LOYALTY:
+					if(m_fWallSpeed < 8.1)
+					{
+						m_fRotateAdd = 200;
+						m_fWallSpeed = 8.25;
+						m_gap = 5.0;
+					}
+					else
+						changeLevel(LEVEL_LAUGHTER);
+					break;
+				
+				case LEVEL_GENEROSITY:
+					if(m_fWallSpeed < 8.6)
+					{
+						m_fRotateAdd = 225;
+						m_fWallSpeed = 9;
+						m_gap = 5.0;
+					}
+					else
+						changeLevel(LEVEL_LAUGHTER);
+					break;
+				
+				case LEVEL_LAUGHTER:
+					changeLevel(LEVEL_MAGIC);
+					break;
+				
+				case LEVEL_MAGIC:	//Go absolutely nuts if they survive here too long
+					//It's sort of entirely broken with the mad spinning, but basically you're dead anyway, so you probably won't notice
+					if(m_fRotateAdd > 0) 
+						m_fRotateAdd += 300;
+					else
+						m_fRotateAdd -= 300;
+					break;
+					
+			}
 		}
 	}
 		
