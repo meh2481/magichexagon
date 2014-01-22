@@ -109,7 +109,9 @@ void magichexagonEngine::draw()
 			break;
 	}
 	
-	//Draw logo text
+	//Draw HUD always at this depth
+	glLoadIdentity();
+	glTranslatef(0, 0, m_fDefCameraZ);
 	m_hud->draw(0);
 }
 

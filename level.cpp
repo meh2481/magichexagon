@@ -13,9 +13,31 @@ const float s_fCenterWallW = 0.14;
 
 void magichexagonEngine::renderLevel()
 {
-	HUDItem* time = m_hud->getChild("curtime");
-	if(time != NULL)
-		bestTime((HUDTextbox*)time, "", m_fTotalSpinTime);
+	if(m_iCurMenu == MENU_NONE)
+	{
+		HUDItem* time = m_hud->getChild("curtime");
+		if(time != NULL)
+			bestTime((HUDTextbox*)time, "", m_fTotalSpinTime);
+		
+		time = m_hud->getChild("bestrtime");
+		if(time != NULL)
+		{
+			if(m_fBestTime[m_iStartLevel] >= 60.0)	//Already beaten this level
+			{
+				if(m_fTotalSpinTime > m_fBestTime[m_iStartLevel])
+					((HUDTextbox*)(time))->setText("new record");
+				else
+					bestTime((HUDTextbox*)time, "best: ", m_fBestTime[m_iStartLevel]);
+			}
+			else
+			{
+				float fNext = 10.0f * (1+floor(m_fTotalSpinTime/10.0));
+				if(fNext > 60.0f)
+					fNext = 60.0f * (1+floor(m_fTotalSpinTime/60.0));
+				bestTime((HUDTextbox*)time, "next: ", fNext);
+			}
+		}
+	}
 	
 	glPushMatrix();
 	//Rotate by how much we're spinning

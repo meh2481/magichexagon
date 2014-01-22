@@ -9,6 +9,8 @@ now:
 - Ingame
 	- add GUI that shows best time (if > 60s) or time to next level
 	- Fix music dying horribly when window dragged ingame
+- Level Select
+	- gfx telling you how to select/enter level
 - Tutorial
 - endgame cutscenes and such
 - Fix Vsync issues
