@@ -162,7 +162,10 @@ void magichexagonEngine::updateWalls(float32 dt)
 	{
 		for(list<Wall>::iterator i = m_walls[j].begin(); i != m_walls[j].end(); i++)
 		{
-			i->height -= i->speed * dt;
+			if(m_wTop == NULL)	//Wait until top wall of last level is gone before speeding up
+				i->height -= i->speed * dt;
+			else
+				i->height -= m_wTop->speed * dt;
 			if(playerHex == j && i->height + i->length + 1.0 > s_fPlayerPos)	//Player is in this hex, and not above this wall
 			{
 				float32 wallAngle = atan(playerHeight / (1.0 + i->height - playerDist)) * RAD2DEG;
@@ -181,6 +184,8 @@ void magichexagonEngine::updateWalls(float32 dt)
 			}
 			if(i->height + i->length <= 0)
 			{	
+				if(&(*i) == m_wTop)
+					m_wTop = NULL;
 				i = m_walls[j].erase(i);
 				i--;
 			}
@@ -212,14 +217,17 @@ void magichexagonEngine::updateLevel(float32 dt)
 	float32 maxHeight = 0;
 	for(int j = 0; j < 6; j++)
 	{
-		for(list<Wall>::iterator i = m_walls[j].begin(); i != m_walls[j].end(); i++)
+		list<Wall>::iterator it = m_walls[j].end();
+		if(it != m_walls[j].begin())
 		{
-			if(maxHeight < i->height + i->length)
-				maxHeight = i->height + i->length;
+			it--;
+			if(maxHeight < it->height + it->length)
+				maxHeight = it->height + it->length;
+			
 		}
 	}
 	
-	if(maxHeight < 11.0)	//Give brief gap of 4.0 texels between patterns
+	if(maxHeight + m_gap < 11.0)	//Give brief gap of 4.0 texels between patterns, and more if specified
 		nextPattern();
 
 	//Spin!
@@ -264,18 +272,17 @@ void magichexagonEngine::updateLevel(float32 dt)
 			m_fTargetSpinTime += LEVELTIME;
 		else
 			m_fTargetSpinTime = FLT_MAX;
-		changeLevel(m_fTotalSpinTime);
+		//TODO changeLevel(m_fTotalSpinTime);
 	}
 }
 
 void magichexagonEngine::nextPattern()
 {
+	m_gap = 0;
 	int iCurLevel = m_iCurLevel;
-	if(m_Patterns.size() <= m_iCurLevel || !m_Patterns[iCurLevel].size())
-	{
-		//cout << "Empty level" << endl;
+	
+	if(m_Patterns.size() <= m_iCurLevel || !m_Patterns[iCurLevel].size())	//Check for empty level
 		iCurLevel = 0;
-	}
 	
 	int iPattern = rand() % m_Patterns[iCurLevel].size();	//Pick a random pattern out of those available
 	int startHex = rand() % 6;	//Start pattern at a random hex value (so it'll point in a random direction)
@@ -342,6 +349,29 @@ bool magichexagonEngine::loadPatterns(string sFilename)
 	return true;
 }
 
+Wall* magichexagonEngine::top()
+{
+	Wall* wret = NULL;
+	float top = 0;
+	for(int i = 0; i < 6; i++)
+	{
+		list<Wall>::iterator it = m_walls[i].begin();
+		if(it != m_walls[i].end())
+		{
+			Wall* w = &(*it);
+			if(w != NULL)
+			{
+				if(w->height + w->length > top)
+				{
+					top = w->height + w->length;
+					wret = w;
+				}
+			}
+		}
+	}
+	return wret;
+}
+
 void magichexagonEngine::resetLevel()
 {
 	m_ColorsChanging.clear();
@@ -350,18 +380,25 @@ void magichexagonEngine::resetLevel()
 	m_fTotalSpinTime = 0.0f;
 	m_fTargetSpinTime = LEVELTIME;
 	m_fWallStartHeight = 15.0;
+	m_wTop = NULL;
+	m_gap = 0;
+	m_iTargetSpinLevel = LEVEL_HONESTY;
 	
-	changeLevel(LEVELTIME * m_iCurLevel + 0.5);
+	changeLevel(m_iCurLevel);
 }
 
-void magichexagonEngine::changeLevel(float32 time)
+void magichexagonEngine::changeLevel(int iNewLevel)
 {	
+	//Mark topmost wall
+	if(iNewLevel != m_iCurLevel)
+		m_wTop = top();
+	m_gap = 5.0;	//Gap of 5 texels until next pattern generates
 	m_fMadSpinLength = 0;
 	m_fTargetMadSpin = FLT_MAX;
 	CameraPos.z = m_fDefCameraZ;
-	if(time >= LEVEL_MAGIC)
+	m_iCurLevel = iNewLevel;
+	if(iNewLevel == LEVEL_MAGIC)
 	{
-		playSound("magic");
 		phaseColor(&m_colors[0], Twilight, 0.5);
 		phaseColor(&m_colors[1], Twilight, 0.5);
 		phaseColor(&m_colors[2], TwilightMane, 0.5);
@@ -374,16 +411,14 @@ void magichexagonEngine::changeLevel(float32 time)
 		m_fRotateAdd = m_fRotateAngle = 0;
 		m_fTargetSpinReverse = FLT_MAX;
 		m_fTargetSpinIncrease = FLT_MAX;
-		m_iCurLevel = 6;
 		m_fWallSpeed = 10;
 		m_fPlayerMove = 10;
 		CameraPos.z -= 2;
 		m_fMadSpinLength = 2.0;
 		m_fTargetMadSpin = m_fTotalSpinTime + randFloat(5, 8);
 	}
-	else if(time >= LEVEL_LAUGHTER)
+	else if(iNewLevel == LEVEL_LAUGHTER)
 	{
-		playSound("laughter");
 		phaseColor(&m_colors[0], Pinkie, 0.5);
 		phaseColor(&m_colors[1], PinkieMane, 0.5);
 		phaseColor(&m_colors[2], PinkieEyes, 0.5);
@@ -393,16 +428,14 @@ void magichexagonEngine::changeLevel(float32 time)
 		phaseColor(&m_colors[6], PinkieEyes, 0.5);
 		phaseColor(&m_colors[7], Pinkie, 0.5);
 		centerCutie = getImage("res/gfx/pinkiemark.png");
-		m_iCurLevel = 5;
 		m_fRotateAdd = 175;
 		m_fWallSpeed = 9.5;
 		m_fPlayerMove = 9.5;
-		m_fTargetSpinReverse = randFloat(4,7);
-		m_fTargetSpinIncrease = randFloat(12, 15);
+		m_fTargetSpinReverse = m_fTotalSpinTime + randFloat(4,7);
+		m_fTargetSpinIncrease = m_fTotalSpinTime + randFloat(12, 15);
 	}
-	else if(time >= LEVEL_GENEROSITY)
+	else if(iNewLevel == LEVEL_GENEROSITY)
 	{
-		playSound("generosity");
 		phaseColor(&m_colors[0], RarityEyes, 0.5);
 		phaseColor(&m_colors[1], Rarity, 0.5);
 		phaseColor(&m_colors[2], RarityMane, 0.5);
@@ -412,16 +445,14 @@ void magichexagonEngine::changeLevel(float32 time)
 		phaseColor(&m_colors[6], RarityMane, 0.5);
 		phaseColor(&m_colors[7], RarityEyes, 0.5);
 		centerCutie = getImage("res/gfx/rarimark.png");
-		m_iCurLevel = 4;
 		m_fRotateAdd = 150;
 		m_fWallSpeed = 8.5;
 		m_fPlayerMove = 8.5;
-		m_fTargetSpinReverse = randFloat(4,7);
-		m_fTargetSpinIncrease = randFloat(12, 15);
+		m_fTargetSpinReverse = m_fTotalSpinTime + randFloat(4,7);
+		m_fTargetSpinIncrease = m_fTotalSpinTime + randFloat(12, 15);
 	}
-	else if(time >= LEVEL_LOYALTY)
+	else if(iNewLevel == LEVEL_LOYALTY)
 	{
-		playSound("loyalty");
 		phaseColor(&m_colors[0], Dash, 0.5);
 		phaseColor(&m_colors[1], Color(0,0,0), 0.5);
 		phaseColor(&m_colors[2], DashManeR, 0.5);
@@ -431,16 +462,14 @@ void magichexagonEngine::changeLevel(float32 time)
 		phaseColor(&m_colors[6], DashManeB, 0.5);
 		phaseColor(&m_colors[7], DashManeV, 0.5);
 		centerCutie = getImage("res/gfx/dashmark.png");
-		m_iCurLevel = 3;
 		m_fRotateAdd = 125;
 		m_fWallSpeed = 8;
 		m_fPlayerMove = 8.0;
-		m_fTargetSpinReverse = randFloat(4,7);
-		m_fTargetSpinIncrease = randFloat(12, 15);
+		m_fTargetSpinReverse = m_fTotalSpinTime + randFloat(4,7);
+		m_fTargetSpinIncrease = m_fTotalSpinTime + randFloat(12, 15);
 	}
-	else if(time >= LEVEL_KINDNESS)
+	else if(iNewLevel == LEVEL_KINDNESS)
 	{
-		playSound("kindness");
 		phaseColor(&m_colors[0], Fluttershy, 0.5);
 		phaseColor(&m_colors[1], FluttershyEyes, 0.5);
 		phaseColor(&m_colors[2], FluttershyMane, 0.5);
@@ -450,18 +479,16 @@ void magichexagonEngine::changeLevel(float32 time)
 		phaseColor(&m_colors[6], FluttershyMane, 0.5);
 		phaseColor(&m_colors[7], Fluttershy, 0.5);
 		centerCutie = getImage("res/gfx/fluttermark.png");
-		m_iCurLevel = 2;
 		m_fRotateAdd = 100;
 		m_fWallSpeed = 7;
 		m_fPlayerMove = 8.0;
-		m_fTargetSpinReverse = randFloat(4,7);
-		m_fTargetSpinIncrease = randFloat(12, 15);
+		m_fTargetSpinReverse = m_fTotalSpinTime + randFloat(4,7);
+		m_fTargetSpinIncrease = m_fTotalSpinTime + randFloat(12, 15);
 		m_fMadSpinLength = 1.0;
 		m_fTargetMadSpin = m_fTotalSpinTime + randFloat(9, 11);
 	}
-	else if(time >= LEVEL_HONESTY)
+	else if(iNewLevel == LEVEL_HONESTY)
 	{
-		playSound("honesty");
 		phaseColor(&m_colors[0], AJ, 0.5);
 		phaseColor(&m_colors[1], AJEyes, 0.5);
 		phaseColor(&m_colors[2], AJMane, 0.5);
@@ -471,14 +498,13 @@ void magichexagonEngine::changeLevel(float32 time)
 		phaseColor(&m_colors[6], AJMane, 0.5);
 		phaseColor(&m_colors[7], AJ, 0.5);
 		centerCutie = getImage("res/gfx/ajmark.png");
-		m_iCurLevel = 1;
 		m_fRotateAdd = 75;
 		m_fWallSpeed = 5.0;
 		m_fPlayerMove = 7.0;
-		m_fTargetSpinReverse = randFloat(4,7);
-		m_fTargetSpinIncrease = randFloat(12, 15);
+		m_fTargetSpinReverse = m_fTotalSpinTime + randFloat(4,7);
+		m_fTargetSpinIncrease = m_fTotalSpinTime + randFloat(12, 15);
 	}
-	else if(time < LEVEL_HONESTY)
+	else if(iNewLevel == LEVEL_FRIENDSHIP)
 	{
 		m_colors[0] = Color(255,255,255);	//Center part
 		m_colors[1] = Color(0,0,0);			//Center ring and triangle
@@ -492,18 +518,14 @@ void magichexagonEngine::changeLevel(float32 time)
 		m_fRotateAdd = 25;
 		m_fWallSpeed = 3.5;
 		m_fPlayerMove = 5.0;
-		m_iCurLevel = 0;
-		m_fTargetSpinReverse = randFloat(4,7);
-		m_fTargetSpinIncrease = randFloat(12, 15);
+		m_fTargetSpinReverse = m_fTotalSpinTime + randFloat(4,7);
+		m_fTargetSpinIncrease = m_fTotalSpinTime + randFloat(12, 15);
 	}
 	else
-		errlog << "Unknown level-change time: " << time << endl;
+		errlog << "Unknown level: " << iNewLevel << endl;
 	
 	if(rand() % 2 == 0)	//Start rotating in a random direction
 		m_fRotateAdd = -m_fRotateAdd;
-	
-	for(int i = 0; i < 6; i++)
-		m_walls[i].clear();
 }
 
 

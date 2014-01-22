@@ -41,25 +41,19 @@ const Color AJEyes(95,187,83);
 
 #define COLOR_EPSILON	0.001
 
-class Wall
-{
-public:
-	float32 speed;
-	float32 height;
-	float32 length;
-};
-
 #define MENU_START			0
 #define MENU_LEVELSELECT	1
 #define MENU_NONE			2
 
 #define LEVELTIME			30.0
-#define LEVEL_HONESTY		1.0*LEVELTIME
-#define LEVEL_KINDNESS		2.0*LEVELTIME
-#define LEVEL_LOYALTY		3.0*LEVELTIME
-#define LEVEL_GENEROSITY	4.0*LEVELTIME
-#define LEVEL_LAUGHTER		5.0*LEVELTIME
-#define LEVEL_MAGIC			6.0*LEVELTIME
+
+#define LEVEL_FRIENDSHIP	0
+#define LEVEL_HONESTY		1
+#define LEVEL_KINDNESS		2
+#define LEVEL_LOYALTY		3
+#define LEVEL_GENEROSITY	4
+#define LEVEL_LAUGHTER		5
+#define LEVEL_MAGIC			6
 
 class ColorPhase
 {
@@ -74,6 +68,14 @@ typedef struct
 	int hex;
 	float32 height, length;
 } pattern;
+
+class Wall
+{
+public:
+	float32 speed;
+	float32 height;
+	float32 length;
+};
 
 class magichexagonEngine : public Engine
 {
@@ -99,12 +101,15 @@ private:
   float m_fTargetSpinReverse;
   float m_fTargetSpinIncrease;
   float m_fTargetSpinTime;
+  int m_iTargetSpinLevel;
   int m_iCurLevel;
   float m_fWallSpeed;
   float m_fPlayerMove;
   float m_fWallStartHeight;
   float m_fTargetMadSpin;
   float m_fMadSpinLength;
+  Wall* m_wTop;
+  float m_gap;
 
 protected:
     void frame(float32 dt);
@@ -143,7 +148,9 @@ public:
 	void nextPattern();						//Lay down next pattern of walls
 	int  calcPlayerHex(float32* relAngle = NULL);
 	void checkSides(float32 fOldAngle, int prevHex, int curHex);
-	void changeLevel(float32 time);	//Change the level according to the given time
+	void changeLevel(int iNewLevel);	//Change to given level
+		
+	Wall* top();
 	
 	//color.cpp functions
 	void updateColors(float32 dt);

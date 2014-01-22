@@ -185,6 +185,7 @@ void magichexagonEngine::handleEvent(SDL_Event event)
                     break;
 				
 				case SDL_SCANCODE_LEFT:
+				case SDL_SCANCODE_A:
 					if(m_iCurMenu == MENU_LEVELSELECT)
 					{
 						playSound("select");
@@ -195,6 +196,7 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 					break;
 				
 				case SDL_SCANCODE_RIGHT:
+				case SDL_SCANCODE_D:
 					if(m_iCurMenu == MENU_LEVELSELECT)
 					{
 						playSound("select");
@@ -206,57 +208,10 @@ void magichexagonEngine::handleEvent(SDL_Event event)
                 
                 case SDL_SCANCODE_RETURN:
                     if(keyDown(SDL_SCANCODE_ALT))
-                      toggleFullscreen();
-                    break;
-#ifdef DEBUG
-				case SDL_SCANCODE_Q:
-					changeLevel(LEVEL_HONESTY);
-					m_fTargetSpinTime = FLT_MAX;
-					break;
-					
-				case SDL_SCANCODE_W:
-					changeLevel(LEVEL_KINDNESS);
-					m_fTargetSpinTime = FLT_MAX;
-					break;
-					
-				case SDL_SCANCODE_E:
-					changeLevel(LEVEL_LOYALTY);
-					m_fTargetSpinTime = FLT_MAX;
-					break;
-					
-				case SDL_SCANCODE_R:
-					changeLevel(LEVEL_GENEROSITY);
-					m_fTargetSpinTime = FLT_MAX;
-					break;
-					
-				case SDL_SCANCODE_T:
-					changeLevel(LEVEL_LAUGHTER);
-					m_fTargetSpinTime = FLT_MAX;
-					break;
-					
-				case SDL_SCANCODE_Y:
-					changeLevel(LEVEL_MAGIC);
-					m_fTargetSpinTime = FLT_MAX;
-					break;
-#endif
-				case SDL_SCANCODE_F10:
-				case SDL_SCANCODE_G:
-					if(keyDown(SDL_SCANCODE_CTRL))
-						grabMouse(!isMouseGrabbed());	//Toggle grabbing/releasing the mouse
-					break;
-					
-				case SDL_SCANCODE_F5:
-				{
-					m_Patterns.clear();
-					loadPatterns("res/patterns.xml");	//Reload patterns
-					string sScene = m_hud->getScene();
-					delete m_hud;
-					m_hud = new HUD("hud");
-					m_hud->create("res/hud.xml");
-					m_hud->setScene(sScene);
-					break;
-				}
-					
+                    {
+						toggleFullscreen();
+						break;
+					}
 				case SDL_SCANCODE_SPACE:
 					switch(m_iCurMenu)
 					{
@@ -278,6 +233,59 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 							break;
 					}
 					break;
+#ifdef DEBUG
+				case SDL_SCANCODE_Q:
+					changeLevel(LEVEL_FRIENDSHIP);
+					m_fTargetSpinTime = FLT_MAX;
+					break;
+					
+				case SDL_SCANCODE_W:
+					changeLevel(LEVEL_HONESTY);
+					m_fTargetSpinTime = FLT_MAX;
+					break;
+					
+				case SDL_SCANCODE_E:
+					changeLevel(LEVEL_KINDNESS);
+					m_fTargetSpinTime = FLT_MAX;
+					break;
+					
+				case SDL_SCANCODE_R:
+					changeLevel(LEVEL_LOYALTY);
+					m_fTargetSpinTime = FLT_MAX;
+					break;
+					
+				case SDL_SCANCODE_T:
+					changeLevel(LEVEL_GENEROSITY);
+					m_fTargetSpinTime = FLT_MAX;
+					break;
+					
+				case SDL_SCANCODE_Y:
+					changeLevel(LEVEL_LAUGHTER);
+					m_fTargetSpinTime = FLT_MAX;
+					break;
+					
+				case SDL_SCANCODE_U:
+					changeLevel(LEVEL_MAGIC);
+					m_fTargetSpinTime = FLT_MAX;
+					break;
+#endif
+				case SDL_SCANCODE_F10:
+				case SDL_SCANCODE_G:
+					if(keyDown(SDL_SCANCODE_CTRL))
+						grabMouse(!isMouseGrabbed());	//Toggle grabbing/releasing the mouse
+					break;
+					
+				case SDL_SCANCODE_F5:
+				{
+					m_Patterns.clear();
+					loadPatterns("res/patterns.xml");	//Reload patterns
+					string sScene = m_hud->getScene();
+					delete m_hud;
+					m_hud = new HUD("hud");
+					m_hud->create("res/hud.xml");
+					m_hud->setScene(sScene);
+					break;
+				}
             }
             break;
 
@@ -502,9 +510,9 @@ void magichexagonEngine::handleKeys()
 #endif
 	int prevHex = calcPlayerHex();
 	float32 fPrevAngle = m_fPlayerAngle;
-	if(keyDown(SDL_SCANCODE_LEFT))
+	if(keyDown(SDL_SCANCODE_LEFT) || keyDown(SDL_SCANCODE_A))
 		m_fPlayerAngle += m_fPlayerMove * getTimeScale();
-	if(keyDown(SDL_SCANCODE_RIGHT))
+	if(keyDown(SDL_SCANCODE_RIGHT) || keyDown(SDL_SCANCODE_D))
 		m_fPlayerAngle -= m_fPlayerMove * getTimeScale();
 	checkSides(fPrevAngle, prevHex, calcPlayerHex());
 }
