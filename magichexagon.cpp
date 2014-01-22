@@ -119,18 +119,20 @@ void magichexagonEngine::init(list<commandlineArg> sArgs)
 	//Create sounds up front
 	//vox
 	createSound("res/sfx/begin.ogg", "begin");
-	createSound("res/sfx/awesome.ogg", "awesome");
 	createSound("res/sfx/excellent.ogg", "excellent");
 	createSound("res/sfx/gameover.ogg", "gameover");
 	createSound("res/sfx/magichexagon.ogg", "magichexagon");
-	createSound("res/sfx/nice.ogg", "nice");
-	createSound("res/sfx/wonderful.ogg", "wonderful");
+	
 	createSound("res/sfx/generosity.ogg", "generosity");
 	createSound("res/sfx/honesty.ogg", "honesty");
 	createSound("res/sfx/kindness.ogg", "kindness");
 	createSound("res/sfx/laughter.ogg", "laughter");
 	createSound("res/sfx/loyalty.ogg", "loyalty");
 	createSound("res/sfx/magic.ogg", "magic");
+	
+	createSound("res/sfx/nice.ogg", "nice");
+	createSound("res/sfx/wonderful.ogg", "wonderful");
+	createSound("res/sfx/awesome.ogg", "awesome");
 	//sfx
 	createSound("res/sfx/beginlevel.ogg", "beginlevel");	//When you enter a level
 	createSound("res/sfx/menubegin.ogg", "menubegin");		//Initial keypress: Title->menu

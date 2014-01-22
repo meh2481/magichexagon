@@ -45,7 +45,7 @@ const Color AJEyes(95,187,83);
 #define MENU_LEVELSELECT	1
 #define MENU_NONE			2
 
-#define LEVELTIME			30.0
+#define LEVELTIME			60.0
 
 #define LEVEL_FRIENDSHIP	0
 #define LEVEL_HONESTY		1
@@ -110,6 +110,7 @@ private:
   float m_fMadSpinLength;
   Wall* m_wTop;
   float m_gap;
+  float m_fLastChecked;	//Last time we checked the level (so we don't change levels constantly)
 
 protected:
     void frame(float32 dt);
@@ -145,6 +146,7 @@ public:
 	void addWall(float32 height, float32 speed, float32 length, int32_t hex);	//Add a wall to the current level
 	void updateLevel(float32 dt);
 	void updateWalls(float32 dt);			//Make walls fall inward and check player collision
+	void checkLevel();						//See if we should change levels, speed up, or what
 	void nextPattern();						//Lay down next pattern of walls
 	int  calcPlayerHex(float32* relAngle = NULL);
 	void checkSides(float32 fOldAngle, int prevHex, int curHex);

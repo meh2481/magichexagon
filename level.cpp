@@ -265,15 +265,77 @@ void magichexagonEngine::updateLevel(float32 dt)
 	}
 	m_fRotateAngle += m_fRotateAdd * dt;
 	
-	//Update timer!
-	if(m_fTotalSpinTime > m_fTargetSpinTime)
+	//check and see if level should be changed
+	checkLevel();
+}
+
+void magichexagonEngine::checkLevel()
+{
+	//Within a level, play vox for "honesty" - "laughter"
+	for(int i = 1; i < 6; i++)
 	{
-		if(m_fTotalSpinTime < LEVEL_MAGIC)
-			m_fTargetSpinTime += LEVELTIME;
-		else
-			m_fTargetSpinTime = FLT_MAX;
-		//TODO changeLevel(m_fTotalSpinTime);
+		float time = 10.0 * i;
+		if(m_fTotalSpinTime > time && m_fLastChecked < time)
+		{
+			switch(i)
+			{
+				case LEVEL_HONESTY:
+					playSound("honesty");
+					break;
+					
+				case LEVEL_KINDNESS:
+					playSound("kindness");
+					break;
+					
+				case LEVEL_LOYALTY:
+					playSound("loyalty");
+					break;
+										
+				case LEVEL_GENEROSITY:
+					playSound("generosity");
+					break;
+										
+				case LEVEL_LAUGHTER:
+					playSound("laughter");
+					break;
+			}
+			break;
+		}
 	}
+	
+	//Every time another level is cleared, play "magic" - "awesome"
+	for(int i = 1; ; i++)
+	{
+		float time = 60.0 * i;
+		if(m_fTotalSpinTime < time)
+			break;
+		if(m_fTotalSpinTime > time && m_fLastChecked < time)
+		{
+			switch(i)
+			{
+				case 1:
+					playSound("magic");
+					break;
+					
+				case 2:
+					playSound("nice");
+					break;
+					
+				case 3:
+					playSound("wonderful");
+					break;
+					
+				default:
+					playSound("awesome");
+					break;
+					
+			}
+			//TODO: Load next level
+		}
+	}
+		
+		
+	m_fLastChecked = m_fTotalSpinTime;
 }
 
 void magichexagonEngine::nextPattern()
@@ -383,6 +445,7 @@ void magichexagonEngine::resetLevel()
 	m_wTop = NULL;
 	m_gap = 0;
 	m_iTargetSpinLevel = LEVEL_HONESTY;
+	m_fLastChecked = 0;
 	
 	changeLevel(m_iCurLevel);
 }
