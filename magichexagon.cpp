@@ -537,6 +537,16 @@ void magichexagonEngine::drawStartMenu()
 		glRotatef(60, 0, 0, 1);
 	}
 	glPopMatrix();
+	
+	//Because we're spinning evenly anyway, hack in a blink effect to the seizure warning logo
+	HUDItem* seizureWarning = m_hud->getChild("titlewarning");
+	if(seizureWarning != NULL)
+	{
+		if((int)(m_fRotateAngle / 30.0) % 2)
+			seizureWarning->hidden = true;
+		else
+			seizureWarning->hidden = false;
+	}
 }
 
 void magichexagonEngine::drawLevelSelectMenu()
