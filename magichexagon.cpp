@@ -542,7 +542,7 @@ void magichexagonEngine::drawStartMenu()
 	HUDItem* seizureWarning = m_hud->getChild("titlewarning");
 	if(seizureWarning != NULL)
 	{
-		if((int)(m_fRotateAngle / 30.0) % 2)
+		if((int)(m_fRotateAngle / 50.0) % 2)
 			seizureWarning->hidden = true;
 		else
 			seizureWarning->hidden = false;

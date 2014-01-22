@@ -38,4 +38,5 @@
   <char ascii="0" rect="560,0,575,18" />
   <char ascii="." rect="576,0,591,18" />
   <char ascii=" " rect="592,0,607,18" />
+  <char ascii=":" rect="608,0,623,18" />
 </font>
