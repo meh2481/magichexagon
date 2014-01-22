@@ -523,9 +523,9 @@ void magichexagonEngine::drawStartMenu()
 	for(int i = 0; i < 6; i++)
 	{
 		if(i % 2)
-			glColor4f(0.9, 0.9, 0.9, 1.0);
+			glColor4f(0.8, 0.8, 0.8, 1.0);
 		else
-			glColor4f(0.7, 0.7, 0.7, 1.0);
+			glColor4f(0.6, 0.6, 0.6, 1.0);
 		glBegin(GL_TRIANGLES);
 		//center
 		glVertex3f(0.0, 0.0, 0.0);

@@ -115,6 +115,24 @@ public:
 
 };
 
+typedef struct
+{
+	Vec3 pt[4];
+} Quad;
+
+class HUDGeom : public HUDItem
+{
+protected:
+	list<Quad> m_lQuads;
+	
+public:
+	HUDGeom(string sName);
+    ~HUDGeom();
+	
+	void draw(float32 fCurTime);
+	void addQuad(Quad q) {m_lQuads.push_back(q);};
+};
+
 //HUDGroup class -- For clumping HUD items together
 class HUDGroup : public HUDItem
 {

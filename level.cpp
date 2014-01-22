@@ -79,9 +79,9 @@ void magichexagonEngine::renderLevel()
 		{
 			glBegin(GL_QUADS);
 			//left inside
-			glVertex3f(min(-1.0 - j->height, -1.0 - s_fCenterWallW/2.0), 0.0, 0.01);
+			glVertex3f(min(-1.0 - j->height, -1.0 - s_fCenterWallW/2.0), -0.01, 0.01);	//Again, a touch down to cover rounding errors
 			//left outside
-			glVertex3f(min(-1.0 - j->height - j->length, -1.0 - s_fCenterWallW/2.0), 0.0, 0.01);
+			glVertex3f(min(-1.0 - j->height - j->length, -1.0 - s_fCenterWallW/2.0), -0.01, 0.01);
 			//Top left outside
 			glVertex3f(0.5*min(-1.0 - j->height - j->length, -1.0 - s_fCenterWallW/2.0), -0.866*min(-1.0 - j->height - j->length, -1.0 - s_fCenterWallW/2.0), 0.01);
 			//Top left inside

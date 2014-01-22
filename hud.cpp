@@ -243,6 +243,33 @@ void HUDGroup::event(SDL_Event event)
 }
 
 //-------------------------------------------------------------------------------------
+// HUDGeom class functions
+//-------------------------------------------------------------------------------------
+HUDGeom::HUDGeom(string sName) : HUDItem(sName)
+{
+}
+
+HUDGeom::~HUDGeom()
+{
+}
+
+void HUDGeom::draw(float32 fCurTime)
+{
+	if(hidden) return;
+    
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glTexCoord2f(0.0, 0.0);
+	glColor4f(col.r, col.g, col.b, col.a);
+	glBegin(GL_QUADS);
+	for(list<Quad>::iterator j = m_lQuads.begin(); j != m_lQuads.end(); j++)
+	{
+		for(int i = 0; i < 4; i++)
+			glVertex3f(j->pt[i].x, j->pt[i].y, j->pt[i].z);
+	}
+	glEnd();
+}
+
+//-------------------------------------------------------------------------------------
 // HUD class functions
 //-------------------------------------------------------------------------------------
 HUD::HUD(string sName) : HUDItem(sName)
@@ -400,6 +427,32 @@ HUDItem* HUD::_getItem(XMLElement* elem)
 		elem->QueryBoolAttribute("hidden", &tb->hidden);
         return(tb);
     }
+	else if(sName == "geom")
+	{
+		const char* cGeomName = elem->Attribute("name");
+		if(cGeomName == NULL) return NULL;
+		HUDGeom* geom = new HUDGeom(cGeomName);
+		const char* cColor = elem->Attribute("col");
+		if(cColor != NULL)
+			geom->col = colorFromString(cColor);
+		for(XMLElement* quad = elem->FirstChildElement("quad"); quad != NULL; quad = quad->NextSiblingElement("quad"))
+		{
+			Quad q;
+			const char* cQuad1 = quad->Attribute("p1");
+			const char* cQuad2 = quad->Attribute("p2");
+			const char* cQuad3 = quad->Attribute("p3");
+			const char* cQuad4 = quad->Attribute("p4");
+			if(cQuad1 != NULL && cQuad2 != NULL && cQuad3 != NULL && cQuad4 != NULL)
+			{
+				q.pt[0] = vec3FromString(cQuad1);
+				q.pt[1] = vec3FromString(cQuad2);
+				q.pt[2] = vec3FromString(cQuad3);
+				q.pt[3] = vec3FromString(cQuad4);
+				geom->addQuad(q);
+			}
+		}
+		return geom;
+	}
     
 	else
         errlog << "Unknown HUD item \"" << sName << "\". Ignoring..." << endl;

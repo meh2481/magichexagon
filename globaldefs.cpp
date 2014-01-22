@@ -135,7 +135,6 @@ string vec3ToString(Vec3 vec)
 Vec3 vec3FromString(string s)
 {
 	s = stripCommas(s);
-
     Vec3 vec;
     istringstream iss(s);
     if(!(iss >> vec.x >> vec.y >> vec.z))
