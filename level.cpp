@@ -209,13 +209,14 @@ void magichexagonEngine::updateWalls(float32 dt)
 				i->height -= i->speed * dt;
 			else
 				i->height -= m_wTop->speed * dt;
+			
 			if(playerHex == j && i->height + i->length + 1.0 > s_fPlayerPos)	//Player is in this hex, and not above this wall
 			{
 				float32 wallAngle = atan(playerHeight / (1.0 + i->height - playerDist)) * RAD2DEG;
 				if(wallAngle > 60.0f || //If the angle here is greater than 60 degrees, we have a collision
 				  //If we're at the very edge of this hex, we can test the height directly.
-				  (plAngle <= 5.0 && i->height + 1.0 < s_fPlayerPos && i->height + i->length + 1.0 > s_fPlayerPos) ||
-				  (plAngle >= 55.0 && i->height + 1.0 < s_fPlayerPos && i->height + i->length + 1.0 > s_fPlayerPos))		
+				  (plAngle <= 10.0 && i->height + 1.0 < s_fPlayerPos && i->height + i->length + 1.0 > s_fPlayerPos) ||
+				  (plAngle >= 50.0 && i->height + 1.0 < s_fPlayerPos && i->height + i->length + 1.0 > s_fPlayerPos))		
 				{
 					die();
 					break;

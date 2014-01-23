@@ -12,3 +12,4 @@ now:
 - Fix "excellent" playing on death when you run level for first time
 - Fix music dying horribly when window dragged ingame
 - Phase menu colors to make it look more dynamic
+- options menu
