@@ -732,6 +732,24 @@ void magichexagonEngine::drawLevelSelectMenu()
 	bestTime((HUDTextbox*)besttime, "best time: ", m_fBestTime[4]);
 	besttime = m_hud->getChild("lev6time");
 	bestTime((HUDTextbox*)besttime, "best time: ", m_fBestTime[5]);
+	
+	//Change color for arrows, depending on which keys pressed
+	HUDItem* arrow = m_hud->getChild("arrow_l");
+	if(arrow != NULL)
+	{
+		if(keyDown(SDL_SCANCODE_LEFT) || keyDown(SDL_SCANCODE_A))
+			arrow->col.set(1,0.4,0.4);
+		else
+			arrow->col.set(1,1,1);
+	}
+	arrow = m_hud->getChild("arrow_r");
+	if(arrow != NULL)
+	{
+		if(keyDown(SDL_SCANCODE_RIGHT) || keyDown(SDL_SCANCODE_D))
+			arrow->col.set(1,0.4,0.4);
+		else
+			arrow->col.set(1,1,1);
+	}
 }
 
 

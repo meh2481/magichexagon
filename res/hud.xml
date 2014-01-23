@@ -57,6 +57,52 @@
 		<textbox name="lev6name" font="HL" text="laughter" pos="-5, 2.5" pt="0.6" col="0.5,0.5,0.5,1" />
 		<textbox name="lev6time" font="HL" text="best time:" pos="-5, 2" pt="0.3" col="0.5,0.5,0.5,1" />
 		<textbox name="lev6locked" font="HL" text="locked" pos="-5, 2.5" pt="0.6" col="0.5,0.5,0.5,1" />
+		
+		<!-- main menu prompts -->
+		<geom name="maintextbg" col=".5,.5,.5,1">
+			<!-- top part: "esc to quit" bg -->
+			<quad p1="-2.8, 6.5, 0" p2="-2.3, 5.6, 0" p3="2.3, 5.6, 0" p4="2.8, 6.5, 0" />
+			<!-- bottom middle: "space to start" bg -->
+			<quad p1="-4.5, -6.5, 0" p2="-3.5, -5.25, 0" p3="3.5, -5.25, 0" p4="4.5, -6.5, 0" />
+			<!-- bottom left: left arrow bg -->
+			<quad p1="-6.15, -3.5, 0" p2="-3.15, -3.5, 0" p3="-5, -5.75, 0" p4="-8, -5.75, 0" />
+			<!-- bottom right: right arrow bg -->
+			<quad p1="6.15, -3.5, 0" p2="3.15, -3.5, 0" p3="5, -5.75, 0" p4="8, -5.75, 0" />
+		</geom>
+		<geom name="maintextbgborder" col="1,1,1,1">
+			<!-- top part border -->
+			<quad p1="-2.94, 6.5, 0" p2="-2.8, 6.5, 0" p3="-2.25, 5.6, 0" p4="-2.3, 5.5, 0" />
+			<quad p1="-2.26, 5.62, 0" p2="2.36, 5.62, 0" p3="2.3, 5.5, 0" p4="-2.3, 5.5, 0" />
+			<quad p1="2.94, 6.5, 0" p2="2.8, 6.5, 0" p3="2.25, 5.6, 0" p4="2.3, 5.5, 0" />
+			<!-- bottom middle: "space to start" border -->
+			<quad p1="-4.5, -6.5, 0" p2="-4.7, -6.5, 0" p3="-3.55, -5.09, 0" p4="-3.5, -5.25, 0" />
+			<quad p1="4.5, -6.5, 0" p2="4.7, -6.5, 0" p3="3.55, -5.09, 0" p4="3.5, -5.25, 0" />
+			<quad p1="-3.55, -5.09, 0" p2="3.55, -5.09, 0" p3="3.5, -5.25, 0" p4="-3.5, -5.25, 0" />
+		</geom>
+		<geom name="arrow_l" col="1,1,1,1">
+			<!-- bottom left: left arrow -->
+			<quad p1="-6.05, -3.75, 0" p2="-5.75, -3.75, 0" p3="-6.45, -4.625, 0" p4="-6.75, -4.625, 0" />
+			<quad p1="-6.05, -5.5, 0" p2="-5.75, -5.5, 0" p3="-6.45, -4.625, 0" p4="-6.75, -4.625, 0" />
+			<quad p1="-6.6, -4.525, 0" p2="-4.44, -4.525, 0" p3="-4.6, -4.725, 0" p4="-6.6, -4.725, 0" />
+			<!-- bottom left: left arrow border -->
+			<quad p1="-6.15, -3.5, 0" p2="-3.15, -3.5, 0" p3="-2.85, -3.35, 0" p4="-6.25, -3.35, 0" />
+			<quad p1="-6.25, -3.35, 0" p2="-6.15, -3.5, 0" p3="-8, -5.75, 0" p4="-8.36, -5.95, 0" />
+			<quad p1="-3.15, -3.5, 0" p2="-2.85, -3.35, 0" p3="-4.9, -5.9, 0" p4="-5, -5.75, 0" />
+			<quad p1="-8, -5.75, 0" p2="-5, -5.75, 0" p3="-4.9, -5.9, 0" p4="-8.36, -5.9, 0" />
+		</geom>
+		<geom name="arrow_r" col="1,1,1,1">
+			<!-- bottom right: right arrow -->
+			<quad p1="6.05, -3.75, 0" p2="5.75, -3.75, 0" p3="6.45, -4.625, 0" p4="6.75, -4.625, 0" />
+			<quad p1="6.05, -5.5, 0" p2="5.75, -5.5, 0" p3="6.45, -4.625, 0" p4="6.75, -4.625, 0" />
+			<quad p1="6.6, -4.525, 0" p2="4.44, -4.525, 0" p3="4.6, -4.725, 0" p4="6.6, -4.725, 0" />
+			<!-- bottom right: right arrow border -->
+			<quad p1="6.15, -3.5, 0" p2="3.15, -3.5, 0" p3="2.85, -3.35, 0" p4="6.25, -3.35, 0" />
+			<quad p1="6.25, -3.35, 0" p2="6.15, -3.5, 0" p3="8, -5.75, 0" p4="8.36, -5.95, 0" />
+			<quad p1="3.15, -3.5, 0" p2="2.85, -3.35, 0" p3="4.9, -5.9, 0" p4="5, -5.75, 0" />
+			<quad p1="8, -5.75, 0" p2="5, -5.75, 0" p3="4.9, -5.9, 0" p4="8.36, -5.9, 0" />			
+		</geom>
+		<textbox name="titleesc" font="HL" text="esc to quit" pos="0, 5.925" pt="0.45" col="1,1,1,1" />
+		<textbox name="titlespaceprompt" font="HL" text="space to start" pos="0, -5.75" pt=".55" col="1,1,1,1" />
 	</scene>
 	
 	<!-- in-level HUD -->
@@ -81,7 +127,8 @@
 		<textbox name="bestrtime" font="HL" text="best: 100.00" pos="-6, 5.975" pt="0.4" col="1,1,1,1" />
 	</scene>
 	
-	<!-- game over HUD -->
+	<!-- TODO: game over HUD -->
 	<scene name="gameover">
+		<textbox name="gameover" font="HL" text="you suck" pos="0, 4" pt="2" col="1,1,1,1" />
 	</scene>
 </hud>
