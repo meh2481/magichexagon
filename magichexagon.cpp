@@ -36,6 +36,9 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_iCurMenu = MENU_START;
 	m_fRotateAngle = 0;
 	m_iCurLevel = 0;
+	m_bFirstRun = false;
+	m_bLeftPressed = m_bRightPressed = false;
+	//m_fPressTimer = 2.0;
 	
 	showCursor();
 	
@@ -76,7 +79,10 @@ void magichexagonEngine::frame(float32 dt)
 			break;
 		
 		case MENU_GAMEOVER:
-			//TODO
+			CameraPos.z += 0.2*dt;
+			m_fRotateAngle += 2*dt;
+			if(CameraPos.z > -5)
+				CameraPos.z = -5;
 			break;
 	}
 }
@@ -89,6 +95,24 @@ void magichexagonEngine::draw()
 	glLoadIdentity();
 	
 	glTranslatef(0, 0, CameraPos.z);
+	
+	//Change color for arrows, depending on which keys pressed
+	HUDItem* arrow = m_hud->getChild("arrow_l");
+	if(arrow != NULL)
+	{
+		if(keyDown(SDL_SCANCODE_LEFT) || keyDown(SDL_SCANCODE_A))
+			arrow->col.set(1,0.4,0.4);
+		else
+			arrow->col.set(1,1,1);
+	}
+	arrow = m_hud->getChild("arrow_r");
+	if(arrow != NULL)
+	{
+		if(keyDown(SDL_SCANCODE_RIGHT) || keyDown(SDL_SCANCODE_D))
+			arrow->col.set(1,0.4,0.4);
+		else
+			arrow->col.set(1,1,1);
+	}
 	
 	switch(m_iCurMenu)
 	{
@@ -105,11 +129,12 @@ void magichexagonEngine::draw()
 			break;
 			
 		case MENU_GAMEOVER:
-			//TODO
+			renderLevel();
 			break;
 	}
 	
-	//Draw HUD always at this depth
+	//Draw HUD always at this depth, on top of everything else
+	glClear(GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 	glTranslatef(0, 0, m_fDefCameraZ);
 	m_hud->draw(0);
@@ -248,10 +273,10 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 								playSound("begin");
 								playSound("beginlevel");
 								restartMusic();
-								resetLevel();
 								m_iCurMenu = MENU_NONE;
 								m_iStartLevel = m_iCurLevel;
 								m_hud->setScene("level");
+								resetLevel();
 							}
 							break;
 						
@@ -261,9 +286,9 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 							playSound("beginlevel");
 							restartMusic();
 							m_iCurLevel = m_iStartLevel;
-							resetLevel();
 							m_iCurMenu = MENU_NONE;
 							m_hud->setScene("level");
+							resetLevel();
 							break;	
 					}
 					break;
@@ -459,6 +484,7 @@ void magichexagonEngine::loadConfig(string sFilename)
 		if(isFullscreen())
 			setInitialFullscreen();
 		delete doc;
+		m_bFirstRun = true;
 		return;	//No file; ignore
 	}
 	
@@ -470,6 +496,7 @@ void magichexagonEngine::loadConfig(string sFilename)
 		if(isFullscreen())
 			setInitialFullscreen();
 		delete doc;
+		m_bFirstRun = true;
 		return;
 	}
 	
@@ -580,9 +607,15 @@ void magichexagonEngine::handleKeys()
 	int prevHex = calcPlayerHex();
 	float32 fPrevAngle = m_fPlayerAngle;
 	if(keyDown(SDL_SCANCODE_LEFT) || keyDown(SDL_SCANCODE_A))
+	{
 		m_fPlayerAngle += m_fPlayerMove * getTimeScale();
+		m_bLeftPressed = true;
+	}
 	if(keyDown(SDL_SCANCODE_RIGHT) || keyDown(SDL_SCANCODE_D))
+	{
 		m_fPlayerAngle -= m_fPlayerMove * getTimeScale();
+		m_bRightPressed = true;
+	}
 	checkSides(fPrevAngle, prevHex, calcPlayerHex());
 }
 
@@ -735,24 +768,6 @@ void magichexagonEngine::drawLevelSelectMenu()
 	bestTime((HUDTextbox*)besttime, "best time: ", m_fBestTime[4]);
 	besttime = m_hud->getChild("lev6time");
 	bestTime((HUDTextbox*)besttime, "best time: ", m_fBestTime[5]);
-	
-	//Change color for arrows, depending on which keys pressed
-	HUDItem* arrow = m_hud->getChild("arrow_l");
-	if(arrow != NULL)
-	{
-		if(keyDown(SDL_SCANCODE_LEFT) || keyDown(SDL_SCANCODE_A))
-			arrow->col.set(1,0.4,0.4);
-		else
-			arrow->col.set(1,1,1);
-	}
-	arrow = m_hud->getChild("arrow_r");
-	if(arrow != NULL)
-	{
-		if(keyDown(SDL_SCANCODE_RIGHT) || keyDown(SDL_SCANCODE_D))
-			arrow->col.set(1,0.4,0.4);
-		else
-			arrow->col.set(1,1,1);
-	}
 }
 
 

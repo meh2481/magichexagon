@@ -115,6 +115,8 @@ private:
   float m_fLastChecked;	//Last time we checked the level (so we don't change levels constantly)
   float m_fBestTime[6];	//Best time in each level
   bool m_bPlayedExcellent;
+  bool m_bFirstRun;		//If this is the first time the player has played this game
+  bool m_bLeftPressed, m_bRightPressed;
 	
 
 protected:

@@ -8,7 +8,7 @@ ifeq ($(BUILD),release)
 	CFLAGS += -O2 -Os -s -DNDEBUG
 else
 # "Debug" build - no optimization, and debugging symbols
-	CFLAGS += -O0 -g -ggdb
+	CFLAGS += -g -ggdb
 endif
 
 all: magichexagon

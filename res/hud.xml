@@ -30,31 +30,31 @@
 		<textbox name="titleesc" font="HL" text="esc to quit" pos="5, 5.8" pt="0.55" col="1,1,1,1" />
 		<textbox name="titlestart" font="HL" text="press spacebar" pos="0, -4.02" pt="0.75" col="1,1,1,1" />
 		<!-- This logo flashes via program code, not here -->
-		<textbox name="titlewarning" font="HL" text="dizziness warning" pos="0, 3.5" pt="0.75" col="1,0,0,1" />
+		<textbox name="titlewarning" font="HL" text="motion sickness warning" pos="0, 3.5" pt="0.75" col="1,0,0,1" />
 		
 		<textbox name="titleauthor" font="HL" text="made by inderpxar" pos="0, -5.75" pt="0.4" col="1,1,1,1" />
 	</scene>
 	
 	<!-- level select HUD -->
 	<scene name="levelselect">
-		<textbox name="lev1name" font="HL" text="friendship" pos="0, 5" pt="0.6" col="0.5,0.5,0.5,1" />
+		<textbox name="lev1name" font="HL" text="twilight" pos="0, 5" pt="0.6" col="0.5,0.5,0.5,1" />
 		<textbox name="lev1time" font="HL" text="best time:" pos="0, 4.5" pt="0.3" col="0.5,0.5,0.5,1" />
 		
-		<textbox name="lev2name" font="HL" text="honesty" pos="5, 2.5" pt="0.6" col="0.5,0.5,0.5,1" />
+		<textbox name="lev2name" font="HL" text="applejack" pos="5, 2.5" pt="0.6" col="0.5,0.5,0.5,1" />
 		<textbox name="lev2time" font="HL" text="best time:" pos="5, 2" pt="0.3" col="0.5,0.5,0.5,1" />
 		
-		<textbox name="lev3name" font="HL" text="kindness" pos="5, -1.5" pt="0.6" col="0.5,0.5,0.5,1" />
+		<textbox name="lev3name" font="HL" text="fluttershy" pos="5, -1.5" pt="0.6" col="0.5,0.5,0.5,1" />
 		<textbox name="lev3time" font="HL" text="best time:" pos="5, -2" pt="0.3" col="0.5,0.5,0.5,1" />
 		
-		<textbox name="lev4name" font="HL" text="loyalty" pos="0, -4" pt="0.6" col="0.5,0.5,0.5,1" />
+		<textbox name="lev4name" font="HL" text="rainbow dash" pos="0, -4" pt="0.6" col="0.5,0.5,0.5,1" />
 		<textbox name="lev4time" font="HL" text="best time:" pos="0, -4.5" pt="0.3" col="0.5,0.5,0.5,1" />
 		<textbox name="lev4locked" font="HL" text="locked" pos="0, -4" pt="0.6" col="0.5,0.5,0.5,1" />
 		
-		<textbox name="lev5name" font="HL" text="generosity" pos="-5, -1.5" pt="0.6" col="0.5,0.5,0.5,1" />
+		<textbox name="lev5name" font="HL" text="rarity" pos="-5, -1.5" pt="0.6" col="0.5,0.5,0.5,1" />
 		<textbox name="lev5time" font="HL" text="best time:" pos="-5, -2" pt="0.3" col="0.5,0.5,0.5,1" />
 		<textbox name="lev5locked" font="HL" text="locked" pos="-5, -1.5" pt="0.6" col="0.5,0.5,0.5,1" />
 		
-		<textbox name="lev6name" font="HL" text="laughter" pos="-5, 2.5" pt="0.6" col="0.5,0.5,0.5,1" />
+		<textbox name="lev6name" font="HL" text="pinkie" pos="-5, 2.5" pt="0.6" col="0.5,0.5,0.5,1" />
 		<textbox name="lev6time" font="HL" text="best time:" pos="-5, 2" pt="0.3" col="0.5,0.5,0.5,1" />
 		<textbox name="lev6locked" font="HL" text="locked" pos="-5, 2.5" pt="0.6" col="0.5,0.5,0.5,1" />
 		
@@ -64,6 +64,8 @@
 			<quad p1="-2.8, 6.5, 0" p2="-2.3, 5.6, 0" p3="2.3, 5.6, 0" p4="2.8, 6.5, 0" />
 			<!-- bottom middle: "space to start" bg -->
 			<quad p1="-4.5, -6.5, 0" p2="-3.5, -5.25, 0" p3="3.5, -5.25, 0" p4="4.5, -6.5, 0" />
+		</geom>
+		<geom name="arrowbg" col=".5,.5,.5,1">
 			<!-- bottom left: left arrow bg -->
 			<quad p1="-6.15, -3.5, 0" p2="-3.15, -3.5, 0" p3="-5, -5.75, 0" p4="-8, -5.75, 0" />
 			<!-- bottom right: right arrow bg -->
@@ -125,10 +127,26 @@
 		</geom>
 		<textbox name="curtime" font="HL" text="100.00" pos="7, 5.975" pt="0.4" col="1,1,1,1" />
 		<textbox name="bestrtime" font="HL" text="best: 100.00" pos="-6, 5.975" pt="0.4" col="1,1,1,1" />
+		
+		<textbox name="tutorial1" font="HL" text="use arrow keys or wasd" pos="0, 2.5" pt="0.6" col="0.5,0.5,0.5,1" />
+		<textbox name="tutorial2" font="HL" text="avoid walls" pos="0, 2.5" pt="0.6" col="0.5,0.5,0.5,1" />
 	</scene>
 	
-	<!-- TODO: game over HUD -->
+	<!-- Game over HUD -->
 	<scene name="gameover">
-		<textbox name="gameover" font="HL" text="you suck" pos="0, 4" pt="2" col="1,1,1,1" />
+		<geom name="gameoverbg" col=".5,.5,.5,1">
+			<quad p1="-4.5, -6.5, 0" p2="-3.5, -5.25, 0" p3="3.5, -5.25, 0" p4="4.5, -6.5, 0" />
+			<quad p1="0.7, 6.5, 0" p2="1.7, 5.45, 0" p3="8.3, 5.45, 0" p4="9.3, 6.5, 0" />
+		</geom>
+		<geom name="gameoverbgborder" col="1,1,1,1">
+			<quad p1="-4.5, -6.5, 0" p2="-4.7, -6.5, 0" p3="-3.55, -5.09, 0" p4="-3.5, -5.25, 0" />
+			<quad p1="4.5, -6.5, 0" p2="4.7, -6.5, 0" p3="3.55, -5.09, 0" p4="3.5, -5.25, 0" />
+			<quad p1="-3.55, -5.09, 0" p2="3.55, -5.09, 0" p3="3.5, -5.25, 0" p4="-3.5, -5.25, 0" />
+			<quad p1="0.5, 6.5, 0" p2="0.7, 6.5, 0" p3="1.75, 5.45, 0" p4="1.65, 5.35, 0" />
+			<quad p1="1.74, 5.47, 0" p2="8.36, 5.47, 0" p3="8.35, 5.35, 0" p4="1.65, 5.35, 0" />
+			<quad p1="8.25, 5.45, 0" p2="9.3, 6.5, 0" p3="9.4, 6.4, 0" p4="8.35, 5.35, 0" />
+		</geom>
+		<textbox name="gameoverspaceprompt" font="HL" text="space to retry" pos="0, -5.75" pt=".55" col="1,1,1,1" />
+		<textbox name="gameoveresc" font="HL" text="esc to quit" pos="5, 5.8" pt="0.55" col="1,1,1,1" />
 	</scene>
 </hud>

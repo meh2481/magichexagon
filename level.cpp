@@ -313,6 +313,9 @@ void magichexagonEngine::updateLevel(float32 dt)
 	
 	//check and see if level should be changed
 	checkLevel();
+	
+	if(m_bFirstRun)
+		m_fTotalSpinTime = 0;
 }
 
 void magichexagonEngine::checkLevel()
@@ -333,8 +336,13 @@ void magichexagonEngine::checkLevel()
 			switch(i)
 			{
 				case LEVEL_HONESTY:
+				{
 					playSound("honesty");
+					HUDItem* tutorial = m_hud->getChild("tutorial2");
+					if(tutorial != NULL)
+						tutorial->hidden = true;
 					break;
+				}
 					
 				case LEVEL_KINDNESS:
 					playSound("kindness");
@@ -372,15 +380,19 @@ void magichexagonEngine::checkLevel()
 					break;
 					
 				case 2:
-					playSound("nice");
+					playSound("awesome");
 					break;
 					
 				case 3:
 					playSound("wonderful");
 					break;
 					
+				case 4:
+					playSound("nice");
+					break;
+				
 				default:
-					playSound("awesome");
+					playSound("awesome");	//Play this over and over if player somehow is this amazing
 					break;
 					
 			}
@@ -462,6 +474,36 @@ void magichexagonEngine::checkLevel()
 
 void magichexagonEngine::nextPattern()
 {
+	if(m_bFirstRun) //Don't add walls if first run
+	{
+		if(m_bLeftPressed && m_bRightPressed)
+		{
+			m_bFirstRun = false;
+			//hide arrows
+			HUDItem* arrow = m_hud->getChild("arrow_l");
+			if(arrow != NULL)
+				arrow->hidden = true;
+			arrow = m_hud->getChild("arrow_r");
+			if(arrow != NULL)
+				arrow->hidden = true;
+			arrow = m_hud->getChild("arrowbg");
+			if(arrow != NULL)
+				arrow->hidden = true;
+			HUDItem* tutorial = m_hud->getChild("tutorial1");
+			if(tutorial != NULL)
+				tutorial->hidden = true;
+			//Show next tutorial text
+			tutorial = m_hud->getChild("tutorial2");
+			if(tutorial != NULL)
+				tutorial->hidden = false;
+			m_bFirstRun = false;
+			HUDItem* time = m_hud->getChild("curtime");
+			if(time != NULL)
+				time->hidden = false;
+		}
+		return;
+	}
+		
 	m_gap = 0;
 	int iCurLevel = m_iCurLevel;
 	
@@ -577,6 +619,31 @@ void magichexagonEngine::resetLevel()
 	}
 	
 	changeLevel(m_iCurLevel);
+	
+	if(m_bFirstRun)
+	{
+		HUDItem* arrow = m_hud->getChild("arrow_l");
+		if(arrow != NULL)
+			arrow->hidden = false;
+		arrow = m_hud->getChild("arrow_r");
+		if(arrow != NULL)
+			arrow->hidden = false;
+		arrow = m_hud->getChild("arrowbg");
+		if(arrow != NULL)
+			arrow->hidden = false;
+		HUDItem* tutorial = m_hud->getChild("tutorial2");
+		if(tutorial != NULL)
+			tutorial->hidden = true;
+	}
+	else
+	{
+		HUDItem* tutorial = m_hud->getChild("tutorial1");
+		if(tutorial != NULL)
+			tutorial->hidden = true;
+		tutorial = m_hud->getChild("tutorial2");
+		if(tutorial != NULL)
+			tutorial->hidden = true;
+	}
 }
 
 void magichexagonEngine::changeLevel(int iNewLevel)
