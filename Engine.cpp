@@ -401,6 +401,20 @@ void Engine::setup_sdl()
   // Quit SDL properly on exit
   atexit(SDL_Quit);
   
+  // Set the minimum requirements for the OpenGL window
+  SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+  SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+  SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+  SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+  
+  //Vsync and stuff	//TODO: Toggle? Figure out what it's actually doing? My pathetic gfx card doesn't do anything with any of these values
+  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);	//Apparently double-buffering or something
+  
+  //Apparently MSAA or something
+  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
+  
   // Create SDL window
   Uint32 flags = SDL_WINDOW_OPENGL;
   if(m_bResizable)
@@ -419,20 +433,8 @@ void Engine::setup_sdl()
     exit(1);
   }
   SDL_GL_CreateContext(m_Window);
-  
-  // Set the minimum requirements for the OpenGL window
-  SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-  SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-  SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-  SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
-  
-  //Vsync and stuff	//TODO: Toggle? Figure out what it's actually doing? My pathetic gfx card doesn't do anything with any of these values
-  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);	//Apparently double-buffering or something
-  SDL_GL_SetSwapInterval(1);					//Apparently Vsync or something
-  //Apparently MSAA or something
-  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
+  if(SDL_GL_SetSwapInterval(-1) == -1) //Apparently Vsync or something
+		SDL_GL_SetSwapInterval(1);
 
   SDL_DisplayMode mode;
   SDL_GetDisplayMode(0, 0, &mode);
@@ -495,8 +497,7 @@ void Engine::setup_opengl()
     glLightfv( GL_LIGHT1, GL_POSITION, LightPosition );
 
     // Enable Light One
-    glEnable( GL_LIGHT1 ); 
-    
+    glEnable( GL_LIGHT1 );
 }
 
 void Engine::setMSAA(int iMSAA)
@@ -589,6 +590,7 @@ void Engine::_loadicon()	//Load icon into SDL window
 void Engine::changeScreenResolution(float32 w, float32 h)
 {
 	errlog << "Changing screen resolution to " << w << ", " << h << endl;
+	int vsync = SDL_GL_GetSwapInterval();
 //In Windoze, we copy the graphics memory to our new context, so we don't have to reload all of our images and stuff every time the resolution changes
 #ifdef _WIN32
 	SDL_SysWMinfo info;
@@ -630,6 +632,8 @@ void Engine::changeScreenResolution(float32 w, float32 h)
 	SDL_SetWindowSize(m_Window, m_iWidth, m_iHeight);
 
 	SDL_GL_CreateContext(m_Window);
+	if(SDL_GL_SetSwapInterval(vsync) == -1) //old vsync won't work in this new mode; default to vsync on
+		SDL_GL_SetSwapInterval(1);
 	
 	//Set OpenGL back up
 	setup_opengl();

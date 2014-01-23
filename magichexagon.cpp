@@ -306,7 +306,9 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 				case SDL_SCANCODE_F10:
 				case SDL_SCANCODE_G:
 					if(keyDown(SDL_SCANCODE_CTRL))
+					{
 						grabMouse(!isMouseGrabbed());	//Toggle grabbing/releasing the mouse
+					}
 					break;
 					
 				case SDL_SCANCODE_F5:
@@ -333,7 +335,8 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 		case SDL_MOUSEBUTTONDOWN:
             if(event.button.button == SDL_BUTTON_LEFT)
             {
-				
+				if(!isMouseGrabbed())
+					grabMouse(true);
             }
             else if(event.button.button == SDL_BUTTON_RIGHT)
             {

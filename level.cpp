@@ -191,6 +191,7 @@ void magichexagonEngine::die()
 		m_fBestTime[m_iStartLevel] = m_fTotalSpinTime;
 		saveConfig(getSaveLocation() + "config.xml");	//Save new best time, so it isn't lost
 	}
+	m_bPlayedExcellent = true;	//So we don't play "excellent" when player dies the first time they enter this level
 }
 
 void magichexagonEngine::updateWalls(float32 dt)

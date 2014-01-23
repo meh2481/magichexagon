@@ -2,14 +2,16 @@ later:
 - flush tyrsound stream so can seek and start song from any point
 - moar songs
 - camera movement?
+- Fix music dying horribly when window dragged ingame -- SDL BUG. WONTFIX
+- Find out what's causing micro-stuttering, and fix -- ONLY IN WINDOWED MODE; LIKELY SDL BUG. WONTFIX
 
 now:
 - Game Over sceen
 	- show time, best time, what level of friendship completed, and what time to next level (if incomplete)
 - Tutorial
 - endgame cutscenes and such
-- Fix Vsync issues
-- Fix "excellent" playing on death when you run level for first time
-- Fix music dying horribly when window dragged ingame
 - Phase menu colors to make it look more dynamic
 - options menu
+- optimize
+- strip
+- Fix broken level progression dropping walls too quickly
