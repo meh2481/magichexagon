@@ -21,3 +21,6 @@ all:
 clean:
 	$(MAKE) -f Makefile.$(MAKEFILE) clean 
 
+release:
+	make "BUILD=release"
+

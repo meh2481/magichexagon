@@ -2,13 +2,22 @@ objects := Image.o Engine.o Object.o Text.o globaldefs.o hud.o main.o tinyxml2.o
 libs := -L./lib/Win32 -lglu32 -ltinyxml2 -lttvfs -lBox2D -static-libgcc -static-libstdc++ ./lib/Win32/FreeImage.lib -lmingw32 -lSDL2main -lSDL2 -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid -ltyrsound.dll -lOpenAL32.dll -lvorbis -logg
 HEADER := -I./ -I./include/
 
+
+ifeq ($(BUILD),release)  
+# "Release" build - optimization, and no debug symbols
+	CFLAGS += -O2 -Os -s -DNDEBUG
+else
+# "Debug" build - no optimization, and debugging symbols
+	CFLAGS += -O0 -g -ggdb
+endif
+
 all: magichexagon
 
 magichexagon: $(objects) magichexagon.res
-	g++ -o $@ $^ $(libs) 
+	g++ $(CFLAGS) -o $@ $^ $(libs) 
 
 %.o: %.cpp
-	g++ -c -MMD -o $@ $< $(HEADER)
+	g++ $(CFLAGS) -c -MMD -o $@ $< $(HEADER)
 
 %.res: %.rc
 	windres $< -O coff -o $@

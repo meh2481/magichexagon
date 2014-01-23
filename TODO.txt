@@ -13,4 +13,3 @@ now:
 - Phase menu colors to make it look more dynamic
 - options menu
 - optimize
-- strip
