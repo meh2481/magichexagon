@@ -14,4 +14,3 @@ now:
 - options menu
 - optimize
 - strip
-- Fix broken level progression dropping walls too quickly

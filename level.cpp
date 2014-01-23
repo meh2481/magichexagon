@@ -539,9 +539,10 @@ Wall* magichexagonEngine::top()
 	float top = 0;
 	for(int i = 0; i < 6; i++)
 	{
-		list<Wall>::iterator it = m_walls[i].begin();
-		if(it != m_walls[i].end())
+		list<Wall>::iterator it = m_walls[i].end();
+		if(it != m_walls[i].begin())
 		{
+			it--;
 			Wall* w = &(*it);
 			if(w != NULL)
 			{
