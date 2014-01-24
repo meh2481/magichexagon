@@ -395,7 +395,41 @@ void magichexagonEngine::handleEvent(SDL_Event event)
             }
 			else if(event.button.button == SDL_BUTTON_MIDDLE)
 			{
-				
+				switch(m_iCurMenu)
+				{
+					case MENU_START:
+						playSound("menubegin");
+						m_iCurMenu = MENU_LEVELSELECT;
+						m_hud->setScene("levelselect");
+						m_iCurLevel = 0;
+						setMenuColors();
+						break;
+						
+					case MENU_LEVELSELECT:
+						if(m_iCurLevel < 3 || m_fBestTime[m_iCurLevel-3] >= 60.0)
+						{
+							playMusic("res/sfx/encore-micro_hexagon_courtesy.ogg");
+							playSound("begin");
+							playSound("beginlevel");
+							restartMusic();
+							m_iCurMenu = MENU_NONE;
+							m_iStartLevel = m_iCurLevel;
+							m_hud->setScene("level");
+							resetLevel();
+						}
+						break;
+					
+					case MENU_GAMEOVER:
+						playMusic("res/sfx/encore-micro_hexagon_courtesy.ogg");
+						playSound("begin");
+						playSound("beginlevel");
+						restartMusic();
+						m_iCurLevel = m_iStartLevel;
+						m_iCurMenu = MENU_NONE;
+						m_hud->setScene("level");
+						resetLevel();
+						break;	
+				}
 			}
             break;
 			
