@@ -178,6 +178,7 @@ int magichexagonEngine::calcPlayerHex(float32* relAngle)
 
 void magichexagonEngine::die()
 {
+	clearColors();
 	m_iCurMenu = MENU_GAMEOVER;
 	CameraPos.z = m_fDefCameraZ;
 	m_hud->setScene("gameover");
@@ -188,6 +189,14 @@ void magichexagonEngine::die()
 	//Update our best time for this level
 	if(m_fTotalSpinTime > m_fBestTime[m_iStartLevel])
 	{
+		if(m_fBestTime[m_iStartLevel] < 60.0 && m_fTotalSpinTime >= 60.0)
+		{
+			//TODO: "X of 6 sides complete"
+			if(m_iStartLevel < 3)
+			{
+				//TODO: "new level unlocked"
+			}
+		}
 		m_fBestTime[m_iStartLevel] = m_fTotalSpinTime;
 		saveConfig(getSaveLocation() + "config.xml");	//Save new best time, so it isn't lost
 		HUDTextbox* it = (HUDTextbox*)m_hud->getChild("besttime");

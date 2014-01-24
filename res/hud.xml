@@ -42,24 +42,30 @@
 	<scene name="levelselect">
 		<textbox name="lev1name" font="HL" text="twilight" pos="0, 5" pt="0.6" col="0.5,0.5,0.5,1" />
 		<textbox name="lev1time" font="HL" text="best time:" pos="0, 4.5" pt="0.3" col="0.5,0.5,0.5,1" />
+		<textbox name="lev1diff" font="HL" text="hard" pos="0, 4.2" pt="0.3" col="0.5,0.5,0.5,1" />
 		
 		<textbox name="lev2name" font="HL" text="applejack" pos="5, 2.5" pt="0.6" col="0.5,0.5,0.5,1" />
 		<textbox name="lev2time" font="HL" text="best time:" pos="5, 2" pt="0.3" col="0.5,0.5,0.5,1" />
+		<textbox name="lev2diff" font="HL" text="harder" pos="5, 1.7" pt="0.3" col="0.5,0.5,0.5,1" />
 		
 		<textbox name="lev3name" font="HL" text="fluttershy" pos="5, -1.5" pt="0.6" col="0.5,0.5,0.5,1" />
 		<textbox name="lev3time" font="HL" text="best time:" pos="5, -2" pt="0.3" col="0.5,0.5,0.5,1" />
+		<textbox name="lev3diff" font="HL" text="hardest" pos="5, -2.3" pt="0.3" col="0.5,0.5,0.5,1" />
 		
 		<textbox name="lev4name" font="HL" text="rainbow dash" pos="0, -4" pt="0.6" col="0.5,0.5,0.5,1" />
 		<textbox name="lev4time" font="HL" text="best time:" pos="0, -4.5" pt="0.3" col="0.5,0.5,0.5,1" />
 		<textbox name="lev4locked" font="HL" text="locked" pos="0, -4" pt="0.6" col="0.5,0.5,0.5,1" />
+		<textbox name="lev4diff" font="HL" text="hardester" pos="0, -4.8" pt="0.3" col="0.5,0.5,0.5,1" />
 		
 		<textbox name="lev5name" font="HL" text="rarity" pos="-5, -1.5" pt="0.6" col="0.5,0.5,0.5,1" />
 		<textbox name="lev5time" font="HL" text="best time:" pos="-5, -2" pt="0.3" col="0.5,0.5,0.5,1" />
 		<textbox name="lev5locked" font="HL" text="locked" pos="-5, -1.5" pt="0.6" col="0.5,0.5,0.5,1" />
+		<textbox name="lev5diff" font="HL" text="hardestest" pos="-5, -2.3" pt="0.3" col="0.5,0.5,0.5,1" />
 		
 		<textbox name="lev6name" font="HL" text="pinkie" pos="-5, 2.5" pt="0.6" col="0.5,0.5,0.5,1" />
 		<textbox name="lev6time" font="HL" text="best time:" pos="-5, 2" pt="0.3" col="0.5,0.5,0.5,1" />
 		<textbox name="lev6locked" font="HL" text="locked" pos="-5, 2.5" pt="0.6" col="0.5,0.5,0.5,1" />
+		<textbox name="lev6diff" font="HL" text="hardestestest" pos="-5, 1.7" pt="0.3" col="0.5,0.5,0.5,1" />
 		
 		<!-- main menu prompts -->
 		<geom name="maintextbg" col=".5,.5,.5,1">

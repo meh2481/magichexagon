@@ -749,49 +749,58 @@ void magichexagonEngine::drawLevelSelectMenu()
 	//Update level locked/unlocked labels
 	HUDItem* locked = m_hud->getChild("lev4locked");
 	HUDItem* levelname = m_hud->getChild("lev4name");
-	if(locked != NULL && levelname != NULL)
+	HUDItem* leveldif = m_hud->getChild("lev4diff");
+	if(locked != NULL && levelname != NULL && leveldif != NULL)
 	{
 		if(m_fBestTime[0] >= 60.0)
 		{
 			locked->hidden = true;
 			levelname->hidden = false;
+			leveldif->hidden = false;
 		}
 		else
 		{
 			locked->hidden = false;
 			levelname->hidden = true;
+			leveldif->hidden = true;
 		}
 	}
 	
 	locked = m_hud->getChild("lev5locked");
 	levelname = m_hud->getChild("lev5name");
-	if(locked != NULL && levelname != NULL)
+	leveldif = m_hud->getChild("lev5diff");
+	if(locked != NULL && levelname != NULL && leveldif != NULL)
 	{
 		if(m_fBestTime[1] >= 60.0)
 		{
 			locked->hidden = true;
 			levelname->hidden = false;
+			leveldif->hidden = false;
 		}
 		else
 		{
 			locked->hidden = false;
 			levelname->hidden = true;
+			leveldif->hidden = true;
 		}
 	}
 	
 	locked = m_hud->getChild("lev6locked");
 	levelname = m_hud->getChild("lev6name");
-	if(locked != NULL && levelname != NULL)
+	leveldif = m_hud->getChild("lev6diff");
+	if(locked != NULL && levelname != NULL && leveldif != NULL)
 	{
 		if(m_fBestTime[2] >= 60.0)
 		{
 			locked->hidden = true;
 			levelname->hidden = false;
+			leveldif->hidden = false;
 		}
 		else
 		{
 			locked->hidden = false;
 			levelname->hidden = true;
+			leveldif->hidden = true;
 		}
 	}
 	

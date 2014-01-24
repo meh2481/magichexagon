@@ -6,9 +6,11 @@ later:
 - Find out what's causing micro-stuttering, and fix -- ONLY IN WINDOWED MODE; LIKELY SDL BUG. WONTFIX
 - options menu
 - printscreen support not working?
+- "new record" onscreen below walls for ~5 sec when old record broken
 
 now:
 - endgame cutscenes and such
+- say when new level unlocked
 
 
 - Compile in release mode and undef DEBUG
