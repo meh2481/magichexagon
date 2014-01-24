@@ -59,6 +59,8 @@ protected:
     Image* m_img;
 
 public:
+	Point pos, size;
+	
     HUDImage(string sName);
     ~HUDImage();
 

@@ -2,6 +2,9 @@
 	<fonts>
 		<font name="HL" path="res/font.xml" />
 	</fonts>
+	<images>
+		<image name="mark" path="res/gfx/twilimark.png" />
+	</images>
 	
 	<!-- title screen HUD -->
 	<scene name="start">
@@ -135,10 +138,18 @@
 	<!-- Game over HUD -->
 	<scene name="gameover">
 		<geom name="gameoverbg" col=".5,.5,.5,1">
+			<!-- top and bot - just copied from above menus -->
 			<quad p1="-4.5, -6.5, 0" p2="-3.5, -5.25, 0" p3="3.5, -5.25, 0" p4="4.5, -6.5, 0" />
 			<quad p1="0.7, 6.5, 0" p2="1.7, 5.45, 0" p3="8.3, 5.45, 0" p4="9.3, 6.5, 0" />
+			<!-- level -->
+			<quad p1="-100, 3, 0" p2="-3, 3, 0" p3="0, -3, 0" p4="-100, -3, 0" />
+			<!-- last time -->
+			<quad p1="0, 2, 0" p2="100, 2, 0" p3="100, 0.5, 0" p4="0.75, 0.5, 0" />
+			<!-- best time -->
+			<quad p1="1.25, -0.5, 0" p2="100, -0.5, 0" p3="100, -2, 0" p4="2, -2, 0" />
 		</geom>
 		<geom name="gameoverbgborder" col="1,1,1,1">
+			<!-- top and bot - just copied from above menus -->
 			<quad p1="-4.5, -6.5, 0" p2="-4.7, -6.5, 0" p3="-3.55, -5.09, 0" p4="-3.5, -5.25, 0" />
 			<quad p1="4.5, -6.5, 0" p2="4.7, -6.5, 0" p3="3.55, -5.09, 0" p4="3.5, -5.25, 0" />
 			<quad p1="-3.55, -5.09, 0" p2="3.55, -5.09, 0" p3="3.5, -5.25, 0" p4="-3.5, -5.25, 0" />
@@ -148,5 +159,13 @@
 		</geom>
 		<textbox name="gameoverspaceprompt" font="HL" text="space to retry" pos="0, -5.75" pt=".55" col="1,1,1,1" />
 		<textbox name="gameoveresc" font="HL" text="esc to quit" pos="5, 5.8" pt="0.55" col="1,1,1,1" />
+		<textbox name="levelcompleted" font="HL" text="level 6" pos="-5.5, 0" pt="0.9" col="1,1,1,1" />
+		<textbox name="levelcompletedname" font="HL" text="generosity" pos="-4.5, -0.9" pt="0.5" col="1,1,1,1" />
+		<textbox name="nextlevelat" font="HL" text="next level at" pos="-5.35, -1.8" pt="0.5" col="1,1,1,1" />
+		<textbox name="nextleveltime" font="HL" text="60 seconds" pos="-3.3, -2.4" pt="0.5" col="1,1,1,1" />
+		<textbox name="stagecomplete" font="HL" text="stage complete" pos="-4.5, -2.1" pt="0.5" col="1,1,1,1" />
+		<textbox name="lasttime" font="HL" text="last: 100.00" pos="3.8, 1.25" pt="0.6" col="1,1,1,1" />
+		<textbox name="besttime" font="HL" text="best: 100.00" pos="5.1, -1.25" pt="0.6" col="1,1,1,1" />
+		<bgimage name="levelcompletedimg" img="mark" pos="-5.5, 1.7" size="2.25, 2.25" />
 	</scene>
 </hud>

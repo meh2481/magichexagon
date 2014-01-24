@@ -73,9 +73,9 @@ void magichexagonEngine::frame(float32 dt)
 			break;
 			
 		case MENU_NONE:
+			handleKeys();
 			updateColors(dt*getTimeScale());
 			updateLevel(dt*getTimeScale());
-			handleKeys();
 			break;
 		
 		case MENU_GAMEOVER:
@@ -207,6 +207,9 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 					switch(m_iCurMenu)
 					{
 						case MENU_NONE:
+							die();
+							break;
+							
 						case MENU_GAMEOVER:
 							pauseMusic();
 							playSound("menubegin");

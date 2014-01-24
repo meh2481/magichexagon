@@ -80,6 +80,8 @@ HUDItem* HUDItem::getChild(string sName)
 HUDImage::HUDImage(string sName) : HUDItem(sName)
 {
     m_img = NULL;
+	pos.SetZero();
+	size.SetZero();
 }
 
 HUDImage::~HUDImage()
@@ -93,10 +95,11 @@ void HUDImage::draw(float32 fCurTime)
     HUDItem::draw(fCurTime);
     if(m_img != NULL)
     {
-		//TODO
-		//glColor4f(col.r,col.g,col.b,col.a);
-        //m_img->draw(m_ptPos.x * m_iSCALE_FAC, m_ptPos.y * m_iSCALE_FAC);
-		//glColor4f(1.0f,1.0f,1.0f,1.0f);
+		glPushMatrix();
+		glTranslatef(pos.x, pos.y, 0);
+		glColor4f(col.r,col.g,col.b,col.a);
+        m_img->render(size);
+		glPopMatrix();
     }
 }
 
@@ -400,10 +403,10 @@ HUDItem* HUD::_getItem(XMLElement* elem)
         hImg->setImage(m_mImages[cImg]);
         const char* cPos = elem->Attribute("pos");
         if(cPos != NULL)
-        {
-            Point ptPos = pointFromString(cPos);
-            hImg->setPos(ptPos);
-        }
+            hImg->pos = pointFromString(cPos);
+        const char* cSize = elem->Attribute("size");
+        if(cSize != NULL)
+            hImg->size = pointFromString(cSize);
         return (hImg); //Add this as a child of our HUD
     }
     else if(sName == "textbox")
