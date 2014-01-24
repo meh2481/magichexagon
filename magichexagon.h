@@ -60,8 +60,11 @@ class ColorPhase
 {
 public:
 	Color* colorToChange;
+	bool pingpong;
 	float32 destr, destg, destb;
+	float32 srcr, srcg, srcb;
 	float32 amtr, amtg, amtb;
+	bool dir;
 };
 
 typedef struct
@@ -166,9 +169,12 @@ public:
 	
 	//color.cpp functions
 	void updateColors(float32 dt);
-	void phaseColor(Color* src, Color dest, float time);
+	void phaseColor(Color* src, Color dest, float time, bool bPingPong = false);
 	void colorFlip();
 	void resetLevel();
+	void clearColors();
+	void highlightLevel();
+	void setMenuColors();
 };
 
 void signalHandler(string sSignal); //Stub function for handling signals that come in from our HUD, and passing them on to myEngine

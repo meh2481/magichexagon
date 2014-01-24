@@ -70,6 +70,7 @@ void magichexagonEngine::frame(float32 dt)
 			break;
 			
 		case MENU_LEVELSELECT:
+			updateColors(dt*getTimeScale());
 			break;
 			
 		case MENU_NONE:
@@ -100,7 +101,7 @@ void magichexagonEngine::draw()
 	HUDItem* arrow = m_hud->getChild("arrow_l");
 	if(arrow != NULL)
 	{
-		if(keyDown(SDL_SCANCODE_LEFT) || keyDown(SDL_SCANCODE_A))
+		if(keyDown(SDL_SCANCODE_LEFT) || keyDown(SDL_SCANCODE_A) || getCursorDown(LMB))
 			arrow->col.set(1,0.4,0.4);
 		else
 			arrow->col.set(1,1,1);
@@ -108,7 +109,7 @@ void magichexagonEngine::draw()
 	arrow = m_hud->getChild("arrow_r");
 	if(arrow != NULL)
 	{
-		if(keyDown(SDL_SCANCODE_RIGHT) || keyDown(SDL_SCANCODE_D))
+		if(keyDown(SDL_SCANCODE_RIGHT) || keyDown(SDL_SCANCODE_D) || getCursorDown(RMB))
 			arrow->col.set(1,0.4,0.4);
 		else
 			arrow->col.set(1,1,1);
@@ -217,6 +218,7 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 							m_iCurLevel = m_iStartLevel;
 							CameraPos.z = m_fDefCameraZ;
 							m_hud->setScene("levelselect");
+							setMenuColors();
 							break;
 							
 						case MENU_LEVELSELECT:
@@ -239,6 +241,7 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 						m_iCurLevel--;
 						if(m_iCurLevel < 0)
 							m_iCurLevel = 5;
+						highlightLevel();
 					}
 					break;
 				
@@ -250,6 +253,7 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 						m_iCurLevel++;
 						if(m_iCurLevel > 5)
 							m_iCurLevel = 0;
+						highlightLevel();
 					}
 					break;
                 
@@ -267,6 +271,7 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 							m_iCurMenu = MENU_LEVELSELECT;
 							m_hud->setScene("levelselect");
 							m_iCurLevel = 0;
+							setMenuColors();
 							break;
 							
 						case MENU_LEVELSELECT:
@@ -365,10 +370,28 @@ void magichexagonEngine::handleEvent(SDL_Event event)
             {
 				if(!isMouseGrabbed())
 					grabMouse(true);
+				else
+				{
+					if(m_iCurMenu == MENU_LEVELSELECT)
+					{
+						playSound("select");
+						m_iCurLevel--;
+						if(m_iCurLevel < 0)
+							m_iCurLevel = 5;
+						highlightLevel();
+					}
+				}
             }
             else if(event.button.button == SDL_BUTTON_RIGHT)
             {
-				
+				if(m_iCurMenu == MENU_LEVELSELECT)
+				{
+					playSound("select");
+					m_iCurLevel++;
+					if(m_iCurLevel > 5)
+						m_iCurLevel = 0;
+					highlightLevel();
+				}
             }
 			else if(event.button.button == SDL_BUTTON_MIDDLE)
 			{
@@ -609,12 +632,12 @@ void magichexagonEngine::handleKeys()
 #endif
 	int prevHex = calcPlayerHex();
 	float32 fPrevAngle = m_fPlayerAngle;
-	if(keyDown(SDL_SCANCODE_LEFT) || keyDown(SDL_SCANCODE_A))
+	if(keyDown(SDL_SCANCODE_LEFT) || keyDown(SDL_SCANCODE_A) || getCursorDown(LMB))
 	{
 		m_fPlayerAngle += m_fPlayerMove * getTimeScale();
 		m_bLeftPressed = true;
 	}
-	if(keyDown(SDL_SCANCODE_RIGHT) || keyDown(SDL_SCANCODE_D))
+	if(keyDown(SDL_SCANCODE_RIGHT) || keyDown(SDL_SCANCODE_D) || getCursorDown(RMB))
 	{
 		m_fPlayerAngle -= m_fPlayerMove * getTimeScale();
 		m_bRightPressed = true;
@@ -679,34 +702,14 @@ void magichexagonEngine::bestTime(HUDTextbox* it, string s, float fTime)
 void magichexagonEngine::drawLevelSelectMenu()
 {
 	m_fRotateAngle = 0.0f;
-	centerCutie = NULL;
+	//centerCutie = NULL;
 	m_fPlayerAngle = -60.0f * m_iCurLevel - 90;
 	for(int i = 0; i < 6; i++)
 	{
 		if(m_walls[i].size())
 			m_walls[i].clear();
 	}
-	m_colors[0] = Color(255,255,255);	//Center part
-	m_colors[1] = Color(0,0,0);			//Center ring and triangle
 	
-	if(m_fBestTime[2] >= 60)
-		m_colors[2] = Pinkie;				//Radial arm 1
-	else
-		m_colors[2].set(0.7,0.7,0.7);
-	
-	if(m_fBestTime[1] >= 60)
-		m_colors[3] = Rarity;				//Radial arm 2
-	else
-		m_colors[3].set(0.9,0.9,0.9);
-		
-	if(m_fBestTime[0] >= 60)
-		m_colors[4] = Dash;					//Radial arm 3
-	else
-		m_colors[4].set(0.7,0.7,0.7);
-	
-	m_colors[5] = Fluttershy;			//Radial arm 4
-	m_colors[6] = AJ;					//Radial arm 5
-	m_colors[7] = Twilight;				//Radial arm 6
 	renderLevel();
 
 	//Update level locked/unlocked labels

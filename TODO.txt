@@ -5,7 +5,10 @@ later:
 - Fix music dying horribly when window dragged ingame -- SDL BUG. WONTFIX
 - Find out what's causing micro-stuttering, and fix -- ONLY IN WINDOWED MODE; LIKELY SDL BUG. WONTFIX
 - options menu
+- printscreen support not working?
 
 now:
 - endgame cutscenes and such
-- Phase menu colors to make it look more dynamic
+
+
+- Compile in release mode and undef DEBUG
