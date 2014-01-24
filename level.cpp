@@ -190,8 +190,105 @@ void magichexagonEngine::die()
 	{
 		m_fBestTime[m_iStartLevel] = m_fTotalSpinTime;
 		saveConfig(getSaveLocation() + "config.xml");	//Save new best time, so it isn't lost
+		HUDTextbox* it = (HUDTextbox*)m_hud->getChild("besttime");
+		if(it != NULL)
+			it->setText("new record");
+	}
+	else
+	{
+		HUDItem* it = m_hud->getChild("besttime");
+		if(it != NULL)
+			bestTime((HUDTextbox*)it, "best: ", m_fBestTime[m_iStartLevel]);
 	}
 	m_bPlayedExcellent = true;	//So we don't play "excellent" when player dies the first time they enter this level
+		
+	//Update game over GUI
+	HUDTextbox* tb = (HUDTextbox*)m_hud->getChild("levelcompleted");
+	if(tb != NULL)
+	{
+		ostringstream oss;
+		oss << "level " << (int)min(floor(m_fBestTime[m_iStartLevel] / 10.0), 6.0);
+		tb->setText(oss.str());
+	}
+	tb = (HUDTextbox*)m_hud->getChild("levelcompletedname");
+	HUDImage* img = (HUDImage*)m_hud->getChild("levelcompletedimg");
+	if(tb != NULL)
+	{
+		switch((int)(floor(m_fBestTime[m_iStartLevel] / 10.0)))
+		{
+			case 0:
+				tb->setText("friendship");
+				img->setImage(NULL);
+				break;
+				
+			case 1:
+				tb->setText("honesty");
+				img->setImage(getImage("res/gfx/ajmark.png"));
+				break;
+				
+			case 2:
+				tb->setText("kindness");
+				img->setImage(getImage("res/gfx/fluttermark.png"));
+				break;
+				
+			case 3:
+				tb->setText("loyalty");
+				img->setImage(getImage("res/gfx/dashmark.png"));
+				break;
+				
+			case 4:
+				tb->setText("generosity");
+				img->setImage(getImage("res/gfx/rarimark.png"));
+				break;
+				
+			case 5:
+				tb->setText("laughter");
+				img->setImage(getImage("res/gfx/pinkiemark.png"));
+				break;
+				
+			default:
+				tb->setText("magic");
+				img->setImage(getImage("res/gfx/twilimark.png"));
+				break;
+		}
+	}
+	tb = (HUDTextbox*)m_hud->getChild("lasttime");
+	if(tb != NULL)
+		bestTime((HUDTextbox*)tb, "last: ", m_fTotalSpinTime);
+	
+	tb = (HUDTextbox*)m_hud->getChild("stagecomplete");
+	if(tb != NULL)
+	{
+		if(m_fBestTime[m_iStartLevel] >= 60.0)
+			tb->hidden = false;
+		else
+			tb->hidden = true;
+	}
+	
+	tb = (HUDTextbox*)m_hud->getChild("nextlevelat");
+	if(tb != NULL)
+	{
+		if(m_fBestTime[m_iStartLevel] >= 60.0)
+			tb->hidden = true;
+		else
+			tb->hidden = false;
+	}
+	
+	tb = (HUDTextbox*)m_hud->getChild("nextleveltime");
+	if(tb != NULL)
+	{
+		if(m_fBestTime[m_iStartLevel] >= 60.0)
+			tb->hidden = true;
+		else
+		{
+			tb->hidden = false;
+			ostringstream oss;
+			oss << min((int)(ceil(m_fBestTime[m_iStartLevel] / 10.0)), 10) * 10;
+			oss << " seconds";
+			tb->setText(oss.str());
+		}
+	}
+	
 }
 
 void magichexagonEngine::updateWalls(float32 dt)

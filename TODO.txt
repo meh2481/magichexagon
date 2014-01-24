@@ -7,7 +7,5 @@ later:
 - options menu
 
 now:
-- Game Over sceen
-	- show time, best time, what level of friendship completed, and what time to next level (if incomplete)
 - endgame cutscenes and such
 - Phase menu colors to make it look more dynamic
