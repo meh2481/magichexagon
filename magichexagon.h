@@ -120,6 +120,7 @@ private:
   bool m_bPlayedExcellent;
   bool m_bFirstRun;		//If this is the first time the player has played this game
   bool m_bLeftPressed, m_bRightPressed;
+  bool m_bUnlocked, m_bSideComplete;
 	
 
 protected:
@@ -166,6 +167,7 @@ public:
 	void changeLevel(int iNewLevel);	//Change to given level
 	void die();							//Kill player
 	Wall* top();						//Get top (closest to player) wall
+	void setComplete();					//Set text for level complete dialog
 	
 	//color.cpp functions
 	void updateColors(float32 dt);

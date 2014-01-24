@@ -38,6 +38,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_iCurLevel = 0;
 	m_bFirstRun = false;
 	m_bLeftPressed = m_bRightPressed = false;
+	m_bUnlocked = m_bSideComplete = false;
 	//m_fPressTimer = 2.0;
 	
 	showCursor();
@@ -212,13 +213,21 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 							break;
 							
 						case MENU_GAMEOVER:
-							pauseMusic();
-							playSound("menubegin");
-							m_iCurMenu = MENU_LEVELSELECT;
-							m_iCurLevel = m_iStartLevel;
-							CameraPos.z = m_fDefCameraZ;
-							m_hud->setScene("levelselect");
-							setMenuColors();
+							if(m_bSideComplete)
+							{
+								playSound("menubegin");
+								setComplete();
+							}
+							else
+							{
+								pauseMusic();
+								playSound("menubegin");
+								m_iCurMenu = MENU_LEVELSELECT;
+								m_iCurLevel = m_iStartLevel;
+								CameraPos.z = m_fDefCameraZ;
+								m_hud->setScene("levelselect");
+								setMenuColors();
+							}
 							break;
 							
 						case MENU_LEVELSELECT:
@@ -289,14 +298,22 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 							break;
 						
 						case MENU_GAMEOVER:
-							playMusic("res/sfx/encore-micro_hexagon_courtesy.ogg");
-							playSound("begin");
-							playSound("beginlevel");
-							restartMusic();
-							m_iCurLevel = m_iStartLevel;
-							m_iCurMenu = MENU_NONE;
-							m_hud->setScene("level");
-							resetLevel();
+							if(m_bSideComplete)
+							{
+								playSound("menubegin");
+								setComplete();
+							}
+							else
+							{
+								playMusic("res/sfx/encore-micro_hexagon_courtesy.ogg");
+								playSound("begin");
+								playSound("beginlevel");
+								restartMusic();
+								m_iCurLevel = m_iStartLevel;
+								m_iCurMenu = MENU_NONE;
+								m_hud->setScene("level");
+								resetLevel();
+							}
 							break;	
 					}
 					break;
@@ -420,14 +437,22 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 						break;
 					
 					case MENU_GAMEOVER:
-						playMusic("res/sfx/encore-micro_hexagon_courtesy.ogg");
-						playSound("begin");
-						playSound("beginlevel");
-						restartMusic();
-						m_iCurLevel = m_iStartLevel;
-						m_iCurMenu = MENU_NONE;
-						m_hud->setScene("level");
-						resetLevel();
+						if(m_bSideComplete)
+						{
+							playSound("menubegin");
+							setComplete();
+						}
+						else
+						{
+							playMusic("res/sfx/encore-micro_hexagon_courtesy.ogg");
+							playSound("begin");
+							playSound("beginlevel");
+							restartMusic();
+							m_iCurLevel = m_iStartLevel;
+							m_iCurMenu = MENU_NONE;
+							m_hud->setScene("level");
+							resetLevel();
+						}
 						break;	
 				}
 			}

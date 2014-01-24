@@ -174,4 +174,16 @@
 		<textbox name="besttime" font="HL" text="best: 100.00" pos="5.1, -1.25" pt="0.6" col="1,1,1,1" />
 		<bgimage name="levelcompletedimg" img="mark" pos="-5.5, 1.7" size="2.25, 2.25" />
 	</scene>
+	
+	<!-- x of 6 sides completed notification menu thing -->
+	<scene name="unlocked">
+		<geom name="unlockedbg" col=".5,.5,.5,1">
+			<quad p1="-100, -2.3, 0" p2="100, -2.3, 0" p3="100, -0.7, 0" p4="-100, -0.7, 0" />
+		</geom>
+		<geom name="completebg" col=".5,.5,.5,1">
+			<quad p1="-100, 2.3, 0" p2="100, 2.3, 0" p3="100, 0.7, 0" p4="-100, 0.7, 0" />
+		</geom>
+		<textbox name="levelunlocked" font="HL" text="new level unlocked" pos="0, -1.5" pt="0.8" col="0,1,0,1" />
+		<textbox name="sidescompleted" font="HL" text="x of 6 sides complete" pos="0, 1.5" pt="0.8" col="0,1,0,1" />
+	</scene>
 </hud>

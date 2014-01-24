@@ -191,11 +191,9 @@ void magichexagonEngine::die()
 	{
 		if(m_fBestTime[m_iStartLevel] < 60.0 && m_fTotalSpinTime >= 60.0)
 		{
-			//TODO: "X of 6 sides complete"
+			m_bSideComplete = true;
 			if(m_iStartLevel < 3)
-			{
-				//TODO: "new level unlocked"
-			}
+				m_bUnlocked = true;
 		}
 		m_fBestTime[m_iStartLevel] = m_fTotalSpinTime;
 		saveConfig(getSaveLocation() + "config.xml");	//Save new best time, so it isn't lost
@@ -893,7 +891,43 @@ void magichexagonEngine::changeLevel(int iNewLevel)
 		m_fRotateAdd = -m_fRotateAdd;
 }
 
-
+void magichexagonEngine::setComplete()
+{
+	m_hud->setScene("unlocked");
+	HUDItem* it = m_hud->getChild("unlockedbg");
+	if(it != NULL)
+	{
+		if(m_bUnlocked)
+			it->hidden = false;
+		else
+			it->hidden = true;
+	}
+	
+	it = m_hud->getChild("levelunlocked");
+	if(it != NULL)
+	{
+		if(m_bUnlocked)
+			it->hidden = false;
+		else
+			it->hidden = true;
+	}
+	
+	HUDTextbox* tb = (HUDTextbox*) m_hud->getChild("sidescompleted");
+	if(tb != NULL)
+	{
+		ostringstream oss;
+		int num = 0;
+		for(int i = 0; i < 6; i++)
+		{
+			if(m_fBestTime[i] >= 60)
+				num++;
+		}
+		oss << num << " of 6 sides complete";
+		tb->setText(oss.str());
+	}
+	
+	m_bUnlocked = m_bSideComplete = false;
+}
 
 
 
