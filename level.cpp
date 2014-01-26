@@ -191,6 +191,7 @@ void magichexagonEngine::die()
 	{
 		if(m_fBestTime[m_iStartLevel] < 60.0 && m_fTotalSpinTime >= 60.0)
 		{
+			//TODO: Test and see if we should do an endgame cutscene
 			m_bSideComplete = true;
 			if(m_iStartLevel < 3)
 				m_bUnlocked = true;

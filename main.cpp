@@ -11,12 +11,22 @@
 #define ICONNAME "res/icons/icon_256.png"
 #endif
 
+#ifdef _WIN32
+int WINAPI WinMain(
+HINSTANCE hInstance,
+HINSTANCE hPrevInstance,
+LPSTR lpCmdLine,
+int nCmdShow)
+#else
 int main(int argc, char *argv[])
+#endif
 {
     FreeImage_Initialise();
 	
     magichexagonEngine* eng = new magichexagonEngine(DEFAULT_WIDTH, DEFAULT_HEIGHT, "Magic Hexagon", "magichexagon", ICONNAME, true); //Create our engine
+#ifndef _WIN32
 	eng->commandline(argc, argv);
+#endif
     eng->start(); //Get the engine rolling
 	
 	//Done main loop; exit program	
