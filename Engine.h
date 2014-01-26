@@ -93,7 +93,7 @@ public:
     ~Engine();
 
     //Methods
-	void commandline(int argc, char** argv);	//Pass along commandline arguments for the engine to use
+	void commandline(list<string> argv);	//Pass along commandline arguments for the engine to use
     void start();   //Runs engine and doesn't exit until the engine ends
     /*void fillRect(Point p1, Point p2, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha); //Fill the specified rect with the specified color
     void fillRect(float32 x1, float32 y1, float32 x2, float32 y2, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);

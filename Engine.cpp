@@ -748,13 +748,14 @@ bool Engine::getCursorDown(int iButtonCode)
 	return false;
 }
 
-void Engine::commandline(int argc, char** argv)
+void Engine::commandline(list<string> argv)
 {
 	//Step through intelligently
-	for(int i = 1; i < argc; i++)
+	for(list<string>::iterator i = argv.begin(); i != argv.end(); i++)
 	{
 		commandlineArg cla;
-		string sSwitch = argv[i];
+		string sSwitch = *i;
+		cout << sSwitch << endl;
 		if(sSwitch.find('-') == 0)
 		{
 			if(sSwitch.find("--") == 0)
@@ -762,12 +763,14 @@ void Engine::commandline(int argc, char** argv)
 			sSwitch.erase(0,1);
 			
 			cla.sSwitch = sSwitch;
-			if(i+1 < argc)	//Switch with a value
+			list<string>::iterator sw = i;
+			if(++sw != argv.end())	//Switch with a value
 			{
-				i++;
-				cla.sValue = argv[i];
+				cla.sValue = *sw;
+				//i++;
+				//if(i == argv.end()) break;
+				cout << "switch value: " << *sw << endl;
 			}
-			
 		}
 		else	//No switch for this value
 			cla.sValue = sSwitch;
