@@ -17,7 +17,7 @@ int SDL_main(int argc, char *argv[])
 	
     magichexagonEngine* eng = new magichexagonEngine(DEFAULT_WIDTH, DEFAULT_HEIGHT, "Magic Hexagon", "magichexagon", ICONNAME, true); //Create our engine
 	list<string> lCommandLine;
-	//Standard C++ way
+	
 	for(int i = 1; i < argc; i++)
 		lCommandLine.push_back(argv[i]);
 
