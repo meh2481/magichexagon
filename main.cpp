@@ -7,16 +7,6 @@
 
 #ifdef _WIN32
 #define ICONNAME "res/icons/icon_32.png"	//For some reason, Windoze (Or SDL2, or something) doesn't like large (256x256) icons for windows. Using a 32x32 icon instead.
-#include <shellapi.h>	//For CommandLineToArgv() and friends
-string ws2s(const wstring& s)
-{
-    int len;
-    int slength = (int)s.length();
-    len = WideCharToMultiByte(CP_ACP, 0, s.c_str(), slength, 0, 0, 0, 0); 
-    string r(len, '\0');
-    WideCharToMultiByte(CP_ACP, 0, s.c_str(), slength, &r[0], len, 0, 0); 
-    return r;
-}
 #else
 #define ICONNAME "res/icons/icon_256.png"
 #endif
@@ -27,25 +17,10 @@ int SDL_main(int argc, char *argv[])
 	
     magichexagonEngine* eng = new magichexagonEngine(DEFAULT_WIDTH, DEFAULT_HEIGHT, "Magic Hexagon", "magichexagon", ICONNAME, true); //Create our engine
 	list<string> lCommandLine;
-#if true
 	//Standard C++ way
 	for(int i = 1; i < argc; i++)
 		lCommandLine.push_back(argv[i]);
-#else
-	//But of course Windoze has to be different
-	LPWSTR *szArglist;
-	int argc;
 
-	szArglist = CommandLineToArgvW(GetCommandLineW(), &argc);
-	if(szArglist != NULL)
-	{
-		for(int i = 1; i < argc; i++)
-			lCommandLine.push_back(ws2s(szArglist[i]));
-
-		//Free memory allocated for CommandLineToArgvW arguments.
-		LocalFree(szArglist);
-	}
-#endif
 	eng->commandline(lCommandLine);
     eng->start(); //Get the engine rolling
 	
