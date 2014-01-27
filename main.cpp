@@ -21,17 +21,13 @@ string ws2s(const wstring& s)
 #define ICONNAME "res/icons/icon_256.png"
 #endif
 
-#ifdef _WIN32
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
-#else
-int main(int argc, char *argv[])
-#endif
+int SDL_main(int argc, char *argv[])
 {
     FreeImage_Initialise();
 	
     magichexagonEngine* eng = new magichexagonEngine(DEFAULT_WIDTH, DEFAULT_HEIGHT, "Magic Hexagon", "magichexagon", ICONNAME, true); //Create our engine
 	list<string> lCommandLine;
-#ifndef _WIN32
+#if true
 	//Standard C++ way
 	for(int i = 1; i < argc; i++)
 		lCommandLine.push_back(argv[i]);

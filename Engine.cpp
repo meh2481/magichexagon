@@ -755,7 +755,6 @@ void Engine::commandline(list<string> argv)
 	{
 		commandlineArg cla;
 		string sSwitch = *i;
-		cout << sSwitch << endl;
 		if(sSwitch.find('-') == 0)
 		{
 			if(sSwitch.find("--") == 0)
@@ -767,9 +766,8 @@ void Engine::commandline(list<string> argv)
 			if(++sw != argv.end())	//Switch with a value
 			{
 				cla.sValue = *sw;
-				//i++;
-				//if(i == argv.end()) break;
-				cout << "switch value: " << *sw << endl;
+				i++;
+				if(i == argv.end()) break;
 			}
 		}
 		else	//No switch for this value
