@@ -6,6 +6,10 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
+#ifdef _WIN32
+//#define AUDIO_THREADING
+#endif
+
 #include "globaldefs.h"
 #include "Image.h"
 #include "Object.h"
@@ -157,6 +161,5 @@ public:
 	float32 getGamma()				{return m_fGamma;};
 
 };
-
 
 #endif

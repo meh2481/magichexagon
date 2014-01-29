@@ -7,6 +7,13 @@
 #include <SDL2/SDL_syswm.h>
 ofstream errlog;
 
+//In Windows, because window dragging can hang the program, make a new thread so audio doesn't die horribly in the process
+#ifdef AUDIO_THREADING
+HANDLE hAudioThread;
+HANDLE hAudioMutex;
+bool bAudioQuit;
+DWORD WINAPI updateAudio(LPVOID lpParam);
+#endif
 
 GLfloat LightAmbient[]  = { 0.1f, 0.1f, 0.1f, 1.0f };
 // Diffuse Light Values
@@ -74,7 +81,9 @@ void PrintEvent(const SDL_Event * event)
 
 bool Engine::_frame()
 {
-	tyrsound_update();
+#ifndef AUDIO_THREADING
+	tyrsound_update();	//Just update audio in main thread on non-Windows systems
+#endif
     //Handle input events from SDL
     SDL_Event event;
     while(SDL_PollEvent(&event))
@@ -218,6 +227,18 @@ Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sAppName
 
 	if(tyrsound_init(NULL, NULL) != TYRSOUND_ERR_OK)
         errlog << "Failed to init tyrsound." << std::endl;
+	
+	//Handle Windows audio issues
+#ifdef AUDIO_THREADING
+	bAudioQuit = false;
+	
+	//Set up new thread and global mutex for audio
+	//Create mutex
+	hAudioMutex = CreateMutex(NULL, FALSE, NULL);
+	
+	//Create thread
+	hAudioThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)updateAudio, NULL, 0, NULL);
+#endif
 }
 
 Engine::~Engine()
@@ -231,6 +252,21 @@ Engine::~Engine()
     //Clean up our sound effects
 	for(map<string, tyrsound_Handle>::iterator i = m_sounds.begin(); i != m_sounds.end(); i++)
 		tyrsound_unload(i->second);
+	
+	//Notify audio thread to exit on Win32, and wait for it to do so
+#ifdef AUDIO_THREADING
+	//Wait for mutex, and let thread know to quit
+	WaitForSingleObject(hAudioMutex, INFINITE);
+	bAudioQuit = true;
+	ReleaseMutex(hAudioMutex);	//Release mutex
+	
+	//Wait for audio thread to exit
+	WaitForSingleObject(hAudioThread, INFINITE);
+	
+	//Clean up thread handles
+	CloseHandle(hAudioThread);
+	CloseHandle(hAudioMutex);
+#endif
 	
 	//Clean up tyrsound
 	tyrsound_shutdown();
@@ -829,6 +865,26 @@ string Engine::getSaveLocation()
 	ttvfs::CreateDirRec(s.c_str());
 	return s;
 }
+
+#ifdef AUDIO_THREADING
+DWORD WINAPI updateAudio(LPVOID lpParam)
+{
+	while(true)//Loop forever
+	{
+		tyrsound_update();
+		Sleep(10);	//Sleep 10ms so we don't hog CPU
+		
+		//Check and see if we should quit
+		WaitForSingleObject(hAudioMutex, INFINITE);
+		if(bAudioQuit)
+			break;
+		ReleaseMutex(hAudioMutex);
+	}
+	ReleaseMutex(hAudioMutex);
+}
+#endif
+
+
 
 
 
