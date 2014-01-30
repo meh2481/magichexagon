@@ -7,7 +7,7 @@
 #define ENGINE_H
 
 #ifdef _WIN32
-//#define AUDIO_THREADING
+#define AUDIO_THREADING
 #endif
 
 #include "globaldefs.h"
