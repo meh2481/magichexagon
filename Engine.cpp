@@ -450,14 +450,15 @@ void Engine::setup_sdl()
   SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
   SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
   SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+  SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 32);
   
   //Vsync and stuff	//TODO: Toggle? Figure out what it's actually doing? My pathetic gfx card doesn't do anything with any of these values
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);	//Apparently double-buffering or something
   
-  //Apparently MSAA or something
-  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
+  //Apparently MSAA or something (disable by default; my Linux gfx drivers seem to not like)
+  //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+  //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
   
   // Create SDL window
   Uint32 flags = SDL_WINDOW_OPENGL;
@@ -468,8 +469,8 @@ void Engine::setup_sdl()
                              SDL_WINDOWPOS_UNDEFINED,
                              SDL_WINDOWPOS_UNDEFINED,
                              m_iWidth, 
-							 m_iHeight,
-                             flags);
+							 							 m_iHeight,
+                             SDL_WINDOW_OPENGL);
 
   if(m_Window == NULL)
   {

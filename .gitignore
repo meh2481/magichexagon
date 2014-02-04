@@ -10,7 +10,8 @@
 *.la
 
 # Compiled executables
-magichexagon
+magichexagon_32
+magichexagon_64
 magichexagon.exe
 
 # program output

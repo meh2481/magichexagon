@@ -11,7 +11,11 @@
 #define ICONNAME "res/icons/icon_256.png"
 #endif
 
+#ifdef _WIN32
 int SDL_main(int argc, char *argv[])
+#else
+int main(int argc, char** argv)
+#endif
 {
     FreeImage_Initialise();
 	
