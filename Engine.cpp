@@ -485,7 +485,7 @@ void Engine::setup_sdl()
   SDL_DisplayMode mode;
   SDL_GetDisplayMode(0, 0, &mode);
   errlog << "Default monitor refresh rate: " << mode.refresh_rate << " Hz" << endl;
-  setFramerate(mode.refresh_rate);
+  setFramerate(max(mode.refresh_rate, 30));	//30fps is a bare minimum
   
   
   //Hide system cursor for SDL, so we can use our own
