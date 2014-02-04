@@ -7,10 +7,10 @@ output=magichexagon_64
 all: magichexagon
 
 magichexagon: $(objects)
-	$(CXX) -o $(output) $^ $(libs) $(CXXFLAGS) `sdl2-config --libs`
+	$(CXX) -o $(output) $^ $(libs) $(CXXFLAGS) `sdl2-config --libs` -m64
 
 %.o: %.cpp
-	$(CXX) -c -MMD $(CXXFLAGS) -o  $@ $< `sdl2-config --cflags` $(header)
+	$(CXX) -c -MMD $(CXXFLAGS) -o  $@ $< `sdl2-config --cflags` $(header) -m64
 
 -include $(objects:.o=.d)
 
