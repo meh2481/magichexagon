@@ -4,6 +4,14 @@ header := -I./ -I./include
 CXX=g++
 output=magichexagon_64
 
+ifeq ($(BUILD),release)  
+# "Release" build - optimization, and no debug symbols
+	CXXFLAGS += -O2 -Os -s -DNDEBUG 
+else
+# "Debug" build - no optimization, and debugging symbols
+	CXXFLAGS += -g -ggdb
+endif
+
 all: magichexagon
 
 magichexagon: $(objects)
