@@ -1,10 +1,15 @@
-#ifdef USE_SDL12
-#  include <SDL/SDL.h>
+#ifdef USE_SDL_FRAMEWORK
+#include <SDL.h>
 #else
-#  include <SDL2/SDL.h>
+#include <SDL2/SDL.h>
 #endif
 
+#ifdef __APPLE__
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#else
 #include <GL/gl.h>
+#endif
 
 #include <iostream>
 #include "opengl-api.h"

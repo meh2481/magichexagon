@@ -10,6 +10,9 @@ ifneq ($(PROCESSOR), x86_64)
 endif
 ifeq ($(OS), Darwin)
     MAKEFILE = Makefile.osx
+    ifeq ($(PROCESSOR), powerpc)
+        MAKEFILE = Makefile_ppc.osx
+    endif
 endif
 ifneq (,$(findstring MINGW,$(OS)))
     MAKEFILE = Makefile.mingw

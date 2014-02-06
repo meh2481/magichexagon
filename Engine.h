@@ -64,6 +64,7 @@ private:
 	float32 m_fGamma;		//Overall screen brightness
 	bool m_bPaused;			//If the game is paused due to not being focused
 	bool m_bPauseOnKeyboardFocus;	//If the game pauses when keyboard focus is lost
+  bool m_bSoundDied;  //If tyrsound fails to load, don't try to use it
 	
 	map<string, tyrsound_Handle> m_sounds;
 

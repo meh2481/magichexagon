@@ -25,7 +25,11 @@ GL_FUNC(void,glReadPixels,(GLint x, GLint y, GLsizei width, GLsizei height, GLen
 
 // textures
 GL_FUNC(void,glGenTextures,(GLsizei n, GLuint *textures),(n,textures),)
+#ifdef __APPLE__
+GL_FUNC(void,glTexImage2D,(GLenum target, GLint level, GLenum internalFormat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid *pixels),(target,level,internalFormat,width,height,border,format,type,pixels),)
+#else
 GL_FUNC(void,glTexImage2D,(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid *pixels),(target,level,internalFormat,width,height,border,format,type,pixels),)
+#endif
 GL_FUNC(void,glBindTexture,(GLenum target,GLuint name),(target,name),)
 GL_FUNC(void,glDeleteTextures,(GLsizei n, const GLuint *textures),(n,textures),)
 GL_FUNC(void,glTexParameterf,(GLenum target, GLenum pname, GLfloat param),(target,pname,param),)
