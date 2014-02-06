@@ -4,7 +4,7 @@
 
 OS = $(shell uname -s)
 MAKEFILE = Makefile.unix
-PROCESSOR = $(shell uname -p)
+PROCESSOR = $(shell uname -m)
 ifneq ($(PROCESSOR), x86_64)
     MAKEFILE = Makefile_32.unix
 endif

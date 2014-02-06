@@ -4,13 +4,21 @@ header := -I./ -I./include
 CXX=g++
 output=magichexagon_64
 
+ifeq ($(BUILD),release)  
+# "Release" build - optimization, and no debug symbols
+	CXXFLAGS += -O2 -Os -s -DNDEBUG 
+else
+# "Debug" build - no optimization, and debugging symbols
+	CXXFLAGS += -g -ggdb
+endif
+
 all: magichexagon
 
 magichexagon: $(objects)
-	$(CXX) -o $(output) $^ $(libs) $(CXXFLAGS) `sdl2-config --libs`
+	$(CXX) -o $(output) $^ $(libs) $(CXXFLAGS) `sdl2-config --libs` -m64
 
 %.o: %.cpp
-	$(CXX) -c -MMD $(CXXFLAGS) -o  $@ $< `sdl2-config --cflags` $(header)
+	$(CXX) -c -MMD $(CXXFLAGS) -o  $@ $< `sdl2-config --cflags` $(header) -m64
 
 -include $(objects:.o=.d)
 

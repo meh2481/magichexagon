@@ -492,13 +492,14 @@ void Engine::setup_sdl()
                              SDL_WINDOWPOS_UNDEFINED,
                              m_iWidth, 
 							 							 m_iHeight,
-                             SDL_WINDOW_OPENGL);
+                             flags);
 
   if(m_Window == NULL)
   {
   	errlog << "Couldn't set video mode: " << SDL_GetError() << endl;
     exit(1);
   }
+  SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1); //Share objects between OpenGL contexts
   SDL_GL_CreateContext(m_Window);
   if(SDL_GL_SetSwapInterval(-1) == -1) //Apparently Vsync or something
 		SDL_GL_SetSwapInterval(1);
@@ -506,7 +507,7 @@ void Engine::setup_sdl()
   SDL_DisplayMode mode;
   SDL_GetDisplayMode(0, 0, &mode);
   errlog << "Default monitor refresh rate: " << mode.refresh_rate << " Hz" << endl;
-  setFramerate(mode.refresh_rate);
+  setFramerate(max(mode.refresh_rate, 30));	//30fps is a bare minimum
   
   
   //Hide system cursor for SDL, so we can use our own
@@ -728,8 +729,7 @@ void Engine::changeScreenResolution(float32 w, float32 h)
 		return;
 	}
 #else
-	//TODO: *nix supposedly does this for us automagically. Test.
-	//Otherwise, reload images & models
+	//Reload images & models (breaks scaled blurring)
 	//reloadImages();
 #endif
 }
