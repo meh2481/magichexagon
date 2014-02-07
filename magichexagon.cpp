@@ -693,12 +693,12 @@ void magichexagonEngine::handleKeys()
 	float32 fPrevAngle = m_fPlayerAngle;
 	if(keyDown(SDL_SCANCODE_LEFT) || keyDown(SDL_SCANCODE_A) || getCursorDown(LMB))
 	{
-		m_fPlayerAngle += m_fPlayerMove * getTimeScale();
+		m_fPlayerAngle += m_fPlayerMove * getTimeScale() * 60.0/(float)getFramerate();
 		m_bLeftPressed = true;
 	}
 	if(keyDown(SDL_SCANCODE_RIGHT) || keyDown(SDL_SCANCODE_D) || getCursorDown(RMB))
 	{
-		m_fPlayerAngle -= m_fPlayerMove * getTimeScale();
+		m_fPlayerAngle -= m_fPlayerMove * getTimeScale() * 60.0/(float)getFramerate();
 		m_bRightPressed = true;
 	}
 	checkSides(fPrevAngle, prevHex, calcPlayerHex());

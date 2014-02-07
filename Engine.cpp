@@ -9,6 +9,7 @@
 #else
 #include <SDL2/SDL_syswm.h>
 #endif
+#include "opengl-api.h"
 ofstream errlog;
 
 //In Windows, because window dragging can hang the program, make a new thread so audio doesn't die horribly in the process
@@ -425,10 +426,10 @@ bool Engine::keyDown(int32_t keyCode)
 	if(m_iKeystates == NULL) return false;	//On first cycle, this can be NULL and cause segfaults otherwise
 	
 	//HACK: See if one of our combined keycodes
-	if(keyCode == SDL_SCANCODE_CTRL) return (keyDown(SDL_SCANCODE_LCTRL)|keyDown(SDL_SCANCODE_RCTRL));
-	if(keyCode == SDL_SCANCODE_SHIFT) return (keyDown(SDL_SCANCODE_LSHIFT)|keyDown(SDL_SCANCODE_RSHIFT));
-	if(keyCode == SDL_SCANCODE_ALT) return (keyDown(SDL_SCANCODE_LALT)|keyDown(SDL_SCANCODE_RALT));
-	if(keyCode == SDL_SCANCODE_GUI) return (keyDown(SDL_SCANCODE_LGUI)|keyDown(SDL_SCANCODE_RGUI));
+	if(keyCode == SDL_SCANCODE_CTRL) return (keyDown(SDL_SCANCODE_LCTRL)||keyDown(SDL_SCANCODE_RCTRL));
+	if(keyCode == SDL_SCANCODE_SHIFT) return (keyDown(SDL_SCANCODE_LSHIFT)||keyDown(SDL_SCANCODE_RSHIFT));
+	if(keyCode == SDL_SCANCODE_ALT) return (keyDown(SDL_SCANCODE_LALT)||keyDown(SDL_SCANCODE_RALT));
+	if(keyCode == SDL_SCANCODE_GUI) return (keyDown(SDL_SCANCODE_LGUI)||keyDown(SDL_SCANCODE_RGUI));
 	
 	//Otherwise, just use our pre-polled list we got from SDL
     return(m_iKeystates[keyCode]);
@@ -436,16 +437,13 @@ bool Engine::keyDown(int32_t keyCode)
 
 void Engine::setFramerate(float32 fFramerate)
 {
+  if(fFramerate < 30.0)
+    fFramerate = 30.0;  //30fps is bare minimum
     if(m_fFramerate == 0.0)
         m_fAccumulatedTime = (float32)SDL_GetTicks()/1000.0;   //If we're stuck at 0fps for a while, this number could be huge, which would cause unlimited fps for a bit
     m_fFramerate = fFramerate;
-    if(m_fFramerate == 0.0)
-        m_fTargetTime = FLT_MAX;    //Avoid division by 0
-    else
-        m_fTargetTime = 1.0 / m_fFramerate;
+    m_fTargetTime = 1.0 / m_fFramerate;
 }
-
-#include "opengl-api.h"
 
 void Engine::setup_sdl()
 {
@@ -506,8 +504,23 @@ void Engine::setup_sdl()
 
   SDL_DisplayMode mode;
   SDL_GetDisplayMode(0, 0, &mode);
+  if(!mode.refresh_rate)  //If 0, display doesn't care, so default to 60
+    mode.refresh_rate = 60;
   errlog << "Default monitor refresh rate: " << mode.refresh_rate << " Hz" << endl;
-  setFramerate(max(mode.refresh_rate, 30));	//30fps is a bare minimum
+  setFramerate(mode.refresh_rate);
+  
+  int numDisplays = SDL_GetNumVideoDisplays();
+  errlog << "Available displays: " << numDisplays << endl;
+  for(int display = 0; display < numDisplays; display++)
+  {
+    int num = SDL_GetNumDisplayModes(display);
+    errlog << "Display " << display << " available modes: " << endl;
+    for(int i = 0; i < num; i++)
+    {
+      SDL_GetDisplayMode(display, i, &mode);
+      errlog << "Mode: " << mode.w << "," << mode.h << " " << mode.refresh_rate << "Hz" << endl;
+    }
+  }
   
   
   //Hide system cursor for SDL, so we can use our own

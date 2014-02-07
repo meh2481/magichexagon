@@ -12,6 +12,7 @@
 # Compiled executables
 magichexagon_32
 magichexagon_64
+magichexagon_mac
 magichexagon_macppc
 magichexagon.exe
 
