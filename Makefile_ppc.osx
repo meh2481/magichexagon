@@ -6,8 +6,7 @@ libs := -L./lib/Mac-PPC/ -framework OpenGL -framework GLUT -lvorbis -lvorbisfile
 includes := -I./lib/Mac-PPC/SDL2.framework/Headers/ -I./include/ -I./
 CXX=g++
 output=magichexagon_macppc
-#SDL2 doesn't support PowerPC
-CXXFLAGS += -DUSE_SDL_FRAMEWORK
+CXXFLAGS += -DUSE_SDL_FRAMEWORK -DIMG_RELOAD -DBIG_ENDIAN
 
 all: magichexagon
 

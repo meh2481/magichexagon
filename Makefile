@@ -10,7 +10,7 @@ ifneq ($(PROCESSOR), x86_64)
 endif
 ifeq ($(OS), Darwin)
     MAKEFILE = Makefile.osx
-    ifeq ($(PROCESSOR), powerpc)
+    ifeq ($(shell uname -p), powerpc)
         MAKEFILE = Makefile_ppc.osx
     endif
 endif

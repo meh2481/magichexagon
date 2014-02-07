@@ -153,7 +153,6 @@ void magichexagonEngine::init(list<commandlineArg> sArgs)
 	//Load our last screen position and such
 	loadConfig(getSaveLocation() + "config.xml");
 	loadPatterns("res/patterns.xml");
-  errlog << "Done loading patterns" << endl;
 	
 	//Set gravity to 0
 	getWorld()->SetGravity(b2Vec2(0,0));

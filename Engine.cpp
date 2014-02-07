@@ -729,8 +729,10 @@ void Engine::changeScreenResolution(float32 w, float32 h)
 		return;
 	}
 #else
-	//Reload images & models (breaks scaled blurring)
-	//reloadImages();
+	//Reload images & models
+#ifdef IMG_RELOAD
+	reloadImages();
+#endif
 #endif
 }
 
