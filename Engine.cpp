@@ -506,7 +506,6 @@ void Engine::setup_sdl()
   SDL_GetDisplayMode(0, 0, &mode);
   if(!mode.refresh_rate)  //If 0, display doesn't care, so default to 60
     mode.refresh_rate = 60;
-  errlog << "Default monitor refresh rate: " << mode.refresh_rate << " Hz" << endl;
   setFramerate(mode.refresh_rate);
   
   int numDisplays = SDL_GetNumVideoDisplays();
@@ -514,11 +513,11 @@ void Engine::setup_sdl()
   for(int display = 0; display < numDisplays; display++)
   {
     int num = SDL_GetNumDisplayModes(display);
-    errlog << "Display " << display << " available modes: " << endl;
+    errlog << "Available modes for display " << display+1 << ':' << endl;
     for(int i = 0; i < num; i++)
     {
       SDL_GetDisplayMode(display, i, &mode);
-      errlog << "Mode: " << mode.w << "," << mode.h << " " << mode.refresh_rate << "Hz" << endl;
+      errlog << "Mode: " << mode.w << "x" << mode.h << " " << mode.refresh_rate << "Hz" << endl;
     }
   }
   
