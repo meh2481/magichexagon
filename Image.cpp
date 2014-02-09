@@ -10,11 +10,22 @@ Image::Image(string sFilename)
 {
   //m_ptHotSpot.SetZero();
   m_sFilename = sFilename;
+	blur = true;
   _load(sFilename);
   _addImgReload(this);
 }
 
-int power_of_two(unsigned int val);
+#ifdef BIG_ENDIAN
+//returns the closest power of two value
+int power_of_two(int input)
+{
+	int value = 1;
+	while ( value < input ) {
+		value <<= 1;
+	}
+	return value;
+}
+#endif
 
 void Image::_load(string sFilename)
 {
@@ -60,13 +71,24 @@ void Image::_load(string sFilename)
 	int mode, modeflip;
 	if(FreeImage_GetBPP(dib) == 24) // RGB 24bit
 	{
-		mode = GL_RGB;
-		modeflip = GL_BGR;
+#ifdef BIG_ENDIAN
+      mode = GL_RGB;
+		  modeflip = GL_RGB;
+#else
+      mode = GL_RGB;
+		  modeflip = GL_BGR;
+#endif
 	}
 	else if(FreeImage_GetBPP(dib) == 32)  // RGBA 32bit
 	{
-		mode = GL_RGBA;
-		modeflip = GL_BGRA;
+#ifdef BIG_ENDIAN
+      mode = GL_RGBA;
+		  modeflip = GL_RGBA;
+#else
+      mode = GL_RGBA;
+		  modeflip = GL_BGRA;
+#endif
+    
 	}
   
 	bits = FreeImage_GetBits(dib);	//if this somehow one of these failed (they shouldn't), return failure
@@ -83,11 +105,22 @@ void Image::_load(string sFilename)
 	//bind to the new texture ID
 	glBindTexture(GL_TEXTURE_2D, m_hTex);
 	//store the texture data for OpenGL use
+#ifdef BIG_ENDIAN
+  m_iRealWidth = power_of_two(width);
+	m_iRealHeight = power_of_two(height);
+  FIBITMAP *bitmap2 = FreeImage_Allocate(m_iRealWidth, m_iRealHeight, FreeImage_GetBPP(dib));
+  FreeImage_FlipVertical(dib);
+	FreeImage_Paste(bitmap2, dib, 0, 0, 255);
+  FreeImage_FlipVertical(bitmap2);
+	bits = FreeImage_GetBits(bitmap2);
+	glTexImage2D(GL_TEXTURE_2D, 0, mode, m_iRealWidth, m_iRealHeight, 0, modeflip, GL_UNSIGNED_BYTE, bits);
+  FreeImage_Unload(bitmap2);
+#else
 	glTexImage2D(GL_TEXTURE_2D, 0, mode, width, height, 0, modeflip, GL_UNSIGNED_BYTE, bits);
+#endif
   
 	//Free FreeImage's copy of the data
 	FreeImage_Unload(dib);
-	blur = true;
 }
 
 Image::~Image()
@@ -117,6 +150,13 @@ void Image::render(Point size)
 // (move left side up) and subtract from the right side (move right side down) by the same amount. 
 void Image::render(Point size, Point shear)
 {
+  float maxx, maxy;
+#ifdef BIG_ENDIAN
+  maxx = (float)m_iWidth/(float)m_iRealWidth;
+  maxy = (float)m_iHeight/(float)m_iRealHeight;
+#else
+  maxx = maxy = 1.0;
+#endif
 	// tell opengl to use the generated texture
 	glBindTexture(GL_TEXTURE_2D, m_hTex);
   
@@ -129,16 +169,16 @@ void Image::render(Point size, Point shear)
 	// make a rectangle
 	glBegin(GL_QUADS);
 	// top left
-	glTexCoord2f(0.0, 1.0);	//Our real image is in the upper-left corner of memory, flipped vertically. Compensate.
+	glTexCoord2f(0.0, maxy);	//Our real image is in the upper-left corner of memory, flipped vertically. Compensate.
 	glVertex3f(-size.x/2.0 - shear.x, size.y/2.0 + shear.y, 0.0);
 	// bottom left
 	glTexCoord2f(0.0, 0.0);
 	glVertex3f(-size.x/2.0 + shear.x, -size.y/2.0 + shear.y, 0.0);
 	// bottom right
-	glTexCoord2f(1.0, 0.0);
+	glTexCoord2f(maxx, 0.0);
 	glVertex3f(size.x/2.0 + shear.x, -size.y/2.0 - shear.y, 0.0);
 	// top right
-	glTexCoord2f(1.0, 1.0);
+	glTexCoord2f(maxx, maxy);
 	glVertex3f(size.x/2.0 - shear.x, size.y/2.0 - shear.y, 0.0);
 
 	glEnd();
@@ -147,10 +187,17 @@ void Image::render(Point size, Point shear)
 
 void Image::render(Point size, Rect rcImg)
 {
+#ifdef BIG_ENDIAN
+	rcImg.left = rcImg.left / (float)m_iRealWidth;
+	rcImg.right = rcImg.right / (float)m_iRealWidth;
+	rcImg.top = rcImg.top / (float)m_iRealHeight;
+	rcImg.bottom = rcImg.bottom / (float)m_iRealHeight;
+#else
 	rcImg.left = rcImg.left / (float)m_iWidth;
 	rcImg.right = rcImg.right / (float)m_iWidth;
 	rcImg.top = rcImg.top / (float)m_iHeight;
 	rcImg.bottom = rcImg.bottom / (float)m_iHeight;
+#endif
 	
 	// tell opengl to use the generated texture
 	glBindTexture(GL_TEXTURE_2D, m_hTex);

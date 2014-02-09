@@ -4,7 +4,11 @@
 */
 
 #include "Engine.h"
+#ifdef USE_SDL_FRAMEWORK
+#include <SDL_syswm.h>
+#else
 #include <SDL2/SDL_syswm.h>
+#endif
 #include "opengl-api.h"
 ofstream errlog;
 
@@ -88,7 +92,8 @@ void PrintEvent(const SDL_Event * event)
 bool Engine::_frame()
 {
 #ifndef AUDIO_THREADING
-	tyrsound_update();	//Just update audio in main thread on non-Windows systems
+  if(!m_bSoundDied)
+	  tyrsound_update();	//Just update audio in main thread on non-Windows systems
 #endif
     //Handle input events from SDL
     SDL_Event event;
@@ -236,7 +241,12 @@ Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sAppName
 #endif
 
 	if(tyrsound_init(NULL, NULL) != TYRSOUND_ERR_OK)
-        errlog << "Failed to init tyrsound." << std::endl;
+  {
+    errlog << "Failed to init tyrsound." << std::endl;
+    m_bSoundDied = true;
+  }
+  else
+    m_bSoundDied = false;
 	
 	//Handle Windows audio issues
 #ifdef AUDIO_THREADING	
@@ -260,8 +270,11 @@ Engine::~Engine()
     clearImages();
 
     //Clean up our sound effects
-	for(map<string, tyrsound_Handle>::iterator i = m_sounds.begin(); i != m_sounds.end(); i++)
-		tyrsound_unload(i->second);
+    if(!m_bSoundDied)
+    {
+      for(map<string, tyrsound_Handle>::iterator i = m_sounds.begin(); i != m_sounds.end(); i++)
+        tyrsound_unload(i->second);
+    }
 	
 	//Notify audio thread to exit on Win32, and wait for it to do so
 #ifdef AUDIO_THREADING
@@ -278,7 +291,8 @@ Engine::~Engine()
 #endif
 	
 	//Clean up tyrsound
-	tyrsound_shutdown();
+  if(!m_bSoundDied)
+	  tyrsound_shutdown();
 
     // Clean up and shutdown
 	errlog << "Deleting phys world" << endl;
@@ -328,6 +342,7 @@ void Engine::fillRect(float32 x1, float32 y1, float32 x2, float32 y2, Color col)
 
 void Engine::createSound(string sPath, string sName)
 {
+  if(m_bSoundDied) return;
 	tyrsound_Stream strm;
     if(tyrsound_createFileNameStream(&strm, sPath.c_str(), "rb") != TYRSOUND_ERR_OK)
     {
@@ -347,6 +362,7 @@ void Engine::createSound(string sPath, string sName)
 
 void Engine::playSound(string sName, int volume, int pan, float32 pitch)
 {
+  if(m_bSoundDied) return;
 	tyrsound_Handle handle = m_sounds[sName];
     tyrsound_setVolume(handle, (float)(volume)/100.0);
 	tyrsound_setSpeed(handle, pitch);
@@ -359,11 +375,13 @@ void Engine::playSound(string sName, int volume, int pan, float32 pitch)
 
 void Engine::pauseMusic()
 {
+  if(m_bSoundDied) return;
     tyrsound_pause(m_sounds["music"]);
 }
 
 void Engine::stopMusic()
 {
+  if(m_bSoundDied) return;
 	if(!m_sounds.count("music")) return;
 	tyrsound_Handle handle = m_sounds["music"];
 	tyrsound_stop(handle);
@@ -372,6 +390,7 @@ void Engine::stopMusic()
 
 void Engine::restartMusic()
 {
+  if(m_bSoundDied) return;
 	tyrsound_Handle handle = m_sounds["music"];
 	tyrsound_stop(handle);
 	tyrsound_seek(handle, 0);
@@ -380,17 +399,20 @@ void Engine::restartMusic()
 
 void Engine::resumeMusic()
 {
+  if(m_bSoundDied) return;
 	if(m_sounds.count("music"))
 		tyrsound_play(m_sounds["music"]);
 }
 
 void Engine::seekMusic(float32 fTime)
 {
+  if(m_bSoundDied) return;
 	tyrsound_seek(m_sounds["music"], fTime);
 }
 
 void Engine::playMusic(string sName, int volume, int pan, float32 pitch)
 {
+  if(m_bSoundDied) return;
 	if(!m_sounds.count("music"))
 		createSound(sName, "music");
 	tyrsound_setLoop(m_sounds["music"], 0.0f, -1);
@@ -402,10 +424,10 @@ bool Engine::keyDown(int32_t keyCode)
 	if(m_iKeystates == NULL) return false;	//On first cycle, this can be NULL and cause segfaults otherwise
 	
 	//HACK: See if one of our combined keycodes
-	if(keyCode == SDL_SCANCODE_CTRL) return (keyDown(SDL_SCANCODE_LCTRL)|keyDown(SDL_SCANCODE_RCTRL));
-	if(keyCode == SDL_SCANCODE_SHIFT) return (keyDown(SDL_SCANCODE_LSHIFT)|keyDown(SDL_SCANCODE_RSHIFT));
-	if(keyCode == SDL_SCANCODE_ALT) return (keyDown(SDL_SCANCODE_LALT)|keyDown(SDL_SCANCODE_RALT));
-	if(keyCode == SDL_SCANCODE_GUI) return (keyDown(SDL_SCANCODE_LGUI)|keyDown(SDL_SCANCODE_RGUI));
+	if(keyCode == SDL_SCANCODE_CTRL) return (keyDown(SDL_SCANCODE_LCTRL)||keyDown(SDL_SCANCODE_RCTRL));
+	if(keyCode == SDL_SCANCODE_SHIFT) return (keyDown(SDL_SCANCODE_LSHIFT)||keyDown(SDL_SCANCODE_RSHIFT));
+	if(keyCode == SDL_SCANCODE_ALT) return (keyDown(SDL_SCANCODE_LALT)||keyDown(SDL_SCANCODE_RALT));
+	if(keyCode == SDL_SCANCODE_GUI) return (keyDown(SDL_SCANCODE_LGUI)||keyDown(SDL_SCANCODE_RGUI));
 	
 	//Otherwise, just use our pre-polled list we got from SDL
     return(m_iKeystates[keyCode]);
@@ -413,13 +435,12 @@ bool Engine::keyDown(int32_t keyCode)
 
 void Engine::setFramerate(float32 fFramerate)
 {
+  if(fFramerate < 30.0)
+    fFramerate = 30.0;  //30fps is bare minimum
     if(m_fFramerate == 0.0)
         m_fAccumulatedTime = (float32)SDL_GetTicks()/1000.0;   //If we're stuck at 0fps for a while, this number could be huge, which would cause unlimited fps for a bit
     m_fFramerate = fFramerate;
-    if(m_fFramerate == 0.0)
-        m_fTargetTime = FLT_MAX;    //Avoid division by 0
-    else
-        m_fTargetTime = 1.0 / m_fFramerate;
+    m_fTargetTime = 1.0 / m_fFramerate;
 }
 
 void Engine::setup_sdl()
@@ -447,14 +468,15 @@ void Engine::setup_sdl()
   SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
   SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
   SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+  SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 32);
   
   //Vsync and stuff	//TODO: Toggle? Figure out what it's actually doing? My pathetic gfx card doesn't do anything with any of these values
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);	//Apparently double-buffering or something
   
-  //Apparently MSAA or something
-  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
+  //Apparently MSAA or something (disable by default; my Linux gfx drivers seem to not like)
+  //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+  //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
   
   // Create SDL window
   Uint32 flags = SDL_WINDOW_OPENGL;
@@ -465,7 +487,7 @@ void Engine::setup_sdl()
                              SDL_WINDOWPOS_UNDEFINED,
                              SDL_WINDOWPOS_UNDEFINED,
                              m_iWidth, 
-							 m_iHeight,
+							 							 m_iHeight,
                              flags);
 
   if(m_Window == NULL)
@@ -473,14 +495,29 @@ void Engine::setup_sdl()
   	errlog << "Couldn't set video mode: " << SDL_GetError() << endl;
     exit(1);
   }
+  SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1); //Share objects between OpenGL contexts
   SDL_GL_CreateContext(m_Window);
   if(SDL_GL_SetSwapInterval(-1) == -1) //Apparently Vsync or something
 		SDL_GL_SetSwapInterval(1);
 
   SDL_DisplayMode mode;
   SDL_GetDisplayMode(0, 0, &mode);
-  errlog << "Default monitor refresh rate: " << mode.refresh_rate << " Hz" << endl;
+  if(!mode.refresh_rate)  //If 0, display doesn't care, so default to 60
+    mode.refresh_rate = 60;
   setFramerate(mode.refresh_rate);
+  
+  int numDisplays = SDL_GetNumVideoDisplays();
+  errlog << "Available displays: " << numDisplays << endl;
+  for(int display = 0; display < numDisplays; display++)
+  {
+    int num = SDL_GetNumDisplayModes(display);
+    errlog << "Available modes for display " << display+1 << ':' << endl;
+    for(int i = 0; i < num; i++)
+    {
+      SDL_GetDisplayMode(display, i, &mode);
+      errlog << "Mode: " << mode.w << "x" << mode.h << " " << mode.refresh_rate << "Hz" << endl;
+    }
+  }
   
   
   //Hide system cursor for SDL, so we can use our own
@@ -702,9 +739,10 @@ void Engine::changeScreenResolution(float32 w, float32 h)
 		return;
 	}
 #else
-	//TODO: *nix supposedly does this for us automagically. Test.
-	//Otherwise, reload images & models
-	//reloadImages();
+	//Reload images & models
+#ifdef IMG_RELOAD
+	reloadImages();
+#endif
 #endif
 }
 
@@ -876,6 +914,7 @@ int updateAudio(void* data)
 {
 	while(true)//Loop forever
 	{
+    if(m_bSoundDied) return;
 		tyrsound_update();
 		SDL_Delay(10);	//Sleep 10ms so we don't hog CPU
 		

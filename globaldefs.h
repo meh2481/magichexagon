@@ -14,8 +14,13 @@ using namespace std;
 using namespace tinyxml2;
 #include "include/VFS.h"
 #include "include/VFSTools.h"
+#ifdef USE_SDL_FRAMEWORK
+#include <SDL.h>
+#include <SDL_opengl.h>
+#else
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
+#endif
 #include "FreeImage.h"
 #ifdef __APPLE__
 #include <OpenGL/gl.h>

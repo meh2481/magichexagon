@@ -15,6 +15,9 @@ private:
     GLuint   	m_hTex;
     string     	m_sFilename;
     uint32_t 	m_iWidth, m_iHeight;			// width and height of original image
+#ifdef BIG_ENDIAN
+    uint32_t m_iRealWidth, m_iRealHeight;
+#endif
 
     void _load(string sFilename);
 
