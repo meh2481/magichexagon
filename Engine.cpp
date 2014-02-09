@@ -5,6 +5,7 @@
 
 #include "Engine.h"
 #include <SDL2/SDL_syswm.h>
+#include "opengl-api.h"
 ofstream errlog;
 
 //In Windows, because window dragging can hang the program, make a new thread so audio doesn't die horribly in the process
@@ -342,8 +343,6 @@ void Engine::createSound(string sPath, string sName)
         return;
     }
 	m_sounds[sName] = handle;
-	tyrsound_play(handle);
-	tyrsound_pause(handle);
 }
 
 void Engine::playSound(string sName, int volume, int pan, float32 pitch)
@@ -422,8 +421,6 @@ void Engine::setFramerate(float32 fFramerate)
     else
         m_fTargetTime = 1.0 / m_fFramerate;
 }
-
-#include "opengl-api.h"
 
 void Engine::setup_sdl()
 {

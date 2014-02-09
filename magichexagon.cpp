@@ -182,8 +182,8 @@ void magichexagonEngine::init(list<commandlineArg> sArgs)
 	
 	
 	//Play music
-	//playMusic("res/sfx/encore-micro_hexagon_courtesy.ogg");
-	//pauseMusic();
+	playMusic("res/sfx/encore-micro_hexagon_courtesy.ogg");
+	pauseMusic();
 	playSound("magichexagon");
 	
 	//TODO seekMusic(34.504028);
