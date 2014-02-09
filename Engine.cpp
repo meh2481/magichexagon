@@ -358,8 +358,6 @@ void Engine::createSound(string sPath, string sName)
         return;
     }
 	m_sounds[sName] = handle;
-	tyrsound_play(handle);
-	tyrsound_pause(handle);
 }
 
 void Engine::playSound(string sName, int volume, int pan, float32 pitch)
