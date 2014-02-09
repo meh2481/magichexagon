@@ -15,7 +15,7 @@ Image::Image(string sFilename)
   _addImgReload(this);
 }
 
-#ifdef BIG_ENDIAN
+#ifdef __BIG_ENDIAN__
 //returns the closest power of two value
 int power_of_two(int input)
 {
@@ -71,7 +71,7 @@ void Image::_load(string sFilename)
 	int mode, modeflip;
 	if(FreeImage_GetBPP(dib) == 24) // RGB 24bit
 	{
-#ifdef BIG_ENDIAN
+#ifdef __BIG_ENDIAN__
       mode = GL_RGB;
 		  modeflip = GL_RGB;
 #else
@@ -81,7 +81,7 @@ void Image::_load(string sFilename)
 	}
 	else if(FreeImage_GetBPP(dib) == 32)  // RGBA 32bit
 	{
-#ifdef BIG_ENDIAN
+#ifdef __BIG_ENDIAN__
       mode = GL_RGBA;
 		  modeflip = GL_RGBA;
 #else
@@ -105,7 +105,7 @@ void Image::_load(string sFilename)
 	//bind to the new texture ID
 	glBindTexture(GL_TEXTURE_2D, m_hTex);
 	//store the texture data for OpenGL use
-#ifdef BIG_ENDIAN
+#ifdef __BIG_ENDIAN__
   m_iRealWidth = power_of_two(width);
 	m_iRealHeight = power_of_two(height);
   FIBITMAP *bitmap2 = FreeImage_Allocate(m_iRealWidth, m_iRealHeight, FreeImage_GetBPP(dib));
@@ -151,7 +151,7 @@ void Image::render(Point size)
 void Image::render(Point size, Point shear)
 {
   float maxx, maxy;
-#ifdef BIG_ENDIAN
+#ifdef __BIG_ENDIAN__
   maxx = (float)m_iWidth/(float)m_iRealWidth;
   maxy = (float)m_iHeight/(float)m_iRealHeight;
 #else
@@ -187,7 +187,7 @@ void Image::render(Point size, Point shear)
 
 void Image::render(Point size, Rect rcImg)
 {
-#ifdef BIG_ENDIAN
+#ifdef __BIG_ENDIAN__
 	rcImg.left = rcImg.left / (float)m_iRealWidth;
 	rcImg.right = rcImg.right / (float)m_iRealWidth;
 	rcImg.top = rcImg.top / (float)m_iRealHeight;
