@@ -2,7 +2,7 @@
 # sudo cp -R ./lib/Mac/SDL2.framework /Library/Frameworks/
 
 objects := Image.o Engine.o Object.o Text.o globaldefs.o hud.o main.o tinyxml2.o magichexagon.o opengl-api.o level.o color.o
-libs := -L./lib/Mac/ -framework OpenGL -framework GLUT -lttvfs -lBox2D -framework Foundation -framework AppKit -lfreeimage -framework SDL2 -ltyrsound -static-libgcc -headerpad_max_install_names
+libs := -L./lib/Mac/ -framework OpenGL -framework GLUT -lttvfs -lBox2D -framework Foundation -framework AppKit -lfreeimage -framework SDL2 -ltyrsound -static-libgcc -headerpad_max_install_names -Bstatic -mmacosx-version-min=10.4
 includes := -I./lib/Mac/SDL2.framework/Headers/ -I./include/ -I./
 CXX=g++
 output=magichexagon_mac
