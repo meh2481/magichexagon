@@ -22,15 +22,15 @@ void magichexagonEngine::updateColors(float32 dt)
 	{
 		if(i->dir)
 		{
-			if(myAbs(i->colorToChange->r - i->destr) > COLOR_EPSILON)
+			if(myAbs(i->colorToChange->r - i->destr) >= myAbs(i->amtr*dt))
 				i->colorToChange->r += i->amtr * dt;
-			if(myAbs(i->colorToChange->g - i->destg) > COLOR_EPSILON)
+			if(myAbs(i->colorToChange->g - i->destg) >= myAbs(i->amtg*dt))
 				i->colorToChange->g += i->amtg * dt;
-			if(myAbs(i->colorToChange->b - i->destb) > COLOR_EPSILON)
+			if(myAbs(i->colorToChange->b - i->destb) >= myAbs(i->amtb*dt))
 				i->colorToChange->b += i->amtb * dt;
-			if(myAbs(i->colorToChange->r - i->destr) < COLOR_EPSILON &&
-			   myAbs(i->colorToChange->g - i->destg) < COLOR_EPSILON &&
-			   myAbs(i->colorToChange->b - i->destb) < COLOR_EPSILON)
+			if(myAbs(i->colorToChange->r - i->destr) <= myAbs(i->amtr*dt) &&
+			   myAbs(i->colorToChange->g - i->destg) <= myAbs(i->amtg*dt) &&
+			   myAbs(i->colorToChange->b - i->destb) <= myAbs(i->amtb*dt))
 			{
 				i->colorToChange->r = i->destr;
 				i->colorToChange->g = i->destg;
@@ -46,15 +46,15 @@ void magichexagonEngine::updateColors(float32 dt)
 		}
 		else
 		{
-			if(myAbs(i->colorToChange->r - i->srcr) > COLOR_EPSILON)
+			if(myAbs(i->colorToChange->r - i->srcr) >= myAbs(i->amtr*dt))
 				i->colorToChange->r -= i->amtr * dt;
-			if(myAbs(i->colorToChange->g - i->srcg) > COLOR_EPSILON)
+			if(myAbs(i->colorToChange->g - i->srcg) >= myAbs(i->amtg*dt))
 				i->colorToChange->g -= i->amtg * dt;
-			if(myAbs(i->colorToChange->b - i->srcb) > COLOR_EPSILON)
+			if(myAbs(i->colorToChange->b - i->srcb) >= myAbs(i->amtb*dt))
 				i->colorToChange->b -= i->amtb * dt;
-			if(myAbs(i->colorToChange->r - i->srcr) < COLOR_EPSILON &&
-			   myAbs(i->colorToChange->g - i->srcg) < COLOR_EPSILON &&
-			   myAbs(i->colorToChange->b - i->srcb) < COLOR_EPSILON)
+			if(myAbs(i->colorToChange->r - i->srcr) <= myAbs(i->amtr*dt) &&
+			   myAbs(i->colorToChange->g - i->srcg) <= myAbs(i->amtg*dt) &&
+			   myAbs(i->colorToChange->b - i->srcb) <= myAbs(i->amtb*dt))
 			{
 				i->colorToChange->r = i->srcr;
 				i->colorToChange->g = i->srcg;

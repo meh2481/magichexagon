@@ -39,8 +39,6 @@ const Color AJ(252,188,94);
 const Color AJMane(255,246,152);
 const Color AJEyes(95,187,83);
 
-#define COLOR_EPSILON	0.001
-
 #define MENU_START			0
 #define MENU_LEVELSELECT	1
 #define MENU_NONE			2

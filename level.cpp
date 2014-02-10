@@ -178,6 +178,9 @@ int magichexagonEngine::calcPlayerHex(float32* relAngle)
 
 void magichexagonEngine::die()
 {
+#ifdef DEBUG
+  if(keyDown(SDL_SCANCODE_V)) return;
+#endif
 	clearColors();
 	m_iCurMenu = MENU_GAMEOVER;
 	CameraPos.z = m_fDefCameraZ;
@@ -763,7 +766,10 @@ void magichexagonEngine::changeLevel(int iNewLevel)
 	m_iCurLevel = iNewLevel;
 	if(iNewLevel == LEVEL_MAGIC)
 	{
-		phaseColor(&m_colors[0], Twilight, 0.5);
+    m_wTop = NULL;
+    for(int j = 0; j < 6; j++)
+      m_walls[j].clear();
+    phaseColor(&m_colors[0], Twilight, 0.5);
 		phaseColor(&m_colors[1], Twilight, 0.5);
 		phaseColor(&m_colors[2], TwilightMane, 0.5);
 		phaseColor(&m_colors[3], TwilightMane, 0.5);
