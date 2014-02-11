@@ -241,23 +241,26 @@ Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sAppName
 #endif
 
 	if(tyrsound_init(NULL, NULL) != TYRSOUND_ERR_OK)
-  {
-    errlog << "Failed to init tyrsound." << std::endl;
-    m_bSoundDied = true;
-  }
-  else
-    m_bSoundDied = false;
+	{
+		errlog << "Failed to init tyrsound." << std::endl;
+		m_bSoundDied = true;
+	}
+	else
+		m_bSoundDied = false;
 	
 	//Handle Windows audio issues
 #ifdef AUDIO_THREADING	
-	bAudioQuit = false;
-	
-	//Set up new thread and global mutex for audio
-	//Create mutex
-	hAudioMutex = SDL_CreateMutex();
-	
-	//Create thread
-	hAudioThread = SDL_CreateThread(updateAudio, "audio", NULL);
+	if(!m_bSoundDied)
+	{
+		bAudioQuit = false;
+		
+		//Set up new thread and global mutex for audio
+		//Create mutex
+		hAudioMutex = SDL_CreateMutex();
+		
+		//Create thread
+		hAudioThread = SDL_CreateThread(updateAudio, "audio", NULL);
+	}
 #endif
 }
 
@@ -278,20 +281,23 @@ Engine::~Engine()
 	
 	//Notify audio thread to exit on Win32, and wait for it to do so
 #ifdef AUDIO_THREADING
-	//Wait for mutex, and let thread know to quit
-	SDL_LockMutex(hAudioMutex);
-	bAudioQuit = true;
-	SDL_UnlockMutex(hAudioMutex);	//Release mutex
-	
-	//Wait for audio thread to exit
-	SDL_WaitThread(hAudioThread, NULL);
-	
-	//Clean up thread handles
-	SDL_DestroyMutex(hAudioMutex);
+	if(!m_bSoundDied)
+	{
+		//Wait for mutex, and let thread know to quit
+		SDL_LockMutex(hAudioMutex);
+		bAudioQuit = true;
+		SDL_UnlockMutex(hAudioMutex);	//Release mutex
+		
+		//Wait for audio thread to exit
+		SDL_WaitThread(hAudioThread, NULL);
+		
+		//Clean up thread handles
+		SDL_DestroyMutex(hAudioMutex);
+	}
 #endif
 	
 	//Clean up tyrsound
-  if(!m_bSoundDied)
+	if(!m_bSoundDied)
 	  tyrsound_shutdown();
 
     // Clean up and shutdown
@@ -914,7 +920,6 @@ int updateAudio(void* data)
 {
 	while(true)//Loop forever
 	{
-    if(m_bSoundDied) return;
 		tyrsound_update();
 		SDL_Delay(10);	//Sleep 10ms so we don't hog CPU
 		
