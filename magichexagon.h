@@ -151,6 +151,8 @@ public:
 		
 	void drawStartMenu();
 	void drawLevelSelectMenu();
+	
+	void seekRandomSongStartPos();	//Start song in random location
 		
 	//level.cpp functions
 	bool loadPatterns(string sFilename);

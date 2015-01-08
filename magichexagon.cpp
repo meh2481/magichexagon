@@ -186,8 +186,6 @@ void magichexagonEngine::init(list<commandlineArg> sArgs)
 	pauseMusic();
 	playSound("magichexagon");
 	
-	//TODO seekMusic(34.504028);
-	
 	hideCursor();
 }
 
@@ -289,7 +287,7 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 								playMusic("res/sfx/encore-micro_hexagon_courtesy.ogg");
 								playSound("begin");
 								playSound("beginlevel");
-								restartMusic();
+								seekRandomSongStartPos();
 								m_iCurMenu = MENU_NONE;
 								m_iStartLevel = m_iCurLevel;
 								m_hud->setScene("level");
@@ -308,7 +306,7 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 								playMusic("res/sfx/encore-micro_hexagon_courtesy.ogg");
 								playSound("begin");
 								playSound("beginlevel");
-								restartMusic();
+								seekRandomSongStartPos();
 								m_iCurLevel = m_iStartLevel;
 								m_iCurMenu = MENU_NONE;
 								m_hud->setScene("level");
@@ -428,7 +426,7 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 							playMusic("res/sfx/encore-micro_hexagon_courtesy.ogg");
 							playSound("begin");
 							playSound("beginlevel");
-							restartMusic();
+							seekRandomSongStartPos();
 							m_iCurMenu = MENU_NONE;
 							m_iStartLevel = m_iCurLevel;
 							m_hud->setScene("level");
@@ -447,7 +445,7 @@ void magichexagonEngine::handleEvent(SDL_Event event)
 							playMusic("res/sfx/encore-micro_hexagon_courtesy.ogg");
 							playSound("begin");
 							playSound("beginlevel");
-							restartMusic();
+							seekRandomSongStartPos();
 							m_iCurLevel = m_iStartLevel;
 							m_iCurMenu = MENU_NONE;
 							m_hud->setScene("level");
@@ -844,4 +842,23 @@ void magichexagonEngine::drawLevelSelectMenu()
 	bestTime((HUDTextbox*)besttime, "best time: ", m_fBestTime[5]);
 }
 
-
+void magichexagonEngine::seekRandomSongStartPos(void)
+{
+	switch(rand() % 4)
+	{
+		case 0:
+			break;
+			
+		case 1:
+			seekMusic(30.83);
+			break;
+		
+		case 2:
+			seekMusic(53.78);
+			break;
+			
+		default:
+			seekMusic(88.25);
+			break;
+	}
+}

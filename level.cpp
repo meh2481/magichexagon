@@ -22,7 +22,7 @@ void magichexagonEngine::renderLevel()
 		time = m_hud->getChild("bestrtime");
 		if(time != NULL)
 		{
-			if(m_fBestTime[m_iStartLevel] >= 60.0)	//Already beaten this level
+			if(m_fBestTime[m_iStartLevel] >= LEVELTIME)	//Already beaten this level
 			{
 				if(m_fTotalSpinTime > m_fBestTime[m_iStartLevel])
 					((HUDTextbox*)(time))->setText("new record");
@@ -32,8 +32,8 @@ void magichexagonEngine::renderLevel()
 			else
 			{
 				float fNext = 10.0f * (1+floor(m_fTotalSpinTime/10.0));
-				if(fNext > 60.0f)
-					fNext = 60.0f * (1+floor(m_fTotalSpinTime/60.0));
+				if(fNext > LEVELTIME)
+					fNext = LEVELTIME * (1+floor(m_fTotalSpinTime/LEVELTIME));
 				bestTime((HUDTextbox*)time, "next: ", fNext);
 			}
 		}
@@ -192,7 +192,7 @@ void magichexagonEngine::die()
 	//Update our best time for this level
 	if(m_fTotalSpinTime > m_fBestTime[m_iStartLevel])
 	{
-		if(m_fBestTime[m_iStartLevel] < 60.0 && m_fTotalSpinTime >= 60.0)
+		if(m_fBestTime[m_iStartLevel] < LEVELTIME && m_fTotalSpinTime >= LEVELTIME)
 		{
 			//TODO: Test and see if we should do an endgame cutscene
 			m_bSideComplete = true;
@@ -270,7 +270,7 @@ void magichexagonEngine::die()
 	tb = (HUDTextbox*)m_hud->getChild("stagecomplete");
 	if(tb != NULL)
 	{
-		if(m_fBestTime[m_iStartLevel] >= 60.0)
+		if(m_fBestTime[m_iStartLevel] >= LEVELTIME)
 			tb->hidden = false;
 		else
 			tb->hidden = true;
@@ -279,7 +279,7 @@ void magichexagonEngine::die()
 	tb = (HUDTextbox*)m_hud->getChild("nextlevelat");
 	if(tb != NULL)
 	{
-		if(m_fBestTime[m_iStartLevel] >= 60.0)
+		if(m_fBestTime[m_iStartLevel] >= LEVELTIME)
 			tb->hidden = true;
 		else
 			tb->hidden = false;
@@ -288,7 +288,7 @@ void magichexagonEngine::die()
 	tb = (HUDTextbox*)m_hud->getChild("nextleveltime");
 	if(tb != NULL)
 	{
-		if(m_fBestTime[m_iStartLevel] >= 60.0)
+		if(m_fBestTime[m_iStartLevel] >= LEVELTIME)
 			tb->hidden = true;
 		else
 		{
@@ -475,7 +475,7 @@ void magichexagonEngine::checkLevel()
 	//Every time another level is cleared, play "magic" - "awesome"
 	for(int i = 1; ; i++)
 	{
-		float time = 60.0 * i;
+		float time = LEVELTIME * i;
 		if(m_fTotalSpinTime < time)
 			break;
 		if(m_fTotalSpinTime > time && m_fLastChecked < time)
@@ -521,10 +521,10 @@ void magichexagonEngine::checkLevel()
 					break;
 				
 				case LEVEL_LOYALTY:
-					if(m_fWallSpeed < 8.1)	//Go into nuts mode
+					if(m_fWallSpeed < 8.5)	//Go into nuts mode
 					{
 						m_fRotateAdd = 200;
-						m_fWallSpeed = 8.25;
+						m_fWallSpeed = 8.5;
 						m_gap = 5.0;
 						//Reverse color
 						phaseColor(&m_colors[0], Color(98,38,8), 0.5);
@@ -541,10 +541,10 @@ void magichexagonEngine::checkLevel()
 					break;
 				
 				case LEVEL_GENEROSITY:
-					if(m_fWallSpeed < 8.6)	//Go into nuts mode
+					if(m_fWallSpeed < 9.5)	//Go into nuts mode
 					{
 						m_fRotateAdd = 225;
-						m_fWallSpeed = 9;
+						m_fWallSpeed = 9.5;
 						m_gap = 5.0;
 						//Nightmare Rarity mode
 						phaseColor(&m_colors[0], Color(72,181,214), 0.5);
@@ -799,8 +799,8 @@ void magichexagonEngine::changeLevel(int iNewLevel)
 		phaseColor(&m_colors[7], Pinkie, 0.5);
 		centerCutie = getImage("res/gfx/pinkiemark.png");
 		m_fRotateAdd = 175;
-		m_fWallSpeed = 9.5;
-		m_fPlayerMove = 9.5;
+		m_fWallSpeed = 10;
+		m_fPlayerMove = 10;
 		m_fTargetSpinReverse = m_fTotalSpinTime + randFloat(4,7);
 		m_fTargetSpinIncrease = m_fTotalSpinTime + randFloat(12, 15);
 	}
@@ -926,7 +926,7 @@ void magichexagonEngine::setComplete()
 		int num = 0;
 		for(int i = 0; i < 6; i++)
 		{
-			if(m_fBestTime[i] >= 60)
+			if(m_fBestTime[i] >= LEVELTIME)
 				num++;
 		}
 		oss << num << " of 6 sides complete";
