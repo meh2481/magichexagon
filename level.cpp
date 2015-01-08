@@ -781,8 +781,8 @@ void magichexagonEngine::changeLevel(int iNewLevel)
 		m_fRotateAdd = m_fRotateAngle = 0;
 		m_fTargetSpinReverse = FLT_MAX;
 		m_fTargetSpinIncrease = FLT_MAX;
-		m_fWallSpeed = 10;
-		m_fPlayerMove = 10;
+		m_fWallSpeed = 11;
+		m_fPlayerMove = 11;
 		CameraPos.z -= 2;
 		m_fMadSpinLength = 2.0;
 		m_fTargetMadSpin = m_fTotalSpinTime + randFloat(5, 8);
@@ -816,8 +816,8 @@ void magichexagonEngine::changeLevel(int iNewLevel)
 		phaseColor(&m_colors[7], RarityEyes, 0.5);
 		centerCutie = getImage("res/gfx/rarimark.png");
 		m_fRotateAdd = 150;
-		m_fWallSpeed = 8.5;
-		m_fPlayerMove = 8.5;
+		m_fWallSpeed = 9;
+		m_fPlayerMove = 9;
 		m_fTargetSpinReverse = m_fTotalSpinTime + randFloat(4,7);
 		m_fTargetSpinIncrease = m_fTotalSpinTime + randFloat(12, 15);
 	}
@@ -869,8 +869,8 @@ void magichexagonEngine::changeLevel(int iNewLevel)
 		phaseColor(&m_colors[7], AJ, 0.5);
 		centerCutie = getImage("res/gfx/ajmark.png");
 		m_fRotateAdd = 75;
-		m_fWallSpeed = 5.0;
-		m_fPlayerMove = 7.0;
+		m_fWallSpeed = 6;
+		m_fPlayerMove = 7.5;
 		m_fTargetSpinReverse = m_fTotalSpinTime + randFloat(4,7);
 		m_fTargetSpinIncrease = m_fTotalSpinTime + randFloat(12, 15);
 	}
@@ -886,8 +886,8 @@ void magichexagonEngine::changeLevel(int iNewLevel)
 		m_colors[7] = AJ;					//Radial arm 6
 		centerCutie = NULL;
 		m_fRotateAdd = 25;
-		m_fWallSpeed = 3.5;
-		m_fPlayerMove = 5.0;
+		m_fWallSpeed = 5;
+		m_fPlayerMove = 6.5;
 		m_fTargetSpinReverse = m_fTotalSpinTime + randFloat(4,7);
 		m_fTargetSpinIncrease = m_fTotalSpinTime + randFloat(12, 15);
 	}

@@ -7,7 +7,7 @@
 #define ENGINE_H
 
 #ifdef _WIN32
-#define AUDIO_THREADING
+//#define AUDIO_THREADING
 #endif
 
 #include "globaldefs.h"
@@ -15,13 +15,15 @@
 #include "Object.h"
 #include "Text.h"
 #include "hud.h"
-#include "tyrsound.h"
+#include <fmod.h>
 #include <map>
 #include <set>
 
 #define LMB	1
 #define RMB	0
 #define MMB 2
+
+const float soundFreqDefault = 44100.0;
 
 typedef struct
 {
@@ -66,7 +68,9 @@ private:
 	bool m_bPauseOnKeyboardFocus;	//If the game pauses when keyboard focus is lost
   bool m_bSoundDied;  //If tyrsound fails to load, don't try to use it
 	
-	map<string, tyrsound_Handle> m_sounds;
+	multimap<string, FMOD_CHANNEL*> m_channels;
+	map<string, FMOD_SOUND*> m_sounds;
+	FMOD_SYSTEM* m_audioSystem;
 
     //Engine-use function definitions
     bool _frame();
@@ -104,14 +108,25 @@ public:
     void fillRect(float32 x1, float32 y1, float32 x2, float32 y2, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
     void fillRect(Rect rc, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
 	void fillRect(float32 x1, float32 y1, float32 x2, float32 y2, Color col);*/
-    void createSound(string sPath, string sName);   //Creates a sound from this name and file path
-    virtual void playSound(string sName, int volume = 100, int pan = 0, float32 pitch = 1.0);     //Play a sound
-    void playMusic(string sName, int volume = 100, int pan = 0, float32 pitch = 1.0);     //Play looping music, or resume paused music
-    void pauseMusic();                                                                     //Pause music that's currently playing
-	void resumeMusic();																		//Resume music that was paused
+	
+    //Sound functions
+	void createSound(string sPath, string sName);   //Creates a sound from this name and file path
+	virtual void playSound(string sName, float32 volume = 1.0f, float32 pan = 0.0f, float32 pitch = 1.0f);	 //Play a sound
+	FMOD_CHANNEL* getChannel(string sSoundName);	//Return the channel of this sound
+	void playMusic(string sName, float32 volume = 1.0f, float32 pan = 0.0f, float32 pitch = 1.0f);	 //Play looping music, or resume paused music
+	void musicLoop(float32 startSec, float32 endSec);	//Set the starting and ending loop points for the currently-playing song
+	void pauseMusic();									//Pause music that's currently playing
+	void resumeMusic();									//Resume music that was paused
 	void restartMusic();
 	void stopMusic();
 	void seekMusic(float32 fTime);
+	float32 getMusicPos();								//Opposite of seekMusic() -- get where we currently are
+	void volumeMusic(float32 fVol);						//Set the music to a particular volume
+	void setMusicFrequency(float32 freq);
+	float32 getMusicFrequency();
+	
+	bool hasMic();										//If we have some form of mic-like input
+	void updateSound();
     bool keyDown(int32_t keyCode);  //Test and see if a key is currently pressed
     void quit() {m_bQuitting = true;};  //Stop the engine and quit nicely
     Rect getScreenRect()    {Rect rc = {0,0,getWidth(),getHeight()}; return rc;};

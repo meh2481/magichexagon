@@ -92,8 +92,7 @@ void PrintEvent(const SDL_Event * event)
 bool Engine::_frame()
 {
 #ifndef AUDIO_THREADING
-  if(!m_bSoundDied)
-	  tyrsound_update();	//Just update audio in main thread on non-Windows systems
+  updateSound();
 #endif
     //Handle input events from SDL
     SDL_Event event;
@@ -236,7 +235,29 @@ Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sAppName
     srand(SDL_GetTicks());  //Not as random as it could be... narf
 	m_fTimeScale = 1.0f;
 
-#ifdef AUDIO_THREADING
+	errlog << "Initializing FMOD..." << endl;
+	if(FMOD_System_Create(&m_audioSystem) != FMOD_OK || FMOD_System_Init(m_audioSystem, 128, FMOD_INIT_NORMAL, 0) != FMOD_OK)
+	{
+		errlog << "Failed to init FMOD." << std::endl;
+		m_bSoundDied = true;
+	}
+	else
+	{
+		m_bSoundDied = false;
+		//Figure out what sound drivers for input we have here
+		int numDrivers = 0;
+		FMOD_System_GetRecordNumDrivers(m_audioSystem, &numDrivers);
+		const int DRIVER_INFO_STR_SIZE = 512;
+		char driverInfoStr[DRIVER_INFO_STR_SIZE];
+		errlog << numDrivers << " recording drivers available." << endl;
+		for(int i = 0; i < numDrivers; i++)
+		{
+			FMOD_System_GetRecordDriverInfo(m_audioSystem, i, driverInfoStr, DRIVER_INFO_STR_SIZE, NULL);
+			errlog << "Driver " << i << ": " << driverInfoStr << endl;
+		}
+	}
+	
+/*#ifdef AUDIO_THREADING
 	tyrsound_setupMT(newMutexFunc, deleteMutexFunc, lockFunc, unlockFunc);
 #endif
 
@@ -261,7 +282,7 @@ Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sAppName
 		//Create thread
 		hAudioThread = SDL_CreateThread(updateAudio, "audio", NULL);
 	}
-#endif
+#endif*/
 }
 
 Engine::~Engine()
@@ -273,14 +294,21 @@ Engine::~Engine()
     clearImages();
 
     //Clean up our sound effects
-    if(!m_bSoundDied)
-    {
-      for(map<string, tyrsound_Handle>::iterator i = m_sounds.begin(); i != m_sounds.end(); i++)
-        tyrsound_unload(i->second);
-    }
+	if(!m_bSoundDied)
+	{
+		for(map<string, FMOD_SOUND*>::iterator i = m_sounds.begin(); i != m_sounds.end(); i++)
+			FMOD_Sound_Release(i->second);
+	}
+	
+	//Clean up FMOD
+	if(!m_bSoundDied)
+	{
+		FMOD_System_Close(m_audioSystem);
+		FMOD_System_Release(m_audioSystem);
+	}
 	
 	//Notify audio thread to exit on Win32, and wait for it to do so
-#ifdef AUDIO_THREADING
+/*#ifdef AUDIO_THREADING
 	if(!m_bSoundDied)
 	{
 		//Wait for mutex, and let thread know to quit
@@ -298,7 +326,7 @@ Engine::~Engine()
 	
 	//Clean up tyrsound
 	if(!m_bSoundDied)
-	  tyrsound_shutdown();
+	  tyrsound_shutdown();*/
 
     // Clean up and shutdown
 	errlog << "Deleting phys world" << endl;
@@ -315,114 +343,168 @@ void Engine::start()
     while(!_frame());
 }
 
-/*void Engine::fillRect(Point p1, Point p2, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
-{
-    fillRect(p1.x, p1.y, p2.x, p2.y, red, green, blue, alpha);
-}
-
-void Engine::fillRect(float32 x1, float32 y1, float32 x2, float32 y2, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
-{
-    Color col;
-    col.from256(red, green, blue, alpha);
-	fillRect(x1, y1, x2, y2, col);
-}
-
-void Engine::fillRect(Rect rc, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
-{
-    fillRect(rc.left, rc.top, rc.right, rc.bottom, red, green, blue, alpha);
-}
-
-void Engine::fillRect(float32 x1, float32 y1, float32 x2, float32 y2, Color col)
-{
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glBegin(GL_QUADS);
-    glColor4f(col.r,col.g,col.b,col.a);	//Colorize
-    //Draw (No, I have no idea how these formulas work, either)
-    glVertex3f((2.0*(float32)m_iWidth/(float32)m_iHeight)*((GLfloat)x1/(GLfloat)m_iWidth-0.5), -2.0*(GLfloat)y1/(GLfloat)m_iHeight + 1.0, 0.0);
-    glVertex3f((2.0*(float32)m_iWidth/(float32)m_iHeight)*((GLfloat)x1/(GLfloat)m_iWidth-0.5), -2.0*(GLfloat)y2/(GLfloat)m_iHeight+1.0, 0.0);
-    glVertex3f((2.0*(float32)m_iWidth/(float32)m_iHeight)*((GLfloat)x2/(GLfloat)m_iWidth-0.5), -2.0*(GLfloat)y2/(GLfloat)m_iHeight+1.0, 0.0);
-    glVertex3f((2.0*(float32)m_iWidth/(float32)m_iHeight)*((GLfloat)x2/(GLfloat)m_iWidth-0.5), -2.0*(GLfloat)y1/(GLfloat)m_iHeight+1.0, 0.0);
-    glEnd();
-    glColor4f(1.0,1.0,1.0,1.0);	//Back to normal
-}*/
-
 void Engine::createSound(string sPath, string sName)
 {
-  if(m_bSoundDied) return;
-	tyrsound_Stream strm;
-    if(tyrsound_createFileNameStream(&strm, sPath.c_str(), "rb") != TYRSOUND_ERR_OK)
-    {
-        errlog << "File not found: " << sPath << endl;
-        return;
-    }
-
-    tyrsound_Handle handle = tyrsound_load(strm);
-
-    if(handle == TYRSOUND_NULLHANDLE)
-    {
-        errlog << "Invalid handle for song " << sPath << endl;
-        return;
-    }
-	m_sounds[sName] = handle;
+	if(m_bSoundDied || m_sounds.count(sName)) return;	//Don't duplicate sounds or attempt to play sounds if we can't
+	errlog << "Load sound " << sPath << endl;
+	FMOD_SOUND* handle;
+	FMOD_MODE open_mode = FMOD_CREATESAMPLE;
+#ifndef DEBUG_REVSOUND
+	if(sName == "music")
+		open_mode = FMOD_CREATESTREAM;	//Open music as a stream, sounds as samples (so the sounds can play multiple times at once)
+#endif
+	if(FMOD_System_CreateSound(m_audioSystem, sPath.c_str(), open_mode, 0, &handle) == FMOD_OK)
+		m_sounds[sName] = handle;
 }
 
-void Engine::playSound(string sName, int volume, int pan, float32 pitch)
+void Engine::playSound(string sName, float32 volume, float32 pan, float32 pitch)
 {
-  if(m_bSoundDied) return;
-	tyrsound_Handle handle = m_sounds[sName];
-    tyrsound_setVolume(handle, (float)(volume)/100.0);
-	tyrsound_setSpeed(handle, pitch);
-	tyrsound_setPosition(handle, pan, 0, 0);
-	//TODO: Play sounds more than once at a time
-	tyrsound_stop(handle);
-	tyrsound_seek(handle, 0);
-    tyrsound_play(handle);
+	if(m_bSoundDied || !m_sounds.count(sName)) return;
+	FMOD_CHANNEL* channel;
+	FMOD_System_PlaySound(m_audioSystem, FMOD_CHANNEL_FREE, m_sounds[sName], false, &channel);
+	pair<string, FMOD_CHANNEL*> chan;
+	chan.first = sName;
+	chan.second = channel;
+	FMOD_Channel_SetVolume(channel, volume);
+	FMOD_Channel_SetPan(channel, pan);
+	FMOD_Channel_SetFrequency(channel, pitch * soundFreqDefault);
+	m_channels.insert(chan);
+}
+
+FMOD_CHANNEL* Engine::getChannel(string sSoundName)
+{
+	multimap<string, FMOD_CHANNEL*>::iterator i = m_channels.find(sSoundName);
+	if(i != m_channels.end())
+		return i->second;
+	return NULL;
 }
 
 void Engine::pauseMusic()
 {
-  if(m_bSoundDied) return;
-    tyrsound_pause(m_sounds["music"]);
+	if(m_bSoundDied) return;
+	if(!m_channels.count("music")) return;
+	FMOD_Channel_SetPaused(getChannel("music"), true);
 }
 
 void Engine::stopMusic()
 {
-  if(m_bSoundDied) return;
-	if(!m_sounds.count("music")) return;
-	tyrsound_Handle handle = m_sounds["music"];
-	tyrsound_stop(handle);
-	tyrsound_seek(handle, 0);
+	if(m_bSoundDied) return;
+	if(!m_channels.count("music")) return;
+	FMOD_Channel_SetPaused(getChannel("music"), true);
 }
 
 void Engine::restartMusic()
 {
-  if(m_bSoundDied) return;
-	tyrsound_Handle handle = m_sounds["music"];
-	tyrsound_stop(handle);
-	tyrsound_seek(handle, 0);
-    tyrsound_play(handle);
+	if(m_bSoundDied) return;
+	if(!m_channels.count("music")) return;
+	FMOD_Channel_SetPosition(getChannel("music"), 0, FMOD_TIMEUNIT_MS);
 }
 
 void Engine::resumeMusic()
 {
-  if(m_bSoundDied) return;
-	if(m_sounds.count("music"))
-		tyrsound_play(m_sounds["music"]);
+	if(m_bSoundDied) return;
+	if(!m_channels.count("music")) return;
+	FMOD_Channel_SetPaused(getChannel("music"), false);
 }
 
 void Engine::seekMusic(float32 fTime)
 {
-  if(m_bSoundDied) return;
-	tyrsound_seek(m_sounds["music"], fTime);
+	if(m_bSoundDied) return;
+	if(!m_channels.count("music")) return;
+	FMOD_Channel_SetPosition(getChannel("music"), fTime * 1000.0, FMOD_TIMEUNIT_MS);
 }
 
-void Engine::playMusic(string sName, int volume, int pan, float32 pitch)
+float32 Engine::getMusicPos()
 {
-  if(m_bSoundDied) return;
-	if(!m_sounds.count("music"))
-		createSound(sName, "music");
-	tyrsound_setLoop(m_sounds["music"], 0.0f, -1);
+	if(m_channels.count("music"))
+	{
+		FMOD_CHANNEL* mus = getChannel("music");
+		unsigned int ms;
+		FMOD_Channel_GetPosition(mus, &ms, FMOD_TIMEUNIT_MS);
+		return (float32)ms / 1000.0f;
+	}
+	return -1;
+}
+
+void Engine::playMusic(string sName, float32 volume, float32 pan, float32 pitch)
+{
+	if(m_bSoundDied) return;
+	if(m_sounds.count("music"))
+	{
+		stopMusic();
+		m_sounds.erase("music");
+		m_channels.erase("music");
+	}
+	createSound(sName, "music");
 	playSound("music", volume, pan, pitch);
+	if(m_channels.count("music"))
+	{
+		FMOD_CHANNEL* mus = getChannel("music");
+		FMOD_Channel_SetLoopCount(mus, -1);
+		FMOD_Channel_SetMode(mus, FMOD_LOOP_NORMAL);
+		FMOD_Channel_SetPosition(mus, 0, FMOD_TIMEUNIT_MS);
+	}
+}
+
+void Engine::musicLoop(float32 startSec, float32 endSec)
+{
+	if(m_bSoundDied) return;
+	if(m_channels.count("music"))
+	{
+		FMOD_CHANNEL* mus = getChannel("music");
+		FMOD_Channel_SetLoopPoints(mus, startSec * 1000, FMOD_TIMEUNIT_MS, endSec * 1000, FMOD_TIMEUNIT_MS);
+		//Flush music stream
+		FMOD_Channel_SetMode(mus, FMOD_LOOP_NORMAL);
+		unsigned int ms;
+		FMOD_Channel_GetPosition(mus, &ms, FMOD_TIMEUNIT_MS);
+		FMOD_Channel_SetPosition(mus, ms, FMOD_TIMEUNIT_MS);
+	}
+}
+
+void Engine::volumeMusic(float32 fVol)
+{
+	if(m_channels.count("music"))
+	{
+		FMOD_CHANNEL* mus = getChannel("music");
+		FMOD_Channel_SetVolume(mus, fVol);
+	}
+}
+
+float32 Engine::getMusicFrequency()
+{
+	if(m_channels.count("music"))
+	{
+		float freq;
+		FMOD_Channel_GetFrequency(getChannel("music"), &freq);
+		return freq;
+	}
+	return -1;
+}
+
+void Engine::setMusicFrequency(float32 freq)
+{
+	if(m_channels.count("music"))
+		FMOD_Channel_SetFrequency(getChannel("music"), freq);
+}
+
+void Engine::updateSound()
+{
+	if(m_bSoundDied) return;
+	
+	//Update FMOD
+	FMOD_System_Update(m_audioSystem);
+	
+	//Get rid of sounds that aren't currently playing
+	for(multimap<string, FMOD_CHANNEL*>::iterator i = m_channels.begin(); i != m_channels.end();i++)
+	{
+		FMOD_BOOL bPlaying;
+		if(FMOD_Channel_IsPlaying(i->second, &bPlaying) != FMOD_OK) continue;
+		if(!bPlaying && i->first != "music")
+		{
+			m_channels.erase(i);
+			continue;
+		}
+	}
 }
 
 bool Engine::keyDown(int32_t keyCode)
