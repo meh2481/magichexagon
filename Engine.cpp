@@ -220,6 +220,7 @@ Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sAppName
     m_iHeight = iHeight;
     m_iKeystates = NULL;
     m_bShowCursor = true;
+	m_fFramerate = 60.0f;
     setFramerate(60);   //60 fps default
     m_bFullscreen = true;
     setup_sdl();
